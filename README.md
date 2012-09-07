@@ -1,4 +1,4 @@
-CCPluginsCommon
-===============
+CoderCow Terraria Plugins Common Library
+=====================
 
-A library containing shared code used over multiple Terraria plugins.
+Library functions shared over multiple Terraria plugins.

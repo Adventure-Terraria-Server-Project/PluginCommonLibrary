@@ -66,8 +66,8 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: Constructor]
       public SpriteMeasureData(
-        int spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, bool hasActiveFrame, 
-        int frameXOffsetAdd
+        int spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, 
+        bool hasActiveFrame, int frameXOffsetAdd
       ) {
         this.spriteType = spriteType;
         this.frameXOffsetAdd = frameXOffsetAdd;

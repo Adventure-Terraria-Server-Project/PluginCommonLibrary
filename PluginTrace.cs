@@ -8,6 +8,8 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
+using TShockAPI;
+
 namespace Terraria.Plugins.CoderCow {
   public class PluginTrace {
     #region [Constants]
@@ -33,38 +35,38 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: WriteLine]
     public void WriteLine(string message, TraceLevel level = TraceLevel.Info) {
-      message = string.Concat(this.TracePrefix, message);
-      Trace.WriteLine(message);
+      message = this.TracePrefix + message;
 
       ConsoleColor oldColor = Console.ForegroundColor;
       try {
         switch (level) {
           case TraceLevel.Error:
             Console.ForegroundColor = PluginTrace.ConsoleErrorColor;
-            Debug.WriteLine(string.Concat("ERROR: ", message));
+            Log.Error(message);
             break;
           case TraceLevel.Warning:
             Console.ForegroundColor = PluginTrace.ConsoleWarningColor;
-            Debug.WriteLine(string.Concat("WARNING: ", message));
+            Log.Warn(message);
             break;
         }
 
         Console.WriteLine(message);
+        Log.Info(message);
       } finally {
         Console.ForegroundColor = oldColor;
       }
     }
 
     public void WriteLineInfo(string format, params object[] args) {
-      this.WriteLine(string.Format(format, args), TraceLevel.Info);
+      this.WriteLine(string.Format(format, args));
     }
 
     public void WriteLineInfo(string format, object arg0, object arg1) {
-      this.WriteLine(string.Format(format, arg0, arg1), TraceLevel.Info);
+      this.WriteLine(string.Format(format, arg0, arg1));
     }
 
     public void WriteLineInfo(string format, object arg0) {
-      this.WriteLine(string.Format(format, arg0), TraceLevel.Info);
+      this.WriteLine(string.Format(format, arg0));
     }
 
     public void WriteLineWarning(string format, params object[] args) {

@@ -11,7 +11,7 @@ using System.IO;
 
 namespace Terraria.Plugins.CoderCow {
   public abstract class WorldMetadataHandlerBase {
-    private const string WorldMetadataFileNameFormat = @"{0}.xml";
+    private const string WorldMetadataFileNameFormat = @"{0}.json";
 
     #region [Property: MetadataFilePath]
     private readonly string metadataFilePath;

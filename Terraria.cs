@@ -752,7 +752,7 @@ namespace Terraria.Plugins.CoderCow {
         if (npcTypes.Contains(npc.type)) {
           npcIndexes.Add(i);
 
-          if (npcIndexes.Count == 10)
+          if (npcIndexes.Count == 10 || npcTypes.Count == 1)
             break;
         }
       }

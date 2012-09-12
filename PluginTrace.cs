@@ -48,10 +48,12 @@ namespace Terraria.Plugins.CoderCow {
             Console.ForegroundColor = PluginTrace.ConsoleWarningColor;
             Log.Warn(message);
             break;
+          default:
+            Log.Info(message);
+            break;
         }
 
         Console.WriteLine(message);
-        Log.Info(message);
       } finally {
         Console.ForegroundColor = oldColor;
       }

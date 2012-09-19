@@ -187,6 +187,11 @@ namespace Terraria.Plugins.CoderCow {
     // This function is currently unable to calculate the height of dynamic sprites.
     public static Terraria.SpriteMeasureData MeasureSprite(DPoint anyTileLocation) {
       Tile tile = Main.tile[anyTileLocation.X, anyTileLocation.Y];
+      if (!tile.active) {
+        throw new ArgumentException(string.Format(
+          "The tile at location {0} can not be measured because its not active", anyTileLocation
+        ));
+      }
 
       DPoint spriteSize = Terraria.GetSpriteSize(tile.type);
       DPoint textureTileSize = new DPoint(Terraria.DefaultTextureTileSize, Terraria.DefaultTextureTileSize);
@@ -234,8 +239,9 @@ namespace Terraria.Plugins.CoderCow {
           break;
 
         default:
-          data = null;
-          return false;
+          throw new ArgumentException(string.Format(
+            "The tile at location {0} can not be measured because the tile id \"{1}\" is is invalid", anyTileLocation, tile.type
+          ));
       }
 
       int originX, originY;
@@ -323,10 +329,9 @@ namespace Terraria.Plugins.CoderCow {
         }
       }
 
-      data = new Terraria.SpriteMeasureData(
+      return new Terraria.SpriteMeasureData(
         tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, hasActiveFrame, frameXOffsetAdd
       );
-      return true;
     }
 
     public static bool IsLeftTreeBranch(Tile tile) {
@@ -715,6 +720,58 @@ namespace Terraria.Plugins.CoderCow {
         throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
 
       return Terraria.spriteSizes[tileId];
+    }
+
+    public static Orientation GetSpriteOrientation(Tile anyTile) {
+      if (!anyTile.active)
+        return Orientation.Unknown;
+
+      switch (anyTile.type) {
+        case Terraria.TileId_Torch:
+          if (anyTile.frameX == 44 || anyTile.frameX == 110)
+            return Orientation.Left;
+
+          if (anyTile.frameX == 22 || anyTile.frameX == 88)
+            return Orientation.Right;
+
+          return Orientation.Up;
+
+        case Terraria.TileId_Sign:
+          if (anyTile.frameX < 36)
+            return Orientation.Up;
+
+          if (anyTile.frameX == 36 || anyTile.frameX == 54)
+            return Orientation.Down;
+
+          if (anyTile.frameX == 72 || anyTile.frameX == 90)
+            return Orientation.Right;
+
+          return Orientation.Left;
+
+        case Terraria.TileId_CrystalShard:
+          if (anyTile.frameY == 0)
+            return Orientation.Up;
+
+          if (anyTile.frameY == 18)
+            return Orientation.Down;
+
+          if (anyTile.frameY == 36)
+            return Orientation.Left;
+
+          return Orientation.Right;
+
+        case Terraria.TileId_Switch:
+          if (anyTile.frameX == 0)
+            return Orientation.Up;
+
+          if (anyTile.frameX == 18)
+            return Orientation.Right;
+
+          return Orientation.Left;
+
+        default:
+          return Orientation.Unknown;
+      }
     }
     
     // Note: A block is considered any non-sprite, so any tile type which blocks the player from passing through 

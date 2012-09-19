@@ -13,7 +13,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.CoderCow.Collections {
   public class SerializableDictionary<TKey, TValue>: Dictionary<TKey, TValue>, IXmlSerializable {
     #region [Property: ItemNodeName]
     private readonly string itemNodeName;

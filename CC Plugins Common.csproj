@@ -65,20 +65,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="#Data\Orientation.cs" />
+    <Compile Include="#Data\PlayerCommandInteraction.cs" />
+    <Compile Include="#Data\CommandInteractionResult.cs" />
     <Compile Include="IWorldMetadata.cs" />
-    <Compile Include="PluginInfo.cs" />
-    <Compile Include="PluginTrace.cs" />
-    <Compile Include="PointEx.cs" />
+    <Compile Include="#Data\PluginInfo.cs" />
+    <Compile Include="#Utility Classes\PluginTrace.cs" />
+    <Compile Include="#Utility Classes\PointEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializableDictionary.cs" />
-    <Compile Include="StatueType.cs" />
-    <Compile Include="StringCollection.cs" />
-    <Compile Include="Terraria.cs" />
-    <Compile Include="Terraria.SpriteMeasureData.cs" />
-    <Compile Include="TileEditType.cs" />
-    <Compile Include="TShockEx.cs" />
-    <Compile Include="WorldMetadataHandlerBase.cs" />
+    <Compile Include="Collections\SerializableDictionary.cs" />
+    <Compile Include="#Data\StatueType.cs" />
+    <Compile Include="Collections\StringCollection.cs" />
+    <Compile Include="#Utility Classes\Terraria.cs" />
+    <Compile Include="#Utility Classes\Terraria.SpriteMeasureData.cs">
+      <DependentUpon>Terraria.cs</DependentUpon>
+    </Compile>
+    <Compile Include="#Data\TileEditType.cs" />
+    <Compile Include="#Utility Classes\TShockEx.cs" />
+    <Compile Include="#Super Classes\UserInteractionHandlerBase.cs" />
+    <Compile Include="#Super Classes\WorldMetadataHandlerBase.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

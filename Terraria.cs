@@ -171,8 +171,8 @@ namespace Terraria.Plugins.CoderCow {
     #region [Method: IsValidCoord]
     public static bool IsValidCoord(int x, int y) {
       return (
-        x >= 0 && x <= Main.maxTilesX &&
-        y >= 0 && y <= Main.maxTilesY
+        x >= 0 && x < Main.maxTilesX &&
+        y >= 0 && y < Main.maxTilesY
       );
     }
 
@@ -184,37 +184,17 @@ namespace Terraria.Plugins.CoderCow {
     #region [Methods: MeasureSprite, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
     // Note: A sprite is considered any tile type the player is not blocked from passing through plus 
     // Active Stone, Boulders, Wood Platforms and Dart Traps.
-    public static bool MeasureSprite(DPoint anyTileLocation, out Terraria.SpriteMeasureData? data) {
+    // This function is currently unable to calculate the height of dynamic sprites.
+    public static Terraria.SpriteMeasureData MeasureSprite(DPoint anyTileLocation) {
       Tile tile = Main.tile[anyTileLocation.X, anyTileLocation.Y];
 
-      DPoint spriteSize = new DPoint(1, 1);
+      DPoint spriteSize = Terraria.GetSpriteSize(tile.type);
       DPoint textureTileSize = new DPoint(Terraria.DefaultTextureTileSize, Terraria.DefaultTextureTileSize);
       int frameXOffsetAdd = 0;
       switch (tile.type) {
-        // 1x1 sprites, normal handling
-        case Terraria.TileId_Bottle:
-        case Terraria.TileId_WoodPlatform:
-        case Terraria.TileId_Book:
-        case Terraria.TileId_WoodenBeam:
-        case Terraria.TileId_CrystalShard:
-        case Terraria.TileId_Switch:
-        case Terraria.TileId_DartTrap:
-        case Terraria.TileId_Explosives:
-        case Terraria.TileId_XSecondTimer:
-        case Terraria.TileId_ActiveStone:
-        case Terraria.TileId_InactiveStone:
-          break;
-
         // Dynamic sprites, special handling
         case Terraria.TileId_Tree:
           textureTileSize = new DPoint(22, 22);
-          break;
-        case Terraria.TileId_Vine:
-        case Terraria.TileId_JungleVine:
-        case Terraria.TileId_GiantGlowingMushroom:
-        case Terraria.TileId_ClayPot:
-        case Terraria.TileId_Cactus:
-        case Terraria.TileId_HallowedVine:
           break;
 
         case Terraria.TileId_GrassPlants:
@@ -247,102 +227,10 @@ namespace Terraria.Plugins.CoderCow {
           frameXOffsetAdd = Terraria.DefaultTextureTileSize * 2;
           break;
 
-        case Terraria.TileId_IronAnvil:
-        case Terraria.TileId_WorkBench:
-        case Terraria.TileId_PiggyBank:
-        case Terraria.TileId_Bowl:
-        case Terraria.TileId_MythrilAnvil:
-          spriteSize = new DPoint(2, 1);
-          break;
-
-        case Terraria.TileId_WoodenChair:
-        case Terraria.TileId_Sapling:
-        case Terraria.TileId_ChainLantern:
-          spriteSize = new DPoint(1, 2);
-          break;
-
         case Terraria.TileId_TallGrassPlants:
         case Terraria.TileId_TallJunglePlants:
         case Terraria.TileId_TallHallowedPlants:
-          spriteSize = new DPoint(1, 2);
           textureTileSize = new DPoint(18, 16);
-          break;
-
-        case Terraria.TileId_CrystalHeart:
-        case Terraria.TileId_Chest:
-        case Terraria.TileId_Pot:
-        case Terraria.TileId_ShadowOrb:
-        case Terraria.TileId_Sign:
-        case Terraria.TileId_Tombstone:
-        case Terraria.TileId_Keg:
-        case Terraria.TileId_ChineseLantern:
-        case Terraria.TileId_CookingPot:
-        case Terraria.TileId_Safe:
-        case Terraria.TileId_SkullLantern:
-        case Terraria.TileId_TashCan_UNUSED:
-        case Terraria.TileId_Candelabra:
-        case Terraria.TileId_CrystalBall:
-        case Terraria.TileId_DiscoBall:
-        case Terraria.TileId_Lever:
-        case Terraria.TileId_Boulder:
-        case Terraria.TileId_InletPump:
-        case Terraria.TileId_OutletPump:
-        case Terraria.TileId_MusicBox:
-          spriteSize = new DPoint(2, 2);
-          break;
-
-        case Terraria.TileId_DoorClosed:
-        case Terraria.TileId_Banner:
-        case Terraria.TileId_TikiTorch:
-          spriteSize = new DPoint(1, 3);
-          break;
-
-        case Terraria.TileId_DoorOpened:
-        case Terraria.TileId_Statue:
-        case Terraria.TileId_Mannequin:
-          spriteSize = new DPoint(2, 3);
-          break;
-
-        case Terraria.TileId_Furnace:
-        case Terraria.TileId_WoodenTable:
-        case Terraria.TileId_DemonAltar:
-        case Terraria.TileId_Hellforge:
-        case Terraria.TileId_Loom:
-        case Terraria.TileId_Piano:
-        case Terraria.TileId_Dresser:
-        case Terraria.TileId_Bench:
-        case Terraria.TileId_TinkerersWorkshop:
-        case Terraria.TileId_AdamantiteForge:
-          spriteSize = new DPoint(3, 2);
-          break;
-
-        case Terraria.TileId_CopperChandelier:
-        case Terraria.TileId_SilverChandelier:
-        case Terraria.TileId_GoldChandelier:
-        case Terraria.TileId_Sawmill:
-          spriteSize = new DPoint(3, 3);
-          break;
-
-        case Terraria.TileId_Bed:
-        case Terraria.TileId_Bathtub:
-          spriteSize = new DPoint(4, 2);
-          break;
-
-        case Terraria.TileId_Bookcase:
-        case Terraria.TileId_Throne:
-          spriteSize = new DPoint(3, 4);
-          break;
-
-        case Terraria.TileId_LampPost:
-          spriteSize = new DPoint(1, 6);
-          break;
-
-        case Terraria.TileId_Sunflower:
-          spriteSize = new DPoint(2, 4);
-          break;
-
-        case Terraria.TileId_GrandfatherClock:
-          spriteSize = new DPoint(2, 5);
           break;
 
         default:
@@ -428,6 +316,7 @@ namespace Terraria.Plugins.CoderCow {
 
               if (tile.type == Terraria.TileId_MusicBox)
                 hasActiveFrame = !hasActiveFrame;
+
               break;
           }
           break;
@@ -500,7 +389,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: GetTileName, IsBlockTile]
+    #region [Method: GetTileName, GetSpriteSize, IsBlockTile]
     private static string[] tileNames;
 
     public static string GetTileName(int tileId) {
@@ -660,12 +549,176 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       if (tileId < 0 || tileId >= Terraria.tileNames.Length)
-        return null;
+        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
 
       return Terraria.tileNames[tileId];
     }
+
+    private static DPoint[] spriteSizes;
+    public static DPoint GetSpriteSize(int tileId) {
+      if (Terraria.spriteSizes == null) {
+        Terraria.spriteSizes = new[] {
+          new DPoint(1, 1), // Dirt
+          new DPoint(1, 1), // Stone
+          new DPoint(1, 1), // Grass
+          new DPoint(1, 1), // Grass Plant
+          new DPoint(1, 1), // Torch
+          new DPoint(1, 1), // Tree (dynamic!)
+          new DPoint(1, 1), // Iron Ore
+          new DPoint(1, 1), // Copper Ore
+          new DPoint(1, 1), // Gold Ore
+          new DPoint(1, 1), // Silver Ore
+          new DPoint(1, 3), // Door (Closed)
+          new DPoint(2, 3), // Door (Opened)
+          new DPoint(2, 2), // Crystal Heart
+          new DPoint(1, 1), // Bottle
+          new DPoint(3, 2), // Wooden Table
+          new DPoint(1, 2), // Wooden Chair
+          new DPoint(2, 1), // Iron Anvil
+          new DPoint(3, 2), // Furnace
+          new DPoint(2, 1), // Work Bench
+          new DPoint(1, 1), // Wood Platform
+          new DPoint(1, 2), // Sapling
+          new DPoint(2, 2), // Chest
+          new DPoint(1, 1), // Demonite Ore
+          new DPoint(1, 1), // Corrupt Grass
+          new DPoint(1, 1), // Corruption Plant
+          new DPoint(1, 1), // Ebonstone Block
+          new DPoint(3, 2), // Demon Altar
+          new DPoint(2, 4), // Sunflower
+          new DPoint(2, 2), // Pot
+          new DPoint(2, 1), // Piggy Bank
+          new DPoint(1, 1), // Wood
+          new DPoint(2, 2), // Shadow Orb
+          new DPoint(1, 1), // Corruption Thorny Bush
+          new DPoint(1, 1), // Candle
+          new DPoint(3, 3), // Copper Chandelier
+          new DPoint(3, 3), // Silver Chandelier
+          new DPoint(3, 3), // Gold Chandelier
+          new DPoint(1, 1), // Meteorite
+          new DPoint(1, 1), // Gray Brick
+          new DPoint(1, 1), // Red Brick
+          new DPoint(1, 1), // Clay
+          new DPoint(1, 1), // Blue Brick
+          new DPoint(1, 2), // Chain Lantern
+          new DPoint(1, 1), // Green Brick
+          new DPoint(1, 1), // Pink Brick
+          new DPoint(1, 1), // Gold Brick
+          new DPoint(1, 1), // Silver Brick
+          new DPoint(1, 1), // Copper Brick
+          new DPoint(1, 1), // Spike
+          new DPoint(1, 1), // Water Candle
+          new DPoint(1, 1), // Book
+          new DPoint(1, 1), // Cobweb
+          new DPoint(1, 1), // Vines (dynamic!)
+          new DPoint(1, 1), // Sand
+          new DPoint(1, 1), // Glass
+          new DPoint(2, 2), // Sign
+          new DPoint(1, 1), // Obsidian
+          new DPoint(1, 1), // Ash
+          new DPoint(1, 1), // Hellstone
+          new DPoint(1, 1), // Mud
+          new DPoint(1, 1), // Jungle Grass
+          new DPoint(1, 1), // Jungle Plant
+          new DPoint(1, 1), // Jungle Vine (dynamic!)
+          new DPoint(1, 1), // Sapphire
+          new DPoint(1, 1), // Ruby
+          new DPoint(1, 1), // Emerald
+          new DPoint(1, 1), // Topaz
+          new DPoint(1, 1), // Amethyst
+          new DPoint(1, 1), // Diamond
+          new DPoint(1, 1), // Jungle Thorny Bush
+          new DPoint(1, 1), // Mushroom Grass
+          new DPoint(1, 1), // Glowing Mushroom
+          new DPoint(1, 1), // Giant Glowing Mushroom (dynamic!)
+          new DPoint(1, 2), // Tall Grass Plant
+          new DPoint(1, 2), // Tall Jungle Plant
+          new DPoint(1, 1), // Obsidian Brick
+          new DPoint(1, 1), // Hellstone Brick
+          new DPoint(3, 2), // Hellforge
+          new DPoint(1, 1), // ClayPot
+          new DPoint(4, 2), // Bed
+          new DPoint(1, 1), // Cactus (dynamic!)
+          new DPoint(1, 1), // Coral
+          new DPoint(1, 1), // Plantable Plant (Growing)
+          new DPoint(1, 1), // Plantable Plant (Mature)
+          new DPoint(1, 1), // Plantable Plant (Blooming)
+          new DPoint(2, 2), // Tombstone
+          new DPoint(3, 2), // Loom
+          new DPoint(3, 2), // Piano
+          new DPoint(3, 2), // Dresser
+          new DPoint(3, 2), // Bench
+          new DPoint(4, 2), // Bathtub
+          new DPoint(1, 3), // Banner
+          new DPoint(1, 6), // LampPost
+          new DPoint(1, 3), // Tiki Torch
+          new DPoint(2, 2), // Keg
+          new DPoint(2, 2), // Chinese Lantern
+          new DPoint(2, 2), // Cooking Pot
+          new DPoint(2, 2), // Safe
+          new DPoint(2, 2), // Skull Lantern
+          new DPoint(2, 2), // TashCan
+          new DPoint(2, 2), // Candelabra
+          new DPoint(3, 4), // Bookcase
+          new DPoint(3, 4), // Throne
+          new DPoint(2, 1), // Bowl
+          new DPoint(2, 5), // Grandfather Clock
+          new DPoint(2, 3), // Statue
+          new DPoint(3, 3), // Sawmill
+          new DPoint(1, 1), // Cobalt Ore
+          new DPoint(1, 1), // Mythril Ore
+          new DPoint(1, 1), // Hallowed Grass
+          new DPoint(1, 1), // Hallowed Plant
+          new DPoint(1, 1), // Adamantite Ore
+          new DPoint(1, 1), // Ebonsand
+          new DPoint(1, 2), // Tall Hallowed Plant
+          new DPoint(3, 2), // Tinkerer's Workshop
+          new DPoint(1, 1), // Hallowed Vine (dynamic!)
+          new DPoint(1, 1), // Pearlsand
+          new DPoint(1, 1), // Pearlstone
+          new DPoint(1, 1), // Pearlstone Brick
+          new DPoint(1, 1), // Iridescent Brick
+          new DPoint(1, 1), // Mudstone
+          new DPoint(1, 1), // Cobalt Brick
+          new DPoint(1, 1), // Mythril Brick
+          new DPoint(1, 1), // Silt
+          new DPoint(1, 1), // Wooden Beam
+          new DPoint(2, 2), // Crystal Ball
+          new DPoint(2, 2), // Disco Ball
+          new DPoint(1, 1), // Ice
+          new DPoint(2, 3), // Mannequin
+          new DPoint(1, 1), // Crystal Shard
+          new DPoint(1, 1), // Active Stone
+          new DPoint(1, 1), // Inactive Stone
+          new DPoint(2, 2), // Lever
+          new DPoint(3, 2), // Adamantite Forge
+          new DPoint(2, 1), // Mythril Anvil
+          new DPoint(1, 1), // Pressure Plate
+          new DPoint(1, 1), // Switch
+          new DPoint(1, 1), // Dart Trap
+          new DPoint(2, 2), // Boulder
+          new DPoint(2, 2), // Music Box
+          new DPoint(1, 1), // Demonite Brick
+          new DPoint(1, 1), // Explosives
+          new DPoint(2, 2), // Inlet Pump
+          new DPoint(2, 2), // Outlet Pump
+          new DPoint(1, 1), // XSecond Timer
+          new DPoint(1, 1), // Red Candy Cane
+          new DPoint(1, 1), // Green Candy Cane
+          new DPoint(1, 1), // Snow
+          new DPoint(1, 1), // Snow Brick
+          new DPoint(1, 1), // X-Mas Light
+        };
+      }
+
+      if (tileId < 0 || tileId >= Terraria.tileNames.Length)
+        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
+
+      return Terraria.spriteSizes[tileId];
+    }
     
-    // Note: A block is considered any non-sprite, so any tile type which blocks the player from passing through.
+    // Note: A block is considered any non-sprite, so any tile type which blocks the player from passing through 
+    // (cobwebs inclusive).
     public static bool IsBlockTile(
       int tileId, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
       bool takeBouldersAsBlocks = false, bool takeDartTrapsAsBlocks = false
@@ -687,7 +740,8 @@ namespace Terraria.Plugins.CoderCow {
         (tileId == Terraria.TileId_EbonstoneBlock) ||
         (takeBouldersAsBlocks && tileId == Terraria.TileId_Boulder) ||
         (tileId == Terraria.TileId_MushroomGrass) ||
-        (tileId == Terraria.TileId_IceBlock)
+        (tileId == Terraria.TileId_IceBlock) ||
+        (tileId == Terraria.TileId_Cobweb)
       );
     }
     #endregion

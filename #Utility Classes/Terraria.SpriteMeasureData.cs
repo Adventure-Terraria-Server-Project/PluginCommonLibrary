@@ -12,6 +12,12 @@ using DPoint = System.Drawing.Point;
 namespace Terraria.Plugins.CoderCow {
   public static partial class Terraria {
     public struct SpriteMeasureData {
+      #region [Property: Static Invalid]
+      public static SpriteMeasureData Invalid {
+        get { return default(SpriteMeasureData); }
+      }
+      #endregion
+
       #region [Property: SpriteType]
       private readonly int spriteType;
 

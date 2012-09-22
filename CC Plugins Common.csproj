@@ -68,6 +68,8 @@
     <Compile Include="#Data\Orientation.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
+    <Compile Include="Test\AssertException.cs" />
+    <Compile Include="Test\TAssert.cs" />
     <Compile Include="IWorldMetadata.cs" />
     <Compile Include="#Data\PluginInfo.cs" />
     <Compile Include="#Utility Classes\PluginTrace.cs" />
@@ -84,9 +86,18 @@
     <Compile Include="#Utility Classes\TShockEx.cs" />
     <Compile Include="#Super Classes\UserInteractionHandlerBase.cs" />
     <Compile Include="#Super Classes\WorldMetadataHandlerBase.cs" />
+    <Compile Include="Test\TestContext.cs" />
+    <Compile Include="Test\TestDelay.cs" />
+    <Compile Include="Test\TestRunData.cs" />
+    <Compile Include="Test\TestRunnerBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>IF "$(ConfigurationName)" == "Release" (
+  COPY /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)Advanced Circuits\References"
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

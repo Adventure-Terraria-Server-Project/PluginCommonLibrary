@@ -237,11 +237,6 @@ namespace Terraria.Plugins.CoderCow {
         case Terraria.TileId_TallHallowedPlants:
           textureTileSize = new DPoint(18, 16);
           break;
-
-        default:
-          throw new ArgumentException(string.Format(
-            "The tile at location {0} can not be measured because the tile id \"{1}\" is is invalid", anyTileLocation, tile.type
-          ));
       }
 
       int originX, originY;
@@ -394,7 +389,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: GetTileName, GetSpriteSize, IsBlockTile]
+    #region [Methods: GetTileName, GetSpriteSize, IsBlockTile]
     private static string[] tileNames;
 
     public static string GetTileName(int tileId) {
@@ -716,7 +711,7 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (tileId < 0 || tileId >= Terraria.tileNames.Length)
+      if (tileId < 0 || tileId >= Terraria.spriteSizes.Length)
         throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
 
       return Terraria.spriteSizes[tileId];
@@ -803,7 +798,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: CountNPCsInRange, CountItemsInRange]
+    #region [Methods: CountNPCsInRange, CountItemsInRange]
     public static int CountNPCsInRange(int x, int y, int npcType, int blocksRange) {
       int halfAreaWidth = (blocksRange * Terraria.TileSize) / 2;
       int areaL = x - halfAreaWidth;

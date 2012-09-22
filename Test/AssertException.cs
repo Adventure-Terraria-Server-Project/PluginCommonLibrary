@@ -8,12 +8,11 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow {
-  public enum Orientation {
-    Unknown,
-    Left,
-    Up,
-    Right,
-    Down
+namespace Terraria.Plugins.CoderCow.Test {
+  [Serializable]
+  public class AssertException: Exception {
+    public AssertException(string message, Exception inner): base(message, inner) {}
+    public AssertException(string message): base(message, null) {}
+    public AssertException(): base("Assert failed.") {}
   }
 }

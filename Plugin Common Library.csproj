@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.CoderCow</RootNamespace>
-    <AssemblyName>CCPluginsCommon</AssemblyName>
+    <AssemblyName>Plugin Common Lib 1.3</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -68,6 +68,7 @@
     <Compile Include="#Data\Orientation.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
+    <Compile Include="Collections\EnumerableEnumerator.cs" />
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
     <Compile Include="IWorldMetadata.cs" />
@@ -94,9 +95,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF "$(ConfigurationName)" == "Release" (
-  COPY /Y "$(TargetDir)$(TargetName).*" "$(SolutionDir)Advanced Circuits\References"
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

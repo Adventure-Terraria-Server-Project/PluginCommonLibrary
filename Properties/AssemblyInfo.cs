@@ -7,11 +7,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("CoderCow's Plugins Common")]
+[assembly: AssemblyTitle("CoderCow's Plugin Common Library")]
 [assembly: AssemblyDescription("Common code used for several Terraria plugins.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cow Powered")]
-[assembly: AssemblyProduct("CC Plugins Common")]
+[assembly: AssemblyProduct("")]
 [assembly: AssemblyCopyright("Copyright © CoderCow 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

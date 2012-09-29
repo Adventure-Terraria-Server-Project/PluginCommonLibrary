@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
+using TShockAPI;
+
 namespace Terraria.Plugins.CoderCow {
   public static partial class Terraria {
     #region [Constants]
@@ -181,7 +183,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: MeasureSprite, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
+    #region [Methods: MeasureSprite, SetSpriteActiveFrame, IsSpriteWired, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
     // Note: A sprite is considered any tile type the player is not blocked from passing through plus 
     // Active Stone, Boulders, Wood Platforms and Dart Traps.
     // This function is currently unable to calculate the height of dynamic sprites.
@@ -329,6 +331,78 @@ namespace Terraria.Plugins.CoderCow {
       );
     }
 
+    public static void SetSpriteActiveFrame(
+      Terraria.SpriteMeasureData measureData, bool setActiveFrame, bool sendTileSquare = true
+    ) {
+      if (setActiveFrame == measureData.HasActiveFrame)
+        return;
+
+      int originX = measureData.OriginTileLocation.X;
+      int originY = measureData.OriginTileLocation.Y;
+      int frameXOffsetAdd = measureData.FrameXOffsetAdd;
+      int spriteWidth = measureData.Size.X;
+      int spriteHeight = measureData.Size.Y;
+      short newFrameXOffset = 0;
+      short newFrameYOffset = 0;
+
+      if (measureData.SpriteType != Terraria.TileId_Switch && measureData.SpriteType != Terraria.TileId_XSecondTimer) {
+        int frameXOffset = (spriteWidth * measureData.TextureTileSize.X) + frameXOffsetAdd;
+        if (setActiveFrame)
+          newFrameXOffset = (short)-frameXOffset;
+        else
+          newFrameXOffset = (short)frameXOffset;
+      } else {
+        int frameYOffset = (spriteHeight * measureData.TextureTileSize.Y);
+        if (measureData.SpriteType == Terraria.TileId_XSecondTimer)
+          setActiveFrame = !setActiveFrame;
+
+        if (setActiveFrame)
+          newFrameYOffset = (short)-frameYOffset;
+        else
+          newFrameYOffset = (short)frameYOffset;
+      }
+        
+      for (int tx = 0; tx < spriteWidth; tx++) {
+        for (int ty = 0; ty < spriteHeight; ty++) {
+          int absoluteX = originX + tx;
+          int absoluteY = originY + ty;
+
+          Main.tile[absoluteX, absoluteY].frameX += newFrameXOffset;
+          Main.tile[absoluteX, absoluteY].frameY += newFrameYOffset;
+        }
+      }
+            
+      if (sendTileSquare)
+        TSPlayer.All.SendTileSquareEx(originX, originY, Math.Max(spriteWidth, spriteHeight));
+    }
+
+    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData, out DPoint firstWirePosition) {
+      int originX = measureData.OriginTileLocation.X;
+      int originY = measureData.OriginTileLocation.Y;
+      int spriteWidth = measureData.Size.X;
+      int spriteHeight = measureData.Size.Y;
+
+      for (int tx = 0; tx < spriteWidth; tx++) {
+        for (int ty = 0; ty < spriteHeight; ty++) {
+          int ax = originX + tx;
+          int ay = originY + ty;
+
+          if (Main.tile[ax, ay].wire) {
+            firstWirePosition = new DPoint(ax, ay);
+            return true;
+          }
+        }
+      }
+
+      firstWirePosition = DPoint.Empty;
+      return false;
+    }
+
+    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData) {
+      DPoint dummy;
+      return Terraria.IsSpriteWired(measureData, out dummy);
+    }
+
     public static bool IsLeftTreeBranch(Tile tile) {
       if (tile.type != Terraria.TileId_Tree)
         return false;
@@ -386,6 +460,24 @@ namespace Terraria.Plugins.CoderCow {
       int frameY = tile.frameY;
 
       return (frameX == 34 || (frameX == 108 && frameY == 18));
+    }
+    #endregion
+
+    #region [Methods: EnumerateSpriteTileLocations, EnumerateSpriteTiles]
+    public static IEnumerable<DPoint> EnumerateSpriteTileLocations(Terraria.SpriteMeasureData measureData) {
+      for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
+        for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
+          yield return new DPoint(x, y);
+        }
+      }
+    }
+
+    public static IEnumerable<Tile> EnumerateSpriteTiles(Terraria.SpriteMeasureData measureData) {
+      for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
+        for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
+          yield return Main.tile[x, y];
+        }
+      }
     }
     #endregion
 

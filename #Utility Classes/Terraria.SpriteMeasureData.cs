@@ -5,6 +5,7 @@
 // Written by CoderCow
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
@@ -82,6 +83,12 @@ namespace Terraria.Plugins.CoderCow {
         this.textureTileSize = textureTileSize;
         this.hasActiveFrame = hasActiveFrame;
         this.frameXOffsetAdd = frameXOffsetAdd;
+      }
+      #endregion
+
+      #region [Method: ToString]
+      public override string ToString() {
+        return Terraria.GetTileName(this.SpriteType);
       }
       #endregion
     }

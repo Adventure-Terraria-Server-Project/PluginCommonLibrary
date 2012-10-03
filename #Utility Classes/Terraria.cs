@@ -244,9 +244,16 @@ namespace Terraria.Plugins.CoderCow {
       int originX, originY;
       bool hasActiveFrame;
       switch (tile.type) {
+        // Removed dynamic measuring support for Cactus due to Terraria bugs...
+        case Terraria.TileId_Cactus:
+          originX = anyTileLocation.X;
+          originY = anyTileLocation.Y;
+
+          hasActiveFrame = false;
+          break;
         case Terraria.TileId_Tree: 
-        case Terraria.TileId_GiantGlowingMushroom:
-        case Terraria.TileId_Cactus: {
+        case Terraria.TileId_GiantGlowingMushroom: {
+        //case Terraria.TileId_Cactus: {
           originX = anyTileLocation.X;
           originY = anyTileLocation.Y;
 
@@ -265,7 +272,7 @@ namespace Terraria.Plugins.CoderCow {
           while (true) {
             Tile tile2 = Main.tile[originX, originY + 1];
 
-            if (tile2.type != tile.type)
+            if (tile2.type == tile.type)
               originY++;
             else 
               break;
@@ -284,7 +291,7 @@ namespace Terraria.Plugins.CoderCow {
           while (true) {
             Tile tile2 = Main.tile[originX, originY - 1];
 
-            if (tile2.type != tile.type)
+            if (tile2.type == tile.type)
               originY--;
             else 
               break;
@@ -443,7 +450,7 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public static bool IsLeftCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
+      if (tile.type != Terraria.TileId_Cactus)
         return false;
 
       int frameX = tile.frameX;
@@ -453,13 +460,13 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public static bool IsRightCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
+      if (tile.type != Terraria.TileId_Cactus)
         return false;
 
       int frameX = tile.frameX;
       int frameY = tile.frameY;
 
-      return (frameX == 34 || (frameX == 108 && frameY == 18));
+      return (frameX == 36 || (frameX == 108 && frameY == 16));
     }
     #endregion
 

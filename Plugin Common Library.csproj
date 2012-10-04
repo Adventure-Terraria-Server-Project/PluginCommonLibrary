@@ -68,19 +68,18 @@
     <Compile Include="#Data\Orientation.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
-    <Compile Include="Collections\EnumerableEnumerator.cs" />
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
     <Compile Include="IWorldMetadata.cs" />
     <Compile Include="#Data\PluginInfo.cs" />
-    <Compile Include="#Utility Classes\PluginTrace.cs" />
+    <Compile Include="PluginTrace.cs" />
     <Compile Include="#Utility Classes\PointEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="#Data\StatueType.cs" />
     <Compile Include="Collections\StringCollection.cs" />
-    <Compile Include="#Utility Classes\Terraria.cs" />
-    <Compile Include="#Utility Classes\Terraria.SpriteMeasureData.cs">
+    <Compile Include="Terraria.cs" />
+    <Compile Include="Terraria.SpriteMeasureData.cs">
       <DependentUpon>Terraria.cs</DependentUpon>
     </Compile>
     <Compile Include="#Data\TileEditType.cs" />

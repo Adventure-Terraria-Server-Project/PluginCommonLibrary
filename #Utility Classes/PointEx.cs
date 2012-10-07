@@ -22,5 +22,26 @@ namespace Terraria.Plugins.CoderCow {
 
       return new DPoint(int.Parse(locationCoords[0]), int.Parse(locationCoords[1]));
     }
+
+    public static void OffsetTowards(this DPoint point, Direction direction, int offset = 1) {
+      switch (direction) {
+        case Direction.Left:
+          point.X -= offset;
+          break;
+        case Direction.Up:
+          point.Y -= offset;
+          break;
+        case Direction.Right:
+          point.X += offset;
+          break;
+        case Direction.Down:
+          point.Y += offset;
+          break;
+      }
+    }
+
+    public static Tile ByPoint(this TileCollection tileCollection, DPoint point) {
+      return tileCollection[point.X, point.Y];
+    }
   }
 }

@@ -170,16 +170,18 @@ namespace Terraria.Plugins.CoderCow {
     public const int TileSize = 16;
     #endregion
 
-    #region [Method: IsValidCoord]
-    public static bool IsValidCoord(int x, int y) {
-      return (
-        x >= 0 && x < Main.maxTilesX &&
-        y >= 0 && y < Main.maxTilesY
-      );
-    }
+    #region [Property: Static Tiles]
+    private static readonly Tiles tiles;
 
-    public static bool IsValidCoord(DPoint point) {
-      return Terraria.IsValidCoord(point.X, point.Y);
+    public static Tiles Tiles {
+      get { return Terraria.tiles; }
+    }
+    #endregion
+
+
+    #region [Method: Static Constructor]
+    static Terraria() {
+      Terraria.tiles = new Tiles();
     }
     #endregion
 
@@ -188,7 +190,7 @@ namespace Terraria.Plugins.CoderCow {
     // Active Stone, Boulders, Wood Platforms and Dart Traps.
     // This function is currently unable to calculate the height of dynamic sprites.
     public static Terraria.SpriteMeasureData MeasureSprite(DPoint anyTileLocation) {
-      Tile tile = Main.tile[anyTileLocation.X, anyTileLocation.Y];
+      Tile tile = Terraria.Tiles[anyTileLocation];
       if (!tile.active) {
         throw new ArgumentException(string.Format(
           "The tile at location {0} can not be measured because its not active", anyTileLocation
@@ -270,7 +272,7 @@ namespace Terraria.Plugins.CoderCow {
           }
 
           while (true) {
-            Tile tile2 = Main.tile[originX, originY + 1];
+            Tile tile2 = Terraria.Tiles[originX, originY + 1];
 
             if (tile2.type == tile.type)
               originY++;
@@ -289,7 +291,7 @@ namespace Terraria.Plugins.CoderCow {
           originY = anyTileLocation.Y;
 
           while (true) {
-            Tile tile2 = Main.tile[originX, originY - 1];
+            Tile tile2 = Terraria.Tiles[originX, originY - 1];
 
             if (tile2.type == tile.type)
               originY--;
@@ -316,13 +318,13 @@ namespace Terraria.Plugins.CoderCow {
 
           switch (tile.type) {
             case Terraria.TileId_Switch:
-              hasActiveFrame = (Main.tile[originX, originY].frameY == 0);
+              hasActiveFrame = (Terraria.Tiles[originX, originY].frameY == 0);
               break;
             case Terraria.TileId_XSecondTimer:
-              hasActiveFrame = (Main.tile[originX, originY].frameY != 0);
+              hasActiveFrame = (Terraria.Tiles[originX, originY].frameY != 0);
               break;
             default:
-              hasActiveFrame = (Main.tile[originX, originY].frameX < frameXOffsetAdd + 1);
+              hasActiveFrame = (Terraria.Tiles[originX, originY].frameX < frameXOffsetAdd + 1);
 
               if (tile.type == Terraria.TileId_MusicBox)
                 hasActiveFrame = !hasActiveFrame;
@@ -374,8 +376,8 @@ namespace Terraria.Plugins.CoderCow {
           int absoluteX = originX + tx;
           int absoluteY = originY + ty;
 
-          Main.tile[absoluteX, absoluteY].frameX += newFrameXOffset;
-          Main.tile[absoluteX, absoluteY].frameY += newFrameYOffset;
+          Terraria.Tiles[absoluteX, absoluteY].frameX += newFrameXOffset;
+          Terraria.Tiles[absoluteX, absoluteY].frameY += newFrameYOffset;
         }
       }
             
@@ -394,7 +396,7 @@ namespace Terraria.Plugins.CoderCow {
           int ax = originX + tx;
           int ay = originY + ty;
 
-          if (Main.tile[ax, ay].wire) {
+          if (Terraria.Tiles[ax, ay].wire) {
             firstWirePosition = new DPoint(ax, ay);
             return true;
           }
@@ -482,7 +484,7 @@ namespace Terraria.Plugins.CoderCow {
     public static IEnumerable<Tile> EnumerateSpriteTiles(Terraria.SpriteMeasureData measureData) {
       for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
         for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
-          yield return Main.tile[x, y];
+          yield return Terraria.Tiles[x, y];
         }
       }
     }

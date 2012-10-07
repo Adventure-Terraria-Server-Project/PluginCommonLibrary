@@ -21,7 +21,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void IsSpriteActive(int x, int y, bool isActive) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       if (!tile.active) {
         throw new AssertException(
           string.Format("Assert failed. There is no tile at [{0},{1}].", x, y)
@@ -52,7 +52,7 @@ namespace Terraria.Plugins.CoderCow.Test {
 
     #region [Methods: IsTileId, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
     public static void IsTileId(int x, int y, int expectedTileId) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       
       if (!tile.active) {
         throw new AssertException(string.Format(
@@ -70,7 +70,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void HasLiquid(int x, int y) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       
       if (tile.liquid <= 0) {
         throw new AssertException(string.Format(
@@ -80,7 +80,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void HasNoLiquid(int x, int y) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       
       if (tile.liquid == 0) {
         throw new AssertException(string.Format(
@@ -90,7 +90,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void HasFullLiquid(int x, int y) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       
       if (tile.liquid < 255) {
         throw new AssertException(string.Format(
@@ -100,7 +100,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void HasNotFullLiquid(int x, int y) {
-      Tile tile = Main.tile[x, y];
+      Tile tile = Terraria.Tiles[x, y];
       
       if (tile.liquid == 0) {
         throw new AssertException(string.Format(

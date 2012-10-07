@@ -90,6 +90,7 @@
     <Compile Include="Test\TestDelay.cs" />
     <Compile Include="Test\TestRunData.cs" />
     <Compile Include="Test\TestRunnerBase.cs" />
+    <Compile Include="Tiles.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

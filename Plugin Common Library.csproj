@@ -65,7 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="#Data\Orientation.cs" />
+    <Compile Include="#Data\Direction.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
     <Compile Include="Test\AssertException.cs" />

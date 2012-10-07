@@ -816,55 +816,55 @@ namespace Terraria.Plugins.CoderCow {
       return Terraria.spriteSizes[tileId];
     }
 
-    public static Orientation GetSpriteOrientation(Tile anyTile) {
+    public static Direction GetSpriteOrientation(Tile anyTile) {
       if (!anyTile.active)
-        return Orientation.Unknown;
+        return Direction.Unknown;
 
       switch (anyTile.type) {
         case Terraria.TileId_Torch:
           if (anyTile.frameX == 44 || anyTile.frameX == 110)
-            return Orientation.Left;
+            return Direction.Left;
 
           if (anyTile.frameX == 22 || anyTile.frameX == 88)
-            return Orientation.Right;
+            return Direction.Right;
 
-          return Orientation.Up;
+          return Direction.Up;
 
         case Terraria.TileId_Sign:
           if (anyTile.frameX < 36)
-            return Orientation.Up;
+            return Direction.Up;
 
           if (anyTile.frameX == 36 || anyTile.frameX == 54)
-            return Orientation.Down;
+            return Direction.Down;
 
           if (anyTile.frameX == 72 || anyTile.frameX == 90)
-            return Orientation.Right;
+            return Direction.Right;
 
-          return Orientation.Left;
+          return Direction.Left;
 
         case Terraria.TileId_CrystalShard:
           if (anyTile.frameY == 0)
-            return Orientation.Up;
+            return Direction.Up;
 
           if (anyTile.frameY == 18)
-            return Orientation.Down;
+            return Direction.Down;
 
           if (anyTile.frameY == 36)
-            return Orientation.Left;
+            return Direction.Left;
 
-          return Orientation.Right;
+          return Direction.Right;
 
         case Terraria.TileId_Switch:
           if (anyTile.frameX == 0)
-            return Orientation.Up;
+            return Direction.Up;
 
           if (anyTile.frameX == 18)
-            return Orientation.Right;
+            return Direction.Right;
 
-          return Orientation.Left;
+          return Direction.Left;
 
         default:
-          return Orientation.Unknown;
+          return Direction.Unknown;
       }
     }
     

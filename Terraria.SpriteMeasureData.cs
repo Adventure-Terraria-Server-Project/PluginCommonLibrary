@@ -51,17 +51,6 @@ namespace Terraria.Plugins.CoderCow {
       }
       #endregion
 
-      #region [Property: HasActiveFrame]
-      private readonly bool hasActiveFrame;
-
-      /// <summary>
-      ///   Gets a bool indicating whether the sprite currently has its "active" frame. A torch is active when it's emitting light.
-      /// </summary>
-      public bool HasActiveFrame {
-        get { return this.hasActiveFrame; }
-      }
-      #endregion
-
       #region [Property: FrameXOffsetAdd]
       private readonly int frameXOffsetAdd;
 
@@ -73,15 +62,13 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: Constructor]
       public SpriteMeasureData(
-        int spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, 
-        bool hasActiveFrame, int frameXOffsetAdd
+        int spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
       ) {
         this.spriteType = spriteType;
         this.frameXOffsetAdd = frameXOffsetAdd;
         this.originTileLocation = originTileLocation;
         this.size = size;
         this.textureTileSize = textureTileSize;
-        this.hasActiveFrame = hasActiveFrame;
         this.frameXOffsetAdd = frameXOffsetAdd;
       }
       #endregion

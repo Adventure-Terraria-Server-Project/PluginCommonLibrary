@@ -170,7 +170,7 @@ namespace Terraria.Plugins.CoderCow {
     public const int TileSize = 16;
     #endregion
 
-    #region [Property: Static Tiles]
+    #region [Property: Tiles]
     private static readonly Tiles tiles;
 
     public static Tiles Tiles {
@@ -179,13 +179,13 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
 
-    #region [Method: Static Constructor]
+    #region [Method: Constructor]
     static Terraria() {
       Terraria.tiles = new Tiles();
     }
     #endregion
 
-    #region [Methods: MeasureSprite, SetSpriteActiveFrame, IsSpriteWired, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
+    #region [Methods: MeasureSprite, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
     // Note: A sprite is considered any tile type the player is not blocked from passing through plus 
     // Active Stone, Boulders, Wood Platforms and Dart Traps.
     // This function is currently unable to calculate the height of dynamic sprites.
@@ -303,7 +303,7 @@ namespace Terraria.Plugins.CoderCow {
           hasActiveFrame = false;
           break;
         }
-
+        
         default: {
           if (spriteSize.X == 1 && spriteSize.Y == 1) {
             originX = anyTileLocation.X;
@@ -316,36 +316,94 @@ namespace Terraria.Plugins.CoderCow {
             originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
           }
 
-          switch (tile.type) {
-            case Terraria.TileId_Switch:
-              hasActiveFrame = (Terraria.Tiles[originX, originY].frameY == 0);
-              break;
-            case Terraria.TileId_XSecondTimer:
-              hasActiveFrame = (Terraria.Tiles[originX, originY].frameY != 0);
-              break;
-            default:
-              hasActiveFrame = (Terraria.Tiles[originX, originY].frameX < frameXOffsetAdd + 1);
-
-              if (tile.type == Terraria.TileId_MusicBox)
-                hasActiveFrame = !hasActiveFrame;
-
-              break;
-          }
           break;
         }
       }
 
       return new Terraria.SpriteMeasureData(
-        tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, hasActiveFrame, frameXOffsetAdd
+        tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, frameXOffsetAdd
       );
+    }
+
+    public static bool IsLeftTreeBranch(Tile tile) {
+      if (tile.type != Terraria.TileId_Tree)
+        return false;
+
+      int frameX = tile.frameX;
+      int frameY = tile.frameY;
+
+      if (frameX == 44) {
+        // Sub side or Green Branch
+        return ((frameY >= 132 && frameY <= 176) || frameY >= 198);
+      } else if (frameX == 66) {
+        // Branch
+        return (frameY >= 0 && frameY <= 44);
+      } else {
+        return false;
+      }
+    }
+
+    public static bool IsRightTreeBranch(Tile tile) {
+      if (tile.type != Terraria.TileId_Tree)
+        return false;
+
+      int frameX = tile.frameX;
+      int frameY = tile.frameY;
+
+      if (frameX == 22) {
+        // Sub side
+        return (frameY >= 132 && frameY <= 176);
+      } else if (frameX == 66) {
+        // Green Branch
+        return (frameY >= 198);
+      } else if (frameX == 88) {
+        // Branch
+        return (frameY >= 66 && frameY <= 110);
+      } else {
+        return false;
+      }
+    }
+
+    public static bool IsLeftCactusBranch(Tile tile) {
+      if (tile.type != Terraria.TileId_Cactus)
+        return false;
+
+      int frameX = tile.frameX;
+      int frameY = tile.frameY;
+
+      return (frameX == 54 || (frameX == 108 && frameY == 36));
+    }
+
+    public static bool IsRightCactusBranch(Tile tile) {
+      if (tile.type != Terraria.TileId_Cactus)
+        return false;
+
+      int frameX = tile.frameX;
+      int frameY = tile.frameY;
+
+      return (frameX == 36 || (frameX == 108 && frameY == 16));
+    }
+    #endregion
+
+    #region [Methods: SpriteHasActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
+    public static bool SpriteHasActiveFrame(Terraria.SpriteMeasureData measureData) {
+      Tile tile = Terraria.Tiles[measureData.OriginTileLocation];
+
+      switch (measureData.SpriteType) {
+        case Terraria.TileId_Switch:
+          return (tile.frameY == 0);
+        case Terraria.TileId_XSecondTimer:
+          return (tile.frameY != 0);
+        case Terraria.TileId_MusicBox:
+          return (tile.frameX != 0);
+        default:
+          return (tile.frameX < measureData.FrameXOffsetAdd + 1);
+      }
     }
 
     public static void SetSpriteActiveFrame(
       Terraria.SpriteMeasureData measureData, bool setActiveFrame, bool sendTileSquare = true
     ) {
-      if (setActiveFrame == measureData.HasActiveFrame)
-        return;
-
       int originX = measureData.OriginTileLocation.X;
       int originY = measureData.OriginTileLocation.Y;
       int frameXOffsetAdd = measureData.FrameXOffsetAdd;
@@ -410,65 +468,6 @@ namespace Terraria.Plugins.CoderCow {
     public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData) {
       DPoint dummy;
       return Terraria.IsSpriteWired(measureData, out dummy);
-    }
-
-    public static bool IsLeftTreeBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
-        return false;
-
-      int frameX = tile.frameX;
-      int frameY = tile.frameY;
-
-      if (frameX == 44) {
-        // Sub side or Green Branch
-        return ((frameY >= 132 && frameY <= 176) || frameY >= 198);
-      } else if (frameX == 66) {
-        // Branch
-        return (frameY >= 0 && frameY <= 44);
-      } else {
-        return false;
-      }
-    }
-
-    public static bool IsRightTreeBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
-        return false;
-
-      int frameX = tile.frameX;
-      int frameY = tile.frameY;
-
-      if (frameX == 22) {
-        // Sub side
-        return (frameY >= 132 && frameY <= 176);
-      } else if (frameX == 66) {
-        // Green Branch
-        return (frameY >= 198);
-      } else if (frameX == 88) {
-        // Branch
-        return (frameY >= 66 && frameY <= 110);
-      } else {
-        return false;
-      }
-    }
-
-    public static bool IsLeftCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Cactus)
-        return false;
-
-      int frameX = tile.frameX;
-      int frameY = tile.frameY;
-
-      return (frameX == 54 || (frameX == 108 && frameY == 36));
-    }
-
-    public static bool IsRightCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Cactus)
-        return false;
-
-      int frameX = tile.frameX;
-      int frameY = tile.frameY;
-
-      return (frameX == 36 || (frameX == 108 && frameY == 16));
     }
     #endregion
 
@@ -899,9 +898,9 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: CountNPCsInRange, CountItemsInRange]
-    public static int CountNPCsInRange(int x, int y, int npcType, int blocksRange) {
-      int halfAreaWidth = (blocksRange * Terraria.TileSize) / 2;
+    #region [Methods: CountNPCsInTileRange, CountItemsInTileRange]
+    public static int CountNPCsInTileRange(int x, int y, int npcType, int rangeInTiles) {
+      int halfAreaWidth = (rangeInTiles * Terraria.TileSize) / 2;
       int areaL = x - halfAreaWidth;
       int areaT = y - halfAreaWidth;
       int areaR = x + halfAreaWidth;
@@ -923,8 +922,8 @@ namespace Terraria.Plugins.CoderCow {
       return count;
     }
 
-    public static int CountItemsInRange(int x, int y, int itemType, int blocksRange) {
-      int halfAreaWidth = (blocksRange * 16) / 2;
+    public static int CountItemsInTileRange(int x, int y, int itemType, int rangeInTiles) {
+      int halfAreaWidth = (rangeInTiles * 16) / 2;
       int areaL = x - halfAreaWidth;
       int areaT = y - halfAreaWidth;
       int areaR = x + halfAreaWidth;

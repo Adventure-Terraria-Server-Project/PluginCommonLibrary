@@ -4,12 +4,12 @@ using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.CoderCow {
-  public class Tiles {
+  public class TerrariaTiles {
     #region [Indexers]
     public Tile this[int x, int y] {
       get {
         #if DEBUG
-        Debug.Assert(Tiles.IsValidCoord(x, y));
+        Debug.Assert(TerrariaTiles.IsValidCoord(x, y));
         #endif
         return Main.tile[x, y];
       }
@@ -18,7 +18,7 @@ namespace Terraria.Plugins.CoderCow {
     public Tile this[DPoint point] {
       get {
         #if DEBUG
-        Debug.Assert(Tiles.IsValidCoord(point.X, point.Y));
+        Debug.Assert(TerrariaTiles.IsValidCoord(point.X, point.Y));
         #endif
         return Main.tile[point.X, point.Y];
       }
@@ -26,16 +26,20 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
 
-    #region [Method: Static IsValidCoord]
-    public static bool IsValidCoord(int x, int y) {
+    #region [Method: IsValidCoord, IsValidTileId]
+    public bool IsValidCoord(int x, int y) {
       return (
         x >= 0 && x < Main.maxTilesX - 1 &&
         y >= 0 && y < Main.maxTilesY - 1
       );
     }
 
-    public static bool IsValidCoord(DPoint point) {
-      return Tiles.IsValidCoord(point.X, point.Y);
+    public bool IsValidCoord(DPoint point) {
+      return this.IsValidCoord(point.X, point.Y);
+    }
+
+    public bool IsValidTileId(int tileId) {
+      return (tileId >= Terraria.TileId_Min && tileId <= Terraria.TileId_Max);
     }
     #endregion
   }

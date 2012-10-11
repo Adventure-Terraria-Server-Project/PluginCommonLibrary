@@ -166,14 +166,17 @@ namespace Terraria.Plugins.CoderCow {
     public const int TileId_SnowBrick = 148;
     public const int TileId_XMasLight = 149;
 
+    public const int TileId_Min = 0;
+    public const int TileId_Max = 149;
+
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;
     #endregion
 
     #region [Property: Tiles]
-    private static readonly Tiles tiles;
+    private static readonly TerrariaTiles tiles;
 
-    public static Tiles Tiles {
+    public static TerrariaTiles Tiles {
       get { return Terraria.tiles; }
     }
     #endregion
@@ -181,7 +184,7 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: Constructor]
     static Terraria() {
-      Terraria.tiles = new Tiles();
+      Terraria.tiles = new TerrariaTiles();
     }
     #endregion
 
@@ -406,14 +409,16 @@ namespace Terraria.Plugins.CoderCow {
     ) {
       int originX = measureData.OriginTileLocation.X;
       int originY = measureData.OriginTileLocation.Y;
-      int frameXOffsetAdd = measureData.FrameXOffsetAdd;
       int spriteWidth = measureData.Size.X;
       int spriteHeight = measureData.Size.Y;
       short newFrameXOffset = 0;
       short newFrameYOffset = 0;
 
       if (measureData.SpriteType != Terraria.TileId_Switch && measureData.SpriteType != Terraria.TileId_XSecondTimer) {
-        int frameXOffset = (spriteWidth * measureData.TextureTileSize.X) + frameXOffsetAdd;
+        int frameXOffset = (spriteWidth * measureData.TextureTileSize.X) + measureData.FrameXOffsetAdd;
+        if (measureData.SpriteType == Terraria.TileId_MusicBox)
+          setActiveFrame = !setActiveFrame;
+
         if (setActiveFrame)
           newFrameXOffset = (short)-frameXOffset;
         else
@@ -468,6 +473,16 @@ namespace Terraria.Plugins.CoderCow {
     public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData) {
       DPoint dummy;
       return Terraria.IsSpriteWired(measureData, out dummy);
+    }
+    #endregion
+
+    #region [Method: GetStatueType]
+    public static StatueType GetStatueType(DPoint anyStatueTileLocation) {
+      Tile tile = Terraria.Tiles[anyStatueTileLocation];
+      if (tile.type != Terraria.TileId_Statue)
+        throw new ArgumentException("The tile at the given location is not of type statue.", "anyStatueTileLocation");
+
+      return (StatueType)(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
     }
     #endregion
 

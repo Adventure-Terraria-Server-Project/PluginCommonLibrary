@@ -69,6 +69,7 @@
     <Compile Include="#Data\Direction.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
+    <Compile Include="Collections\PriorityList.cs" />
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
     <Compile Include="IWorldMetadata.cs" />

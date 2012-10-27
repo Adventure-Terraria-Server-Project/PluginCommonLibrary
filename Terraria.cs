@@ -402,8 +402,8 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: SpriteHasActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
-    public static bool SpriteHasActiveFrame(Terraria.SpriteMeasureData measureData) {
+    #region [Methods: HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
+    public static bool HasSpriteActiveFrame(Terraria.SpriteMeasureData measureData) {
       Tile tile = Terraria.Tiles[measureData.OriginTileLocation];
 
       switch (measureData.SpriteType) {

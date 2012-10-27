@@ -29,7 +29,7 @@ namespace Terraria.Plugins.CoderCow.Test {
       }
 
       Terraria.SpriteMeasureData measureData = Terraria.MeasureSprite(new DPoint(x, y));
-      bool isActive = Terraria.SpriteHasActiveFrame(measureData);
+      bool isActive = Terraria.HasSpriteActiveFrame(measureData);
       if (isActive != expectedState) {
         string actualStateString;
         if (isActive)

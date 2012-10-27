@@ -306,7 +306,21 @@ namespace Terraria.Plugins.CoderCow {
           hasActiveFrame = false;
           break;
         }
-        
+        case Terraria.TileId_DoorOpened: {
+          int tileIndexX = tile.frameX / textureTileSize.X;
+          int frameIndexX = tileIndexX / spriteSize.X;
+
+          // Is opened to the right side?
+          if (frameIndexX == 0) {
+            originX = anyTileLocation.X - tileIndexX;
+            originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
+          } else {
+            originX = (anyTileLocation.X - (tileIndexX - (frameIndexX * spriteSize.X))) + 1;
+            originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
+          }
+
+          break;
+        }
         default: {
           if (spriteSize.X == 1 && spriteSize.Y == 1) {
             originX = anyTileLocation.X;

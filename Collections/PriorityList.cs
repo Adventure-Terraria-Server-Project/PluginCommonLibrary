@@ -15,6 +15,12 @@ namespace Terraria.Plugins.CoderCow.Collections {
     #endregion
 
 
+    #region [Method: Constructor]
+    public PriorityList() {
+      this.priorities = new List<int>();
+    }
+    #endregion
+
     #region [Methods: Add, InsertItem, GetPriority]
     public void Add(T item, int priority) {
       int index;

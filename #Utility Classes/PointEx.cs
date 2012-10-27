@@ -23,20 +23,18 @@ namespace Terraria.Plugins.CoderCow {
       return new DPoint(int.Parse(locationCoords[0]), int.Parse(locationCoords[1]));
     }
 
-    public static void OffsetTowards(this DPoint point, Direction direction, int offset = 1) {
+    public static DPoint OffsetTowards(this DPoint point, Direction direction, int offset = 1) {
       switch (direction) {
         case Direction.Left:
-          point.X -= offset;
-          break;
+          return new DPoint(point.X - offset, point.Y);
         case Direction.Up:
-          point.Y -= offset;
-          break;
+          return new DPoint(point.X, point.Y - offset);
         case Direction.Right:
-          point.X += offset;
-          break;
+          return new DPoint(point.X + offset, point.Y);
         case Direction.Down:
-          point.Y += offset;
-          break;
+          return new DPoint(point.X, point.Y + offset);
+        default:
+          return point;
       }
     }
 

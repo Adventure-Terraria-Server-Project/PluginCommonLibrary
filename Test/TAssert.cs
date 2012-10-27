@@ -20,7 +20,7 @@ namespace Terraria.Plugins.CoderCow.Test {
       TAssert.IsSpriteActive(x, y, false);
     }
 
-    public static void IsSpriteActive(int x, int y, bool isActive) {
+    public static void IsSpriteActive(int x, int y, bool expectedState) {
       Tile tile = Terraria.Tiles[x, y];
       if (!tile.active) {
         throw new AssertException(
@@ -29,22 +29,23 @@ namespace Terraria.Plugins.CoderCow.Test {
       }
 
       Terraria.SpriteMeasureData measureData = Terraria.MeasureSprite(new DPoint(x, y));
-      if (measureData.HasActiveFrame != isActive) {
-        string actualState;
-        if (measureData.HasActiveFrame)
-          actualState = "active";
-        else 
-          actualState = "inactive";
-
-        string expectedState;
+      bool isActive = Terraria.SpriteHasActiveFrame(measureData);
+      if (isActive != expectedState) {
+        string actualStateString;
         if (isActive)
-          expectedState = "Active";
+          actualStateString = "active";
+        else 
+          actualStateString = "inactive";
+
+        string expectedStateString;
+        if (expectedState)
+          expectedStateString = "Active";
         else
-          expectedState = "Inactive";
+          expectedStateString = "Inactive";
 
         throw new AssertException(string.Format(
           "Assert failed. {0} frame for sprite \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
-          expectedState, Terraria.GetTileName(tile.type), x, y, actualState
+          expectedStateString, Terraria.GetTileName(tile.type), x, y, actualStateString
         ));
       }
     }

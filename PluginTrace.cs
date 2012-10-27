@@ -71,6 +71,10 @@ namespace Terraria.Plugins.CoderCow {
       this.WriteLine(string.Format(format, arg0));
     }
 
+    public void WriteLineInfo(string lineString) {
+      this.WriteLine(lineString);
+    }
+
     public void WriteLineWarning(string format, params object[] args) {
       this.WriteLine(string.Format(format, args), TraceLevel.Warning);
     }
@@ -83,6 +87,10 @@ namespace Terraria.Plugins.CoderCow {
       this.WriteLine(string.Format(format, arg0), TraceLevel.Warning);
     }
 
+    public void WriteLineWarning(string lineString) {
+      this.WriteLine(lineString, TraceLevel.Warning);
+    }
+
     public void WriteLineError(string format, params object[] args) {
       this.WriteLine(string.Format(format, args), TraceLevel.Error);
     }
@@ -93,6 +101,10 @@ namespace Terraria.Plugins.CoderCow {
 
     public void WriteLineError(string format, object arg0) {
       this.WriteLine(string.Format(format, arg0), TraceLevel.Error);
+    }
+
+    public void WriteLineError(string lineString) {
+      this.WriteLine(lineString, TraceLevel.Error);
     }
 
     [Conditional("Verbose")]
@@ -108,6 +120,11 @@ namespace Terraria.Plugins.CoderCow {
     [Conditional("Verbose")]
     public void WriteLineVerbose(string format, object arg0) {
       this.WriteLine(string.Format(format, arg0), TraceLevel.Verbose);
+    }
+
+    [Conditional("Verbose")]
+    public void WriteLineVerbose(string lineString) {
+      this.WriteLine(lineString, TraceLevel.Verbose);
     }
     #endregion
   }

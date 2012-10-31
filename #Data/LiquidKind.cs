@@ -9,11 +9,8 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.CoderCow {
-  public enum ChestKind {
-    ShadowChest,
-    DungeonChest,
-    SkyIslandChest,
-    OceanChest,
-    TreasureChest
+  public enum LiquidKind {
+    Water,
+    Lava
   }
 }

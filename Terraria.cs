@@ -169,6 +169,9 @@ namespace Terraria.Plugins.CoderCow {
     public const int TileId_Min = 0;
     public const int TileId_Max = 149;
 
+    public const int ItemId_Min = 0;
+    public const int ItemId_Max = 603;
+
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;
     #endregion
@@ -924,6 +927,12 @@ namespace Terraria.Plugins.CoderCow {
         (tileId == Terraria.TileId_IceBlock) ||
         (tileId == Terraria.TileId_Cobweb)
       );
+    }
+    #endregion
+
+    #region [Method: IsValidItemId]
+    public static bool IsValidItemId(int itemId) {
+      return (itemId >= Terraria.ItemId_Min && itemId <= Terraria.ItemId_Max);
     }
     #endregion
 

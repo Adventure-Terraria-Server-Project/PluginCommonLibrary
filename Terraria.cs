@@ -169,6 +169,42 @@ namespace Terraria.Plugins.CoderCow {
     public const int TileId_Min = 0;
     public const int TileId_Max = 149;
 
+    public const int WallId_Sky = 0;
+    public const int WallId_StoneWall = 1;
+    public const int WallId_DirtWall = 2;
+    public const int WallId_EbonstoneWall = 3;
+    public const int WallId_WoodWall = 4;
+    public const int WallId_GrayBrickWall = 5;
+    public const int WallId_RedBrickWall = 6;
+    public const int WallId_DungeonBlueBrickWall = 7;
+    public const int WallId_DungeonGreenBrickWall = 8;
+    public const int WallId_DungeonPinkBrickWall = 9;
+    public const int WallId_GoldWall = 10;
+    public const int WallId_SilverWall = 11;
+    public const int WallId_CopperWall = 12;
+    public const int WallId_HellstoneWall = 13;
+    public const int WallId_ObsidianBrickWall = 14;
+    public const int WallId_MudWall = 15;
+    public const int WallId_PlayerDirtWall = 16;
+    public const int WallId_BlueBrickWall = 17;
+    public const int WallId_GreenBrickWall = 18;
+    public const int WallId_PinkBrickWall = 19;
+    public const int WallId_PlayerObsidianBrickWall = 20;
+    public const int WallId_GlassWall = 21;
+    public const int WallId_PearlstoneBrickWall = 22;
+    public const int WallId_IridecentBrickWall = 23;
+    public const int WallId_MudstoneBrickWall = 24;
+    public const int WallId_CobaltBrickWall = 25;
+    public const int WallId_MythrilBrickWall = 26;
+    public const int WallId_PlankedWall = 27;
+    public const int WallId_PearlstoneWall = 28;
+    public const int WallId_CandyCaneWall = 29;
+    public const int WallId_GreenCandyCaneWall = 30;
+    public const int WallId_SnowBrickWall = 31;
+
+    public const int WallId_Min = 0;
+    public const int WallId_Max = 31;
+
     public const int ItemId_Min = 0;
     public const int ItemId_Max = 603;
 
@@ -497,9 +533,64 @@ namespace Terraria.Plugins.CoderCow {
     public static StatueType GetStatueType(DPoint anyStatueTileLocation) {
       Tile tile = Terraria.Tiles[anyStatueTileLocation];
       if (tile.type != Terraria.TileId_Statue)
-        throw new ArgumentException("The tile at the given location is not of type statue.", "anyStatueTileLocation");
+        throw new ArgumentException("The tile at the given location is not of type Statue.", "anyStatueTileLocation");
 
       return (StatueType)(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
+    }
+
+    public static ChestType GetChestType(DPoint anyChestTileLocation, out bool isLocked) {
+      Tile tile = Terraria.Tiles[anyChestTileLocation];
+      if (tile.type != Terraria.TileId_Statue)
+        throw new ArgumentException("The tile at the given location is not of type Chest.", "anyChestTileLocation");
+
+      isLocked = false;
+      if (tile.frameX <= 18) {
+        return ChestType.WoodenChest;
+      } else if (tile.frameX <= 54) {
+        return ChestType.GoldChest;
+      } else if (tile.frameX <= 90) {
+        isLocked = true;
+        return ChestType.GoldChest;
+      } else if (tile.frameX <= 126) {
+        return ChestType.ShadowChest;
+      } else if (tile.frameX <= 162) {
+        isLocked = true;
+        return ChestType.ShadowChest;
+      } else if (tile.frameX <= 198) {
+        return ChestType.Barrel;
+      }
+
+      return ChestType.TrashCan;
+    }
+
+    public static ChestKind GetChestKind(DPoint anyChestTileLocation) {
+      bool isLocked;
+      ChestType chestType = Terraria.GetChestType(anyChestTileLocation, out isLocked);
+
+      switch (chestType) {
+        case ChestType.GoldChest:
+          Tile chestTile = Terraria.Tiles[anyChestTileLocation];
+
+          if (isLocked) {
+            if (chestTile.wall < Terraria.WallId_DungeonBlueBrickWall || chestTile.wall > Terraria.WallId_DungeonPinkBrickWall)
+              return ChestKind.SkyIslandChest;
+
+            return ChestKind.DungeonChest;
+          }
+
+          if (chestTile.liquid < 255 || chestTile.lava)
+            return ChestKind.Unknown;
+          if (anyChestTileLocation.X > 250 && anyChestTileLocation.X > Main.maxTilesX - 250)
+            return ChestKind.Unknown;
+          if (anyChestTileLocation.Y < Main.worldSurface - 450 || anyChestTileLocation.Y > Main.worldSurface)
+            return ChestKind.Unknown;
+
+          return ChestKind.OceanChest;
+        case ChestType.ShadowChest:
+          return ChestKind.ShadowChest;
+        default:
+          return ChestKind.Unknown;
+      }
     }
     #endregion
 

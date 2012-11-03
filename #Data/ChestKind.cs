@@ -10,10 +10,11 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.CoderCow {
   public enum ChestKind {
-    ShadowChest,
-    DungeonChest,
-    SkyIslandChest,
+    Unknown,
     OceanChest,
+    DungeonChest,
+    ShadowChest,
+    SkyIslandChest,
     TreasureChest
   }
 }

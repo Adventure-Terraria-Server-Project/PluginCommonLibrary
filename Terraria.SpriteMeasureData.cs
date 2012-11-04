@@ -75,7 +75,7 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: ToString]
       public override string ToString() {
-        return Terraria.GetTileName(this.SpriteType);
+        return Terraria.Tiles.GetTileName(this.SpriteType);
       }
       #endregion
     }

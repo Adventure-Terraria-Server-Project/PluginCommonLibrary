@@ -45,7 +45,7 @@ namespace Terraria.Plugins.CoderCow.Test {
 
         throw new AssertException(string.Format(
           "Assert failed. {0} frame for sprite \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
-          expectedStateString, Terraria.GetTileName(tile.type), x, y, actualStateString
+          expectedStateString, Terraria.Tiles.GetTileName(tile.type), x, y, actualStateString
         ));
       }
     }
@@ -58,14 +58,14 @@ namespace Terraria.Plugins.CoderCow.Test {
       if (!tile.active) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but there is no tile at all.",
-          Terraria.GetTileName(expectedTileId), x, y
+          Terraria.Tiles.GetTileName(expectedTileId), x, y
         ));
       }
 
       if (tile.type != expectedTileId) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but it is \"{3}\".",
-          Terraria.GetTileName(expectedTileId), x, y, Terraria.GetTileName(tile.type)
+          Terraria.Tiles.GetTileName(expectedTileId), x, y, Terraria.Tiles.GetTileName(tile.type)
         ));
       }
     }

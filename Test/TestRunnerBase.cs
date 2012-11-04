@@ -96,7 +96,7 @@ namespace Terraria.Plugins.CoderCow.Test {
           }
         } else {
           try {
-          this.TestCleanup();
+            this.TestCleanup();
           } catch (Exception ex) {
             testPair.Value.FailException = new InvalidOperationException(
               "TestCleanup threw an exception. See inner exception for details.", ex
@@ -116,6 +116,7 @@ namespace Terraria.Plugins.CoderCow.Test {
             "TestInit threw an exception. See inner exception for details.", ex
           );
           this.testRunFailedTests.Add(testPair.Key);
+          return;
         }
 
         try {
@@ -124,6 +125,7 @@ namespace Terraria.Plugins.CoderCow.Test {
         } catch (Exception ex) {
           testPair.Value.FailException = ex;
           this.testRunFailedTests.Add(testPair.Key);
+          return;
         }
       } else {
         this.Trace.WriteLineInfo("{0} tests passed.", this.testRunSucceededTests.Count);

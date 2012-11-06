@@ -83,7 +83,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     public static void HasNoLiquid(int x, int y) {
       Tile tile = Terraria.Tiles[x, y];
       
-      if (tile.liquid == 0) {
+      if (tile.liquid != 0) {
         throw new AssertException(string.Format(
           "The tile at [{0},{1}] was expected to have no liquid, but it has.", x, y
         ));
@@ -103,7 +103,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     public static void HasNotFullLiquid(int x, int y) {
       Tile tile = Terraria.Tiles[x, y];
       
-      if (tile.liquid == 0) {
+      if (tile.liquid <= 0) {
         throw new AssertException(string.Format(
           "The tile at [{0},{1}] was expected to have at least 1 liquid, but it has none.", x, y
         ));
@@ -256,8 +256,8 @@ namespace Terraria.Plugins.CoderCow.Test {
       throw new AssertException(string.Format("Asser failed. Expected exception \"{0}\" was not thrown.", expectedException.Name));
     }
 
-    public static void Fail(string message, params object[] args) {
-      throw new AssertException(string.Format(message, args));
+    public static void Fail(string messageFormat, params object[] args) {
+      throw new AssertException(string.Format(messageFormat, args));
     }
     #endregion
   }

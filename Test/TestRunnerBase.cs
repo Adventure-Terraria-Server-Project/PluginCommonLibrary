@@ -12,12 +12,32 @@ using System.Diagnostics.Contracts;
 namespace Terraria.Plugins.CoderCow.Test {
   public abstract class TestRunnerBase {
     private readonly Dictionary<string,TestRunData> testRunData;
+    private IEnumerator<KeyValuePair<string,TestRunData>> testRunEnumerator;
+    private List<string> testRunSucceededTests;
+    private List<string> testRunFailedTests;
+
+    #region [Property: IsRunning]
+    private bool isRunning;
+
+    public bool IsRunning { 
+      get { return this.isRunning; }
+    }
+    #endregion
 
     #region [Property: Trace]
     private readonly PluginTrace trace;
 
     protected PluginTrace Trace {
       get { return this.trace; }
+    }
+    #endregion
+
+    #region [Event: TestRunCompleted]
+    public event EventHandler TestRunCompleted;
+
+    protected virtual void OnTestRunCompleted() {
+      if (TestRunCompleted != null)
+        this.TestRunCompleted(this, EventArgs.Empty);
     }
     #endregion
 
@@ -31,25 +51,21 @@ namespace Terraria.Plugins.CoderCow.Test {
 
     #region [Methods: RegisterTest, RunAllTests, TestInit, TestCleanup]
     protected void RegisterTest(string testName, Action<TestContext> testAction) {
-      if (this.testRunIsRunning)
+      if (this.isRunning)
         throw new InvalidOperationException("Registering new tests is not possible while a test run is in progress.");
 
       this.testRunData.Add(testName, new TestRunData(testAction));
     }
 
-    private bool testRunIsRunning;
-    private IEnumerator<KeyValuePair<string,TestRunData>> testRunEnumerator;
-    private List<string> testRunSucceededTests;
-    private List<string> testRunFailedTests;
     public void RunAllTests() {
-      if (this.testRunIsRunning)
+      if (this.isRunning)
         throw new InvalidOperationException("A testrun is already in progress.");
 
       this.testRunEnumerator = this.testRunData.GetEnumerator();
       this.testRunSucceededTests = new List<string>();
       this.testRunFailedTests = new List<string>();
 
-      this.testRunIsRunning = true;
+      this.isRunning = true;
 
       this.Trace.WriteLineInfo("------------------------------------------");
       this.Trace.WriteLineInfo("Test running with {0} tests...", this.testRunData.Count);
@@ -61,8 +77,8 @@ namespace Terraria.Plugins.CoderCow.Test {
 
     #region [Method: HandleGameUpdate]
     private int frameCounter;
-    public void HandleGameUpdate() {
-      if (!this.testRunIsRunning)
+    public virtual void HandleGameUpdate() {
+      if (!this.isRunning)
         return;
 
       if (this.frameCounter < 10) {
@@ -94,9 +110,12 @@ namespace Terraria.Plugins.CoderCow.Test {
           } else {
             delayedAction.FramesLeft -= 10;
           }
-        } else {
+
+          return;
+        } else if (testPair.Value.FailException == null) {
           try {
             this.TestCleanup();
+            this.testRunSucceededTests.Add(testPair.Key);
           } catch (Exception ex) {
             testPair.Value.FailException = new InvalidOperationException(
               "TestCleanup threw an exception. See inner exception for details.", ex
@@ -121,7 +140,6 @@ namespace Terraria.Plugins.CoderCow.Test {
 
         try {
           testPair.Value.TestAction(testPair.Value.Context);
-          this.testRunSucceededTests.Add(testPair.Key);
         } catch (Exception ex) {
           testPair.Value.FailException = ex;
           this.testRunFailedTests.Add(testPair.Key);
@@ -151,7 +169,8 @@ namespace Terraria.Plugins.CoderCow.Test {
 
         this.Trace.WriteLineInfo("------------------------------------------");
 
-        this.testRunIsRunning = false;
+        this.isRunning = false;
+        this.OnTestRunCompleted();
       }
     }
     #endregion

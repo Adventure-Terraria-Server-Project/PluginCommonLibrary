@@ -71,6 +71,7 @@
     <Compile Include="#Data\LiquidKind.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
+    <Compile Include="#Utility Classes\BoolEx.cs" />
     <Compile Include="Collections\PriorityList.cs" />
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />

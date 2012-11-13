@@ -460,6 +460,14 @@ namespace Terraria.Plugins.CoderCow {
     public static void SetSpriteActiveFrame(
       Terraria.SpriteMeasureData measureData, bool setActiveFrame, bool sendTileSquare = true
     ) {
+      #if DEBUG
+      if (Terraria.HasSpriteActiveFrame(measureData) == setActiveFrame) {
+        throw new ArgumentException(string.Format(
+          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetTileName(measureData.SpriteType), setActiveFrame
+        ));
+      }
+      #endif
+
       int originX = measureData.OriginTileLocation.X;
       int originY = measureData.OriginTileLocation.Y;
       int spriteWidth = measureData.Size.X;

@@ -15,10 +15,10 @@ namespace Terraria.Plugins.CoderCow {
   public static class TShockEx {
     #region [TSPlayer Extensions]
     public static TSPlayer GetPlayerByName(
-      string userAccountName, StringComparison stringComparison = StringComparison.InvariantCulture
+      string name, StringComparison stringComparison = StringComparison.InvariantCulture
     ) {
       foreach (TSPlayer tsPlayer in TShock.Players) {
-        if (tsPlayer.UserAccountName.Equals(userAccountName, stringComparison))
+        if (tsPlayer.Name.Equals(name, stringComparison))
           return tsPlayer;
       }
 

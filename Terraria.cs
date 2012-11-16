@@ -555,7 +555,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: GetStatueType]
+    #region [Methods: GetStatueType, GetItemTypeFromStatueType]
     public static StatueType GetStatueType(DPoint anyStatueTileLocation) {
       Tile tile = Terraria.Tiles[anyStatueTileLocation];
       if (tile.type != Terraria.TileId_Statue)
@@ -564,6 +564,101 @@ namespace Terraria.Plugins.CoderCow {
       return (StatueType)(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
     }
 
+    public static int GetItemTypeFromStatueType(StatueType statueType) {
+      switch (statueType) {
+        case StatueType.Armor:
+          return 360;
+        case StatueType.Angel:
+          return 52;
+        case StatueType.Star:
+          return 438;
+        case StatueType.Sword:
+          return 439;
+        case StatueType.Slime:
+          return 440;
+        case StatueType.Goblin:
+          return 441;
+        case StatueType.Shield:
+          return 442;
+        case StatueType.Bat:
+          return 443;
+        case StatueType.Fish:
+          return 444;
+        case StatueType.Bunny:
+          return 445;
+        case StatueType.Skeleton:
+          return 446;
+        case StatueType.Reaper:
+          return 447;
+        case StatueType.Woman:
+          return 448;
+        case StatueType.Imp:
+          return 449;
+        case StatueType.Gargoyle:
+          return 450;
+        case StatueType.Gloom:
+          return 451;
+        case StatueType.Hornet:
+          return 452;
+        case StatueType.Bomb:
+          return 453;
+        case StatueType.Crab:
+          return 454;
+        case StatueType.Hammer:
+          return 455;
+        case StatueType.Potion:
+          return 456;
+        case StatueType.Spear:
+          return 457;
+        case StatueType.Cross:
+          return 458;
+        case StatueType.Jellyfish:
+          return 459;
+        case StatueType.Bow:
+          return 460;
+        case StatueType.Boomerang:
+          return 461;
+        case StatueType.Boot:
+          return 462;
+        case StatueType.Chest:
+          return 463;
+        case StatueType.Bird:
+          return 464;
+        case StatueType.Axe:
+          return 465;
+        case StatueType.Corrupt:
+          return 466;
+        case StatueType.Tree:
+          return 467;
+        case StatueType.Anvil:
+          return 468;
+        case StatueType.Pickaxe:
+          return 469;
+        case StatueType.Mushroom:
+          return 470;
+        case StatueType.Eyeball:
+          return 471;
+        case StatueType.Pillar:
+          return 472;
+        case StatueType.Heart:
+          return 473;
+        case StatueType.Pot:
+          return 474;
+        case StatueType.Sunflower:
+          return 475;
+        case StatueType.King:
+          return 476;
+        case StatueType.Queen:
+          return 477;
+        case StatueType.Piranha:
+          return 478;
+        default:
+          throw new ArgumentOutOfRangeException("statueType");
+      }
+    }
+    #endregion
+
+    #region [Methods: GetChestType, GetChestKind]
     public static ChestType GetChestType(DPoint anyChestTileLocation, out bool isLocked) {
       Tile tile = Terraria.Tiles[anyChestTileLocation];
       if (tile.type != Terraria.TileId_Statue)

@@ -47,10 +47,10 @@ namespace Terraria.Plugins.CoderCow {
     protected PlayerCommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer) {
       PlayerCommandInteraction newInteraction = new PlayerCommandInteraction(UserInteractionHandlerBase.CommandInteractionTimeout);
       PlayerCommandInteraction existingInteraction;
-      if (this.ActiveCommandInteractions.TryGetValue(forPlayer.UserAccountName, out existingInteraction))
-        this.ActiveCommandInteractions[forPlayer.UserAccountName] = newInteraction;
+      if (this.ActiveCommandInteractions.TryGetValue(forPlayer.Name, out existingInteraction))
+        this.ActiveCommandInteractions[forPlayer.Name] = newInteraction;
       else 
-        this.ActiveCommandInteractions.Add(forPlayer.UserAccountName, newInteraction);
+        this.ActiveCommandInteractions.Add(forPlayer.Name, newInteraction);
 
       return newInteraction;
     }
@@ -63,7 +63,7 @@ namespace Terraria.Plugins.CoderCow {
 
       PlayerCommandInteraction commandInteraction;
       // Is the player currently interacting with a command?
-      if (!this.activeCommandInteractions.TryGetValue(player.UserAccountName, out commandInteraction))
+      if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
       if (commandInteraction.TileEditCallback == null)
@@ -71,7 +71,7 @@ namespace Terraria.Plugins.CoderCow {
 
       CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, tileId, x, y);
       if (result.IsInteractionCompleted)
-        this.activeCommandInteractions.Remove(player.UserAccountName);
+        this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
@@ -82,7 +82,7 @@ namespace Terraria.Plugins.CoderCow {
 
       PlayerCommandInteraction commandInteraction;
       // Is the player currently interacting with a command?
-      if (!this.activeCommandInteractions.TryGetValue(player.UserAccountName, out commandInteraction))
+      if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
       if (commandInteraction.ChestOpenCallback != null)
@@ -90,7 +90,7 @@ namespace Terraria.Plugins.CoderCow {
 
       CommandInteractionResult result = commandInteraction.ChestOpenCallback(player, x, y);
       if (result.IsInteractionCompleted)
-        this.activeCommandInteractions.Remove(player.UserAccountName);
+        this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
@@ -101,7 +101,7 @@ namespace Terraria.Plugins.CoderCow {
 
       PlayerCommandInteraction commandInteraction;
       // Is the player currently interacting with a command?
-      if (!this.activeCommandInteractions.TryGetValue(player.UserAccountName, out commandInteraction))
+      if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
       if (commandInteraction.SignEditCallback != null)
@@ -109,7 +109,7 @@ namespace Terraria.Plugins.CoderCow {
 
       CommandInteractionResult result = commandInteraction.SignEditCallback(player, signId, x, y, newText);
       if (result.IsInteractionCompleted)
-        this.activeCommandInteractions.Remove(player.UserAccountName);
+        this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
@@ -120,7 +120,7 @@ namespace Terraria.Plugins.CoderCow {
 
       PlayerCommandInteraction commandInteraction;
       // Is the player currently interacting with a command?
-      if (!this.activeCommandInteractions.TryGetValue(player.UserAccountName, out commandInteraction))
+      if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
       if (commandInteraction.HitSwitchCallback != null)
@@ -128,7 +128,7 @@ namespace Terraria.Plugins.CoderCow {
 
       CommandInteractionResult result = commandInteraction.HitSwitchCallback(player, x, y);
       if (result.IsInteractionCompleted)
-        this.activeCommandInteractions.Remove(player.UserAccountName);
+        this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
@@ -139,45 +139,36 @@ namespace Terraria.Plugins.CoderCow {
         return;
 
       this.frameCounter++;
-
       if (this.frameCounter >= UserInteractionHandlerBase.UpdateFrameRate) {
         this.frameCounter = 0;
 
         if (this.ActiveCommandInteractions.Count == 0)
           return;
 
-        try {
-          // Deleting multiple items from a dictionary in one loop requires quite a bit of performance, so we try to do 
-          // it only when necessary.
-          List<string> playerInteractionsToRemove = null;
-          foreach (KeyValuePair<string,PlayerCommandInteraction> interaction in this.ActiveCommandInteractions) {
-            if (interaction.Value.FramesLeft <= 0) {
-              if (playerInteractionsToRemove == null)
-                playerInteractionsToRemove = new List<string>();
+        // Deleting multiple items from a dictionary in one loop requires quite a bit of performance, so we try to do 
+        // it only when necessary.
+        List<string> playerInteractionsToRemove = null;
+        foreach (KeyValuePair<string,PlayerCommandInteraction> interaction in this.ActiveCommandInteractions) {
+          if (interaction.Value.FramesLeft <= 0) {
+            if (playerInteractionsToRemove == null)
+              playerInteractionsToRemove = new List<string>();
 
-              playerInteractionsToRemove.Add(interaction.Key);
-              continue;
-            }
-
-            interaction.Value.FramesLeft -= UserInteractionHandlerBase.UpdateFrameRate;
+            playerInteractionsToRemove.Add(interaction.Key);
+            continue;
           }
+
+          interaction.Value.FramesLeft -= UserInteractionHandlerBase.UpdateFrameRate;
+        }
         
-          if (playerInteractionsToRemove != null) {
-            foreach (string playerInteractionToRemove in playerInteractionsToRemove) {
-              PlayerCommandInteraction commandInteraction = this.ActiveCommandInteractions[playerInteractionToRemove];
-              TSPlayer player = TShockEx.GetPlayerByName(playerInteractionToRemove);
-              if (
-                player != null && player.ConnectionAlive && player.IsLoggedIn && 
-                commandInteraction.TimeExpiredCallback != null
-              ) {
-                commandInteraction.TimeExpiredCallback(player);
-              }
+        if (playerInteractionsToRemove != null) {
+          foreach (string playerInteractionToRemove in playerInteractionsToRemove) {
+            PlayerCommandInteraction commandInteraction = this.ActiveCommandInteractions[playerInteractionToRemove];
+            TSPlayer player = TShockEx.GetPlayerByName(playerInteractionToRemove);
+            if (player != null && player.ConnectionAlive && commandInteraction.TimeExpiredCallback != null)
+              commandInteraction.TimeExpiredCallback(player);
 
-              this.ActiveCommandInteractions.Remove(playerInteractionToRemove);
-            }
+            this.ActiveCommandInteractions.Remove(playerInteractionToRemove);
           }
-        } catch (Exception ex) {
-          this.PluginTrace.WriteLineError("Failed handling interactions. Exception details: {0}", ex);
         }
       }
     }

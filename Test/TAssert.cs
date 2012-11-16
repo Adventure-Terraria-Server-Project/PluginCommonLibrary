@@ -51,6 +51,38 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
     #endregion
 
+    #region [Methods: IsTileActive, IsTileInactive]
+    public static void IsTileActive(int x, int y) {
+      TAssert.IsTileActive(x, y, true);
+    }
+
+    public static void IsTileInactive(int x, int y) {
+      TAssert.IsTileActive(x, y, false);
+    }
+
+    public static void IsTileActive(int x, int y, bool expectedState) {
+      Tile tile = Terraria.Tiles[x, y];
+      if (tile.active != expectedState) {
+        string actualStateString;
+        if (tile.active)
+          actualStateString = "active";
+        else 
+          actualStateString = "inactive";
+
+        string expectedStateString;
+        if (expectedState)
+          expectedStateString = "Active";
+        else
+          expectedStateString = "Inactive";
+
+        throw new AssertException(string.Format(
+          "Assert failed. {0} state for tile at [{1},{2}] was expected, but it is {3}.", 
+          expectedStateString, x, y, actualStateString
+        ));
+      }
+    }
+    #endregion
+
     #region [Methods: IsTileId, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
     public static void IsTileId(int x, int y, int expectedTileId) {
       Tile tile = Terraria.Tiles[x, y];

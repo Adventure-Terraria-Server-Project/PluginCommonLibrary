@@ -45,13 +45,14 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: StartOrResetCommandInteraction]
     protected PlayerCommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer) {
-      PlayerCommandInteraction interaction;
-      if (this.ActiveCommandInteractions.TryGetValue(forPlayer.UserAccountName, out interaction))
-        interaction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
-      else
-        interaction = new PlayerCommandInteraction(UserInteractionHandlerBase.CommandInteractionTimeout);
+      PlayerCommandInteraction newInteraction = new PlayerCommandInteraction(UserInteractionHandlerBase.CommandInteractionTimeout);
+      PlayerCommandInteraction existingInteraction;
+      if (this.ActiveCommandInteractions.TryGetValue(forPlayer.UserAccountName, out existingInteraction))
+        this.ActiveCommandInteractions[forPlayer.UserAccountName] = newInteraction;
+      else 
+        this.ActiveCommandInteractions.Add(forPlayer.UserAccountName, newInteraction);
 
-      return interaction;
+      return newInteraction;
     }
     #endregion
 
@@ -65,7 +66,7 @@ namespace Terraria.Plugins.CoderCow {
       if (!this.activeCommandInteractions.TryGetValue(player.UserAccountName, out commandInteraction))
         return false;
 
-      if (commandInteraction.TileEditCallback != null)
+      if (commandInteraction.TileEditCallback == null)
         return false;
 
       CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, tileId, x, y);
@@ -148,34 +149,31 @@ namespace Terraria.Plugins.CoderCow {
         try {
           // Deleting multiple items from a dictionary in one loop requires quite a bit of performance, so we try to do 
           // it only when necessary.
-          bool safeLoopRequired = false;
+          List<string> playerInteractionsToRemove = null;
           foreach (KeyValuePair<string,PlayerCommandInteraction> interaction in this.ActiveCommandInteractions) {
             if (interaction.Value.FramesLeft <= 0) {
-              safeLoopRequired = true;
+              if (playerInteractionsToRemove == null)
+                playerInteractionsToRemove = new List<string>();
+
+              playerInteractionsToRemove.Add(interaction.Key);
               continue;
             }
 
             interaction.Value.FramesLeft -= UserInteractionHandlerBase.UpdateFrameRate;
           }
         
-          if (safeLoopRequired) {
-            List<string> interactingPlayers = new List<string>(this.ActiveCommandInteractions.Keys);
-            foreach (string interactingPlayer in interactingPlayers) {
-              PlayerCommandInteraction commandInteraction;
-              if (!this.ActiveCommandInteractions.TryGetValue(interactingPlayer, out commandInteraction))
-                continue;
-
-              if (commandInteraction.FramesLeft <= 0) {
-                TSPlayer player = TShockEx.GetPlayerByName(interactingPlayer);
-                if (
-                  player != null && player.ConnectionAlive && player.IsLoggedIn && 
-                  commandInteraction.TimeExpiredCallback != null
-                ) {
-                  commandInteraction.TimeExpiredCallback(player);
-                }
-
-                this.ActiveCommandInteractions.Remove(interactingPlayer);
+          if (playerInteractionsToRemove != null) {
+            foreach (string playerInteractionToRemove in playerInteractionsToRemove) {
+              PlayerCommandInteraction commandInteraction = this.ActiveCommandInteractions[playerInteractionToRemove];
+              TSPlayer player = TShockEx.GetPlayerByName(playerInteractionToRemove);
+              if (
+                player != null && player.ConnectionAlive && player.IsLoggedIn && 
+                commandInteraction.TimeExpiredCallback != null
+              ) {
+                commandInteraction.TimeExpiredCallback(player);
               }
+
+              this.ActiveCommandInteractions.Remove(playerInteractionToRemove);
             }
           }
         } catch (Exception ex) {

@@ -441,7 +441,25 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
+    #region [Methods: IsSpriteToggleable, HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
+    // Does not include doors or active stone!
+    public static bool IsSpriteToggleable(int tileId) {
+      return (
+        tileId == Terraria.TileId_Torch ||
+        (tileId >= Terraria.TileId_Candle && tileId <= Terraria.TileId_GoldChandelier) ||
+        tileId == Terraria.TileId_ChainLantern ||
+        tileId == Terraria.TileId_LampPost ||
+        tileId == Terraria.TileId_TikiTorch ||
+        tileId == Terraria.TileId_ChineseLantern ||
+        tileId == Terraria.TileId_Candelabra ||
+        tileId == Terraria.TileId_DiscoBall ||
+        tileId == Terraria.TileId_Lever ||
+        tileId == Terraria.TileId_Switch ||
+        tileId == Terraria.TileId_XSecondTimer ||
+        tileId == Terraria.TileId_XMasLight
+      );
+    }
+
     public static bool HasSpriteActiveFrame(Terraria.SpriteMeasureData measureData) {
       Tile tile = Terraria.Tiles[measureData.OriginTileLocation];
 

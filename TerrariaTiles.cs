@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using TShockAPI;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.CoderCow {
@@ -234,6 +235,34 @@ namespace Terraria.Plugins.CoderCow {
         (tileId == Terraria.TileId_IceBlock) ||
         (tileId == Terraria.TileId_Cobweb)
       );
+    }
+    #endregion
+
+    #region [Methods: SetBlock, RemoveBlock]
+    public void SetBlock(DPoint tileLocation, byte blockId, bool localOnly = false) {
+      Tile tile = Terraria.Tiles[tileLocation];
+
+      tile.type = blockId;
+      tile.active = true;
+
+      WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
+      if (!localOnly)
+        TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 1);
+    }
+
+    public void RemoveBlock(DPoint tileLocation, bool squareFrames = true, bool localOnly = false) {
+      Tile tile = Terraria.Tiles[tileLocation];
+
+      tile.type = 0;
+      tile.active = false;
+      tile.frameX = -1;
+      tile.frameY = -1;
+      tile.frameNumber = 0;
+
+      if (squareFrames)
+        WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
+      if (!localOnly)
+        TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 1);
     }
     #endregion
   }

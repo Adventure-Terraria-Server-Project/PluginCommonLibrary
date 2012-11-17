@@ -57,7 +57,7 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Methods: HandleTileEdit, HandleChestOpen, HandleSignEdit, HandleHitSwitch, HandleGameUpdate]
-    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, int tileId, int x, int y) {
+    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, int blockId, int x, int y) {
       if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
         return false;
 
@@ -69,7 +69,7 @@ namespace Terraria.Plugins.CoderCow {
       if (commandInteraction.TileEditCallback == null)
         return false;
 
-      CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, tileId, x, y);
+      CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, blockId, x, y);
       if (result.IsInteractionCompleted)
         this.activeCommandInteractions.Remove(player.Name);
 

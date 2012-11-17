@@ -39,15 +39,15 @@ namespace Terraria.Plugins.CoderCow {
       return this.IsValidCoord(point.X, point.Y);
     }
 
-    public bool IsValidTileId(int tileId) {
-      return (tileId >= Terraria.TileId_Min && tileId <= Terraria.TileId_Max);
+    public bool IsValidTileId(int blockId) {
+      return (blockId >= Terraria.TileId_Min && blockId <= Terraria.TileId_Max);
     }
     #endregion
 
-    #region [Methods: GetTileName, IsSolidBlockTile]
+    #region [Methods: GetBlockName, IsSolidBlock]
     private static string[] tileNames;
 
-    public string GetTileName(int tileId) {
+    public string GetBlockName(int blockId) {
       if (TerrariaTiles.tileNames == null) {
         TerrariaTiles.tileNames = new[] {
           "Dirt",
@@ -203,37 +203,37 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (tileId < 0 || tileId >= TerrariaTiles.tileNames.Length)
-        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
+      if (blockId < 0 || blockId >= TerrariaTiles.tileNames.Length)
+        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", blockId), "blockId");
 
-      return TerrariaTiles.tileNames[tileId];
+      return TerrariaTiles.tileNames[blockId];
     }
 
     // Note: A block is considered any non-sprite, so any tile type which blocks the player from passing through 
     // (cobwebs inclusive).
-    public bool IsSolidBlockTile(
-      int tileId, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
+    public bool IsSolidBlock(
+      int blockId, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
       bool takeBouldersAsBlocks = false, bool takeDartTrapsAsBlocks = false
     ) {
       return (
-        (tileId >= Terraria.TileId_DirtBlock && tileId <= Terraria.TileId_Grass) ||
-        (tileId >= Terraria.TileId_SandBlock && tileId <= Terraria.TileId_JungleGrass && tileId != Terraria.TileId_Sign) ||
-        (tileId >= Terraria.TileId_IronOre && tileId <= Terraria.TileId_SilverOre) ||
-        (tileId >= Terraria.TileId_PearlsandBlock && tileId <= Terraria.TileId_SiltBlock) ||
-        (takeWoodPlatformAsBlock && tileId == Terraria.TileId_WoodPlatform) ||
-        (tileId >= Terraria.TileId_Meteorite && tileId <= Terraria.TileId_Spike && tileId != Terraria.TileId_ChainLantern) ||
-        (tileId >= Terraria.TileId_ObsidianBrick && tileId <= Terraria.TileId_HellstoneBrick) ||
-        (tileId >= Terraria.TileId_RedCandyCaneBlock && tileId <= Terraria.TileId_SnowBrick) ||
-        (tileId >= Terraria.TileId_DemoniteOre && tileId <= Terraria.TileId_CorruptGrass) ||
-        (tileId == Terraria.TileId_Wood) ||
-        (tileId >= Terraria.TileId_SapphireBlock && tileId <= Terraria.TileId_DiamondBlock) ||
-        (tileId >= Terraria.TileId_CobaltOre && tileId <= Terraria.TileId_EbonsandBlock && tileId != Terraria.TileId_HallowedPlants) ||
-        (takeWireableStoneAsBlock && tileId >= Terraria.TileId_ActiveStone && tileId <= Terraria.TileId_InactiveStone) ||
-        (tileId == Terraria.TileId_EbonstoneBlock) ||
-        (takeBouldersAsBlocks && tileId == Terraria.TileId_Boulder) ||
-        (tileId == Terraria.TileId_MushroomGrass) ||
-        (tileId == Terraria.TileId_IceBlock) ||
-        (tileId == Terraria.TileId_Cobweb)
+        (blockId >= Terraria.TileId_DirtBlock && blockId <= Terraria.TileId_Grass) ||
+        (blockId >= Terraria.TileId_SandBlock && blockId <= Terraria.TileId_JungleGrass && blockId != Terraria.TileId_Sign) ||
+        (blockId >= Terraria.TileId_IronOre && blockId <= Terraria.TileId_SilverOre) ||
+        (blockId >= Terraria.TileId_PearlsandBlock && blockId <= Terraria.TileId_SiltBlock) ||
+        (takeWoodPlatformAsBlock && blockId == Terraria.TileId_WoodPlatform) ||
+        (blockId >= Terraria.TileId_Meteorite && blockId <= Terraria.TileId_Spike && blockId != Terraria.TileId_ChainLantern) ||
+        (blockId >= Terraria.TileId_ObsidianBrick && blockId <= Terraria.TileId_HellstoneBrick) ||
+        (blockId >= Terraria.TileId_RedCandyCaneBlock && blockId <= Terraria.TileId_SnowBrick) ||
+        (blockId >= Terraria.TileId_DemoniteOre && blockId <= Terraria.TileId_CorruptGrass) ||
+        (blockId == Terraria.TileId_Wood) ||
+        (blockId >= Terraria.TileId_SapphireBlock && blockId <= Terraria.TileId_DiamondBlock) ||
+        (blockId >= Terraria.TileId_CobaltOre && blockId <= Terraria.TileId_EbonsandBlock && blockId != Terraria.TileId_HallowedPlants) ||
+        (takeWireableStoneAsBlock && blockId >= Terraria.TileId_ActiveStone && blockId <= Terraria.TileId_InactiveStone) ||
+        (blockId == Terraria.TileId_EbonstoneBlock) ||
+        (takeBouldersAsBlocks && blockId == Terraria.TileId_Boulder) ||
+        (blockId == Terraria.TileId_MushroomGrass) ||
+        (blockId == Terraria.TileId_IceBlock) ||
+        (blockId == Terraria.TileId_Cobweb)
       );
     }
     #endregion

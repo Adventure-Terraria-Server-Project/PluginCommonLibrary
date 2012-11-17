@@ -205,6 +205,11 @@ namespace Terraria.Plugins.CoderCow {
     public const int WallId_Min = 0;
     public const int WallId_Max = 31;
 
+    public const int ItemId_CobaltOre = 364;
+    public const int ItemId_Wire = 530;
+    public const int ItemId_DartTrap = 539;
+    public const int ItemId_Boulder = 540;
+
     public const int ItemId_Min = 0;
     public const int ItemId_Max = 603;
 
@@ -286,14 +291,12 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       int originX, originY;
-      bool hasActiveFrame;
       switch (tile.type) {
         // Removed dynamic measuring support for Cactus due to Terraria bugs...
         case Terraria.TileId_Cactus:
           originX = anyTileLocation.X;
           originY = anyTileLocation.Y;
 
-          hasActiveFrame = false;
           break;
         case Terraria.TileId_Tree: 
         case Terraria.TileId_GiantGlowingMushroom: {
@@ -323,7 +326,6 @@ namespace Terraria.Plugins.CoderCow {
           }
 
           spriteSize = new DPoint(3, 0);
-          hasActiveFrame = false;
           break;
         }
         case Terraria.TileId_Vine:
@@ -342,7 +344,6 @@ namespace Terraria.Plugins.CoderCow {
           }
 
           spriteSize = new DPoint(1, 0);
-          hasActiveFrame = false;
           break;
         }
         case Terraria.TileId_DoorOpened: {
@@ -443,20 +444,20 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Methods: IsSpriteToggleable, HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
     // Does not include doors or active stone!
-    public static bool IsSpriteToggleable(int tileId) {
+    public static bool IsSpriteToggleable(int blockId) {
       return (
-        tileId == Terraria.TileId_Torch ||
-        (tileId >= Terraria.TileId_Candle && tileId <= Terraria.TileId_GoldChandelier) ||
-        tileId == Terraria.TileId_ChainLantern ||
-        tileId == Terraria.TileId_LampPost ||
-        tileId == Terraria.TileId_TikiTorch ||
-        tileId == Terraria.TileId_ChineseLantern ||
-        tileId == Terraria.TileId_Candelabra ||
-        tileId == Terraria.TileId_DiscoBall ||
-        tileId == Terraria.TileId_Lever ||
-        tileId == Terraria.TileId_Switch ||
-        tileId == Terraria.TileId_XSecondTimer ||
-        tileId == Terraria.TileId_XMasLight
+        blockId == Terraria.TileId_Torch ||
+        (blockId >= Terraria.TileId_Candle && blockId <= Terraria.TileId_GoldChandelier) ||
+        blockId == Terraria.TileId_ChainLantern ||
+        blockId == Terraria.TileId_LampPost ||
+        blockId == Terraria.TileId_TikiTorch ||
+        blockId == Terraria.TileId_ChineseLantern ||
+        blockId == Terraria.TileId_Candelabra ||
+        blockId == Terraria.TileId_DiscoBall ||
+        blockId == Terraria.TileId_Lever ||
+        blockId == Terraria.TileId_Switch ||
+        blockId == Terraria.TileId_XSecondTimer ||
+        blockId == Terraria.TileId_XMasLight
       );
     }
 
@@ -481,7 +482,7 @@ namespace Terraria.Plugins.CoderCow {
       #if DEBUG
       if (Terraria.HasSpriteActiveFrame(measureData) == setActiveFrame) {
         throw new ArgumentException(string.Format(
-          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetTileName(measureData.SpriteType), setActiveFrame
+          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetBlockName(measureData.SpriteType), setActiveFrame
         ));
       }
       #endif
@@ -527,16 +528,11 @@ namespace Terraria.Plugins.CoderCow {
         TSPlayer.All.SendTileSquareEx(originX, originY, Math.Max(spriteWidth, spriteHeight));
     }
 
-    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData, out DPoint firstWirePosition) {
-      int originX = measureData.OriginTileLocation.X;
-      int originY = measureData.OriginTileLocation.Y;
-      int spriteWidth = measureData.Size.X;
-      int spriteHeight = measureData.Size.Y;
-
-      for (int tx = 0; tx < spriteWidth; tx++) {
-        for (int ty = 0; ty < spriteHeight; ty++) {
-          int ax = originX + tx;
-          int ay = originY + ty;
+    public static bool IsSpriteWired(DPoint originTileLocation, DPoint size, out DPoint firstWirePosition) {
+      for (int tx = 0; tx < size.X; tx++) {
+        for (int ty = 0; ty < size.Y; ty++) {
+          int ax = originTileLocation.X + tx;
+          int ay = originTileLocation.Y + ty;
 
           if (Terraria.Tiles[ax, ay].wire) {
             firstWirePosition = new DPoint(ax, ay);
@@ -549,9 +545,18 @@ namespace Terraria.Plugins.CoderCow {
       return false;
     }
 
+    public static bool IsSpriteWired(DPoint originTileLocation, DPoint size) {
+      DPoint dummy;
+      return Terraria.IsSpriteWired(originTileLocation, size, out dummy);
+    }
+
     public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData) {
       DPoint dummy;
-      return Terraria.IsSpriteWired(measureData, out dummy);
+      return Terraria.IsSpriteWired(measureData.OriginTileLocation, measureData.Size, out dummy);
+    }
+
+    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData, out DPoint firstWirePosition) {
+      return Terraria.IsSpriteWired(measureData.OriginTileLocation, measureData.Size, out firstWirePosition);
     }
     #endregion
 
@@ -735,7 +740,7 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Methods: GetSpriteSize, GetSpriteOrientation]
     private static DPoint[] spriteSizes;
-    public static DPoint GetSpriteSize(int tileId) {
+    public static DPoint GetSpriteSize(int blockId) {
       if (Terraria.spriteSizes == null) {
         Terraria.spriteSizes = new[] {
           new DPoint(1, 1), // Dirt
@@ -891,10 +896,10 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (tileId < 0 || tileId >= Terraria.spriteSizes.Length)
-        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", tileId), "tileId");
+      if (blockId < 0 || blockId >= Terraria.spriteSizes.Length)
+        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", blockId), "blockId");
 
-      return Terraria.spriteSizes[tileId];
+      return Terraria.spriteSizes[blockId];
     }
 
     public static Direction GetSpriteOrientation(Tile anyTile) {

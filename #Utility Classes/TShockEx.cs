@@ -18,6 +18,9 @@ namespace Terraria.Plugins.CoderCow {
       string name, StringComparison stringComparison = StringComparison.InvariantCulture
     ) {
       foreach (TSPlayer tsPlayer in TShock.Players) {
+        if (tsPlayer == null)
+          continue;
+
         if (tsPlayer.Name.Equals(name, stringComparison))
           return tsPlayer;
       }

@@ -13,10 +13,19 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
+    #region [Property: NewOwner]
+    private readonly TSPlayer newOwner;
+
+    public TSPlayer NewOwner {
+      get { return this.newOwner; }
+    }
+    #endregion
+
 
     #region [Method: Constructor]
-    public ItemOwnerEventArgs(TSPlayer player, short itemIndex): base(player) {
+    public ItemOwnerEventArgs(TSPlayer player, short itemIndex, TSPlayer newOwner): base(player) {
       this.itemIndex = itemIndex;
+      this.newOwner = newOwner;
     }
     #endregion
   }

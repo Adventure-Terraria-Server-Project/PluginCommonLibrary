@@ -161,17 +161,17 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Event: ItemDrop]
-    public event EventHandler<ItemDropEventArgs> ItemDrop;
+    #region [Event: ItemDropOrPickUp]
+    public event EventHandler<ItemDropOrPickUpEventArgs> ItemDropOrPickUp;
 
-    protected virtual bool OnItemDrop(ItemDropEventArgs e) {
+    protected virtual bool OnItemDropOrPickUp(ItemDropOrPickUpEventArgs e) {
       Contract.Requires<ArgumentNullException>(e != null);
       
       try {
-        if (this.ItemDrop != null)
-          this.ItemDrop(this, e);
+        if (this.ItemDropOrPickUp != null)
+          this.ItemDropOrPickUp(this, e);
       } catch (Exception ex) {
-        this.ReportEventHandlerException("ItemDrop", ex);
+        this.ReportEventHandlerException("ItemDropOrPickUp", ex);
       }
 
       return e.Handled;
@@ -361,7 +361,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           break;
         }
         case PacketTypes.ItemDrop: {
-          if (this.ItemDrop == null || e.Msg.readBuffer.Length - e.Index < 22)
+          if (this.ItemDropOrPickUp == null || e.Msg.readBuffer.Length - e.Index < 22)
             break;
 
           short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
@@ -373,7 +373,11 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           byte itemPrefix = e.Msg.readBuffer[e.Index + 19];
           short itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
 
-          e.Handled = this.OnItemDrop(new ItemDropEventArgs(
+          // If it is actually an item pick up, then ensure a valid item index.
+          if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
+            break;
+
+          e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
             player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), itemStackSize, itemPrefix, itemType
           ));
           break;
@@ -383,9 +387,16 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
 
           short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-          //byte playerIndex = e.Msg.readBuffer[e.Index + 2];
+          byte newOwnerPlayerIndex = e.Msg.readBuffer[e.Index + 2];
+          TSPlayer newOwner;
+          if (newOwnerPlayerIndex == -1)
+            newOwner = TSPlayer.Server;
+          else if (newOwnerPlayerIndex < 255)
+            newOwner = TShock.Players[newOwnerPlayerIndex];
+          else 
+            break;
 
-          e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex));
+          e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
           break;
         }
         case PacketTypes.PlayerSlot: {

@@ -4,11 +4,11 @@ using DPoint = System.Drawing.Point;
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow.Hooks {
-  public class ItemDropEventArgs: NetHookEventArgs {
+  public class ItemDropOrPickUpEventArgs: NetHookEventArgs {
     #region [Property: ItemIndex]
-    private readonly int itemIndex;
+    private readonly short itemIndex;
 
-    public int ItemIndex {
+    public short ItemIndex {
       get { return this.itemIndex; }
     }
     #endregion
@@ -55,8 +55,8 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
 
     #region [Method: Constructor]
-    public ItemDropEventArgs(
-      TSPlayer player, int itemIndex, Vector2 location, Vector2 velocity, byte stackSize, byte prefix, short itemType
+    public ItemDropOrPickUpEventArgs(
+      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, byte stackSize, byte prefix, short itemType
     ): base(player) {
       this.itemIndex = itemIndex;
       this.location = location;

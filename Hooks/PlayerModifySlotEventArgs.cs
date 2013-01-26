@@ -5,11 +5,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow.Hooks {
   public class PlayerModifySlotEventArgs: NetHookEventArgs {
-    #region [Property: SlotId]
-    private readonly byte slotId;
+    #region [Property: SlotIndex]
+    private readonly byte slotIndex;
 
-    public byte SlotId {
-      get { return this.slotId; }
+    public byte SlotIndex {
+      get { return this.slotIndex; }
     }
     #endregion
 
@@ -40,9 +40,9 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
     #region [Method: Constructor]
     public PlayerModifySlotEventArgs(
-      TSPlayer player, byte slotId, byte itemStackSize, byte itemPrefix, short itemType
+      TSPlayer player, byte slotIndex, byte itemStackSize, byte itemPrefix, short itemType
     ): base(player) {
-      this.slotId = slotId;
+      this.slotIndex = slotIndex;
       this.itemStackSize = itemStackSize;
       this.itemPrefix = itemPrefix;
       this.itemType = itemType;

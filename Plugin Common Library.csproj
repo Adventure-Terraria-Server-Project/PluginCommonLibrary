@@ -115,7 +115,7 @@
     <Compile Include="Collections\PriorityList.cs" />
     <Compile Include="Hooks\BossSpawnEventArgs.cs" />
     <Compile Include="Hooks\ChestModifySlotEventArgs.cs" />
-    <Compile Include="Hooks\ItemDropEventArgs.cs" />
+    <Compile Include="Hooks\ItemDropOrPickUpEventArgs.cs" />
     <Compile Include="Hooks\ItemOwnerEventArgs.cs" />
     <Compile Include="Hooks\PlayerModifySlotEventArgs.cs" />
     <Compile Include="Hooks\TileLocationEventArgs.cs" />

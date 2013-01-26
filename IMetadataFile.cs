@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.CoderCow {
-  public interface IWorldMetadata {
+  public interface IMetadataFile {
     void Write(string filePath);
   }
 }

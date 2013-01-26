@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
@@ -56,8 +57,8 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: HandleTileEdit, HandleChestOpen, HandleSignEdit, HandleHitSwitch, HandleGameUpdate]
-    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, int blockId, int x, int y) {
+    #region [Methods: HandleTileEdit, HandleChestGetContents, HandleSignEdit, HandleSignRead, HandleHitSwitch, HandleGameUpdate]
+    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, short blockIndex, DPoint location) {
       if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
         return false;
 
@@ -69,14 +70,14 @@ namespace Terraria.Plugins.CoderCow {
       if (commandInteraction.TileEditCallback == null)
         return false;
 
-      CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, blockId, x, y);
+      CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, blockIndex, location);
       if (result.IsInteractionCompleted)
         this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
 
-    public virtual bool HandleChestOpen(TSPlayer player, int x, int y) {
+    public virtual bool HandleChestGetContents(TSPlayer player, DPoint location) {
       if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
         return false;
 
@@ -85,17 +86,17 @@ namespace Terraria.Plugins.CoderCow {
       if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
-      if (commandInteraction.ChestOpenCallback != null)
+      if (commandInteraction.ChestOpenCallback == null)
         return false;
 
-      CommandInteractionResult result = commandInteraction.ChestOpenCallback(player, x, y);
+      CommandInteractionResult result = commandInteraction.ChestOpenCallback(player, location);
       if (result.IsInteractionCompleted)
         this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
 
-    public virtual bool HandleSignEdit(TSPlayer player, int signId, int x, int y, string newText) {
+    public virtual bool HandleSignEdit(TSPlayer player, short signIndex, DPoint location, string newText) {
       if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
         return false;
 
@@ -104,17 +105,17 @@ namespace Terraria.Plugins.CoderCow {
       if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
-      if (commandInteraction.SignEditCallback != null)
+      if (commandInteraction.SignEditCallback == null)
         return false;
 
-      CommandInteractionResult result = commandInteraction.SignEditCallback(player, signId, x, y, newText);
+      CommandInteractionResult result = commandInteraction.SignEditCallback(player, signIndex, location, newText);
       if (result.IsInteractionCompleted)
         this.activeCommandInteractions.Remove(player.Name);
 
       return result.IsHandled;
     }
 
-    public virtual bool HandleHitSwitch(TSPlayer player, int x, int y) {
+    public virtual bool HandleSignRead(TSPlayer player, DPoint location) {
       if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
         return false;
 
@@ -123,10 +124,29 @@ namespace Terraria.Plugins.CoderCow {
       if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
         return false;
 
-      if (commandInteraction.HitSwitchCallback != null)
+      if (commandInteraction.SignReadCallback == null)
         return false;
 
-      CommandInteractionResult result = commandInteraction.HitSwitchCallback(player, x, y);
+      CommandInteractionResult result = commandInteraction.SignReadCallback(player, location);
+      if (result.IsInteractionCompleted)
+        this.activeCommandInteractions.Remove(player.Name);
+
+      return result.IsHandled;
+    }
+
+    public virtual bool HandleHitSwitch(TSPlayer player, DPoint location) {
+      if (this.IsDisposed || this.ActiveCommandInteractions.Count == 0)
+        return false;
+
+      PlayerCommandInteraction commandInteraction;
+      // Is the player currently interacting with a command?
+      if (!this.activeCommandInteractions.TryGetValue(player.Name, out commandInteraction))
+        return false;
+
+      if (commandInteraction.HitSwitchCallback == null)
+        return false;
+
+      CommandInteractionResult result = commandInteraction.HitSwitchCallback(player, location);
       if (result.IsInteractionCompleted)
         this.activeCommandInteractions.Remove(player.Name);
 

@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
@@ -22,36 +23,45 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Property: TileEditCallback]
-    private Func<TSPlayer,TileEditType,int,int,int,CommandInteractionResult> tileEditCallback;
+    private Func<TSPlayer,TileEditType,int,DPoint,CommandInteractionResult> tileEditCallback;
 
-    public Func<TSPlayer,TileEditType,int,int,int,CommandInteractionResult> TileEditCallback {
+    public Func<TSPlayer,TileEditType,int,DPoint,CommandInteractionResult> TileEditCallback {
       get { return this.tileEditCallback; }
       set { this.tileEditCallback = value; }
     }
     #endregion
 
     #region [Property: ChestOpenCallback]
-    private Func<TSPlayer,int,int,CommandInteractionResult> chestOpenCallback;
+    private Func<TSPlayer,DPoint,CommandInteractionResult> chestOpenCallback;
 
-    public Func<TSPlayer,int,int,CommandInteractionResult> ChestOpenCallback {
+    public Func<TSPlayer,DPoint,CommandInteractionResult> ChestOpenCallback {
       get { return this.chestOpenCallback; }
       set { this.chestOpenCallback = value; }
     }
     #endregion
 
     #region [Property: SignEditCallback]
-    private Func<TSPlayer,int,int,int,string,CommandInteractionResult> signEditCallback;
+    private Func<TSPlayer,int,DPoint,string,CommandInteractionResult> signEditCallback;
 
-    public Func<TSPlayer,int,int,int,string,CommandInteractionResult> SignEditCallback {
+    public Func<TSPlayer,int,DPoint,string,CommandInteractionResult> SignEditCallback {
       get { return this.signEditCallback; }
       set { this.signEditCallback = value; }
     }
     #endregion
 
-    #region [Property: HitSwitchCallback]
-    private Func<TSPlayer,int,int,CommandInteractionResult> hitSwitchCallback;
+    #region [Property: SignReadCallback]
+    private Func<TSPlayer, DPoint, CommandInteractionResult> signReadCallback;
 
-    public Func<TSPlayer,int,int,CommandInteractionResult> HitSwitchCallback {
+    public Func<TSPlayer,DPoint,CommandInteractionResult> SignReadCallback {
+      get { return this.signReadCallback; }
+      set { this.signReadCallback = value; }
+    }
+    #endregion
+
+    #region [Property: HitSwitchCallback]
+    private Func<TSPlayer,DPoint,CommandInteractionResult> hitSwitchCallback;
+
+    public Func<TSPlayer,DPoint,CommandInteractionResult> HitSwitchCallback {
       get { return this.hitSwitchCallback; }
       set { this.hitSwitchCallback = value; }
     }

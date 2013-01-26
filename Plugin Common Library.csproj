@@ -14,6 +14,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -32,6 +33,38 @@
     <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -65,17 +98,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="#Data\BossType.cs" />
     <Compile Include="#Data\ChestKind.cs" />
     <Compile Include="#Data\ChestType.cs" />
     <Compile Include="#Data\Direction.cs" />
     <Compile Include="#Data\LiquidKind.cs" />
     <Compile Include="#Data\PlayerCommandInteraction.cs" />
     <Compile Include="#Data\CommandInteractionResult.cs" />
+    <Compile Include="#Super Classes\MetadataHandlerBase.cs" />
     <Compile Include="#Utility Classes\BoolEx.cs" />
+    <Compile Include="#Utility Classes\FrameTimer.cs" />
+    <Compile Include="#Utility Classes\Timer.cs" />
+    <Compile Include="#Utility Classes\TimerBase.cs" />
+    <Compile Include="#Utility Classes\TimerManager.cs" />
+    <Compile Include="#Utility Classes\TimeSpanEx.cs" />
     <Compile Include="Collections\PriorityList.cs" />
+    <Compile Include="Hooks\BossSpawnEventArgs.cs" />
+    <Compile Include="Hooks\ChestModifySlotEventArgs.cs" />
+    <Compile Include="Hooks\ItemDropEventArgs.cs" />
+    <Compile Include="Hooks\ItemOwnerEventArgs.cs" />
+    <Compile Include="Hooks\PlayerModifySlotEventArgs.cs" />
+    <Compile Include="Hooks\TileLocationEventArgs.cs" />
+    <Compile Include="Hooks\NetHookEventArgs.cs" />
+    <Compile Include="Hooks\NetHookHandler.cs" />
+    <Compile Include="Hooks\SignEditEventArgs.cs" />
+    <Compile Include="Hooks\TileEditEventArgs.cs" />
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
-    <Compile Include="IWorldMetadata.cs" />
+    <Compile Include="IMetadataFile.cs" />
     <Compile Include="#Data\PluginInfo.cs" />
     <Compile Include="PluginTrace.cs" />
     <Compile Include="#Utility Classes\PointEx.cs" />
@@ -96,6 +146,11 @@
     <Compile Include="Test\TestRunData.cs" />
     <Compile Include="Test\TestRunnerBase.cs" />
     <Compile Include="TerrariaTiles.cs" />
+    <Compile Include="_Exceptions\InvalidTileTypeException.cs" />
+    <Compile Include="_Exceptions\LimitEnforcementException.cs" />
+    <Compile Include="_Exceptions\MissingPermissionException.cs" />
+    <Compile Include="_Exceptions\PlayerNotLoggedInException.cs" />
+    <Compile Include="_Exceptions\TileProtectedException.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

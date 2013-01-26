@@ -18,8 +18,8 @@ namespace Terraria.Plugins.CoderCow.Collections {
     public StringCollection(IList<string> wrappedList): base(wrappedList) {}
     #endregion
 
-    #region [Method: Contains, IndexOf]
-    public int IndexOf(string item, StringComparison comparison = StringComparison.InvariantCulture) {
+    #region [Methods: Contains, IndexOf]
+    public int IndexOf(string item, StringComparison comparison) {
       if (comparison == StringComparison.InvariantCulture)
         return base.IndexOf(item);
 
@@ -31,8 +31,18 @@ namespace Terraria.Plugins.CoderCow.Collections {
       return -1;
     }
 
-    public bool Contains(string item, StringComparison comparison = StringComparison.InvariantCulture) {
+    public bool Contains(string item, StringComparison comparison) {
       return (this.IndexOf(item, comparison) > -1);
+    }
+    #endregion
+
+    #region [Method: Remove]
+    public void Remove(string item, StringComparison comparison) {
+      int itemIndex = this.IndexOf(item, comparison);
+      if (itemIndex == -1)
+        throw new ArgumentException("The item does not exist.");
+
+      this.RemoveAt(itemIndex);
     }
     #endregion
 

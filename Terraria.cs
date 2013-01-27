@@ -961,28 +961,25 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: CountNPCsInTileRange, CountItemsInTileRange]
-    public static int CountNPCsInTileRange(int x, int y, int npcType, int rangeInTiles) {
-      int halfAreaWidth = (rangeInTiles * Terraria.TileSize) / 2;
-      int areaL = x - halfAreaWidth;
-      int areaT = y - halfAreaWidth;
-      int areaR = x + halfAreaWidth;
-      int areaB = y + halfAreaWidth;
-      int count = 0;
+    #region [Methods: EnumerateNPCsInTileRange, CountItemsInTileRange]
+    public static IEnumerable<NPC> EnumerateNPCsInRange(Vector2 location, float range) {
+      float halfRange = range / 2;
+      float areaL = location.X - halfRange;
+      float areaT = location.Y - halfRange;
+      float areaR = location.X + halfRange;
+      float areaB = location.Y + halfRange;
 
       for (int i = 0; i < 200; i++) {
         NPC npc = Main.npc[i];
 
         if (
-          npc.active && npc.type == npcType && 
-          npc.position.X > areaL && npc.position.X < areaR &&
-          npc.position.Y > areaT && npc.position.Y < areaB
-        ) {
-          count++;
+          npc.active &&
+            npc.position.X > areaL && npc.position.X < areaR &&
+            npc.position.Y > areaT && npc.position.Y < areaB
+          ) {
+          yield return npc;
         }
       }
-
-      return count;
     }
 
     public static int CountItemsInTileRange(int x, int y, int itemType, int rangeInTiles) {
@@ -1039,6 +1036,10 @@ namespace Terraria.Plugins.CoderCow {
 
     public static List<int> GetFriendlyMaleNPCIndexes() {
       return Terraria.GetSpecificNPCIndexes(new List<int> { 17, 19, 22, 38, 54, 107, 108 });
+    }
+
+    public static List<int> GetShopNPCIndexes() {
+      return Terraria.GetSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124 });
     }
     #endregion
   }

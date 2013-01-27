@@ -16,27 +16,16 @@ using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
   public static class TShockEx {
-    #region [Method: Static GetUserAccountNameByPlayerName, GetUserIdByPlayerName, GetUserByPlayerName]
-    public static bool GetUserAccountNameByPlayerName(string playerName, out string exactName, TSPlayer messagesReceiver = null) {
+    #region [Method: Static MatchUserAccountNameByPlayerName, MatchUserIdByPlayerName, MatchUserByPlayerName]
+    public static bool MatchUserAccountNameByPlayerName(string playerName, out string exactName, TSPlayer messagesReceiver = null) {
       exactName = null;
       TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
       if (tsUser == null) {
-        List<TSPlayer> players = TShock.Utils.FindPlayer(playerName);
-        if (players.Count == 0) {
-          messagesReceiver.SendErrorMessage(string.Format("The player \"{0}\" does not exist.", playerName));
+        TSPlayer player;
+        if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
-        } if (players.Count > 1) {
-          if (messagesReceiver != null) {
-            string str = string.Empty;
-            foreach (TSPlayer tsPlayer in players)
-              str = str.Length == 0 ? str + tsPlayer.Name : str + ", " + tsPlayer.Name;
 
-            messagesReceiver.SendErrorMessage("More than one player matched! Matches: " + str);
-          }
-          return false;
-        }
-
-        exactName = players[0].UserAccountName;
+        exactName = player.UserAccountName;
       } else {
         exactName = tsUser.Name;
       }
@@ -44,26 +33,15 @@ namespace Terraria.Plugins.CoderCow {
       return true;
     }
 
-    public static bool GetUserIdByPlayerName(string playerName, out int userId, TSPlayer messagesReceiver = null) {
+    public static bool MatchUserIdByPlayerName(string playerName, out int userId, TSPlayer messagesReceiver = null) {
       userId = -1;
       TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
       if (tsUser == null) {
-        List<TSPlayer> players = TShock.Utils.FindPlayer(playerName);
-        if (players.Count == 0) {
-          messagesReceiver.SendErrorMessage(string.Format("The player \"{0}\" does not exist.", playerName));
+        TSPlayer player;
+        if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
-        } if (players.Count > 1) {
-          if (messagesReceiver != null) {
-            string str = string.Empty;
-            foreach (TSPlayer tsPlayer in players)
-              str = str.Length == 0 ? str + tsPlayer.Name : str + ", " + tsPlayer.Name;
 
-            messagesReceiver.SendErrorMessage("More than one player matched! Matches: " + str);
-          }
-          return false;
-        }
-
-        userId = players[0].UserID;
+        userId = player.UserID;
       } else {
         userId = tsUser.ID;
       }
@@ -71,26 +49,15 @@ namespace Terraria.Plugins.CoderCow {
       return true;
     }
 
-    public static bool GetUserByPlayerName(string playerName, out TShockAPI.DB.User user, TSPlayer messagesReceiver = null) {
+    public static bool MatchUserByPlayerName(string playerName, out TShockAPI.DB.User user, TSPlayer messagesReceiver = null) {
       user = null;
       TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
       if (tsUser == null) {
-        List<TSPlayer> players = TShock.Utils.FindPlayer(playerName);
-        if (players.Count == 0) {
-          messagesReceiver.SendErrorMessage(string.Format("The player \"{0}\" does not exist.", playerName));
+        TSPlayer player;
+        if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
-        } if (players.Count > 1) {
-          if (messagesReceiver != null) {
-            string str = string.Empty;
-            foreach (TSPlayer tsPlayer in players)
-              str = str.Length == 0 ? str + tsPlayer.Name : str + ", " + tsPlayer.Name;
 
-            messagesReceiver.SendErrorMessage("More than one player matched! Matches: " + str);
-          }
-          return false;
-        }
-
-        user = TShock.Users.GetUserByID(players[0].UserID);
+        user = TShock.Users.GetUserByID(player.UserID);
       } else {
         user = tsUser;
       }
@@ -100,6 +67,34 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [TSPlayer Extensions]
+    public static bool MatchPlayerByName(
+      string name, out TSPlayer matchedPlayer, TSPlayer messagesReceiver = null
+    ) {
+      matchedPlayer = null;
+
+      List<TSPlayer> players = TShock.Utils.FindPlayer(name);
+      if (players.Count == 0) {
+        messagesReceiver.SendErrorMessage(string.Format("Could not match any players for \"{0}\".", name));
+        return false;
+      } if (players.Count > 1) {
+        if (messagesReceiver != null) {
+          StringBuilder matches = new StringBuilder();
+          foreach (TSPlayer player in players) {
+            if (matches.Length > 0)
+              matches.Append(", ");
+
+            matches.Append(player.Name);
+          }
+
+          messagesReceiver.SendErrorMessage("More than one player matched! Matches: " + matches);
+        }
+        return false;
+      }
+
+      matchedPlayer = players[0];
+      return true;
+    }
+
     public static TSPlayer GetPlayerByName(
       string name, StringComparison stringComparison = StringComparison.InvariantCulture
     ) {
@@ -128,9 +123,9 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [CommandArgs Extensions]
-    public static string ParamsToSingleString(this CommandArgs args, int fromIndex = 0) {
+    public static string ParamsToSingleString(this CommandArgs args, int fromIndex = 0, int paramsToTrimFromEnd = 0) {
       StringBuilder builder = new StringBuilder();
-      for (int i = fromIndex; i < args.Parameters.Count; i++) {
+      for (int i = fromIndex; i < args.Parameters.Count - paramsToTrimFromEnd; i++) {
         if (i > fromIndex)
           builder.Append(' ');
 

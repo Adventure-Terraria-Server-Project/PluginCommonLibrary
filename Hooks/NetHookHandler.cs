@@ -212,6 +212,23 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
+    #region [Event: LiquidSet]
+    public event EventHandler<LiquidSetEventArgs> LiquidSet;
+
+    protected virtual bool OnLiquidSet(LiquidSetEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.LiquidSet != null)
+          this.LiquidSet(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("LiquidSet", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     #region [Method: Constructor]
     public NetHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
@@ -404,12 +421,27 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
 
           //byte playerIndex = e.Msg.readBuffer[e.Index];
-          byte slotId = e.Msg.readBuffer[e.Index + 1];
+          byte slotIndex = e.Msg.readBuffer[e.Index + 1];
           byte itemStackSize = e.Msg.readBuffer[e.Index + 2];
           byte itemPrefix = e.Msg.readBuffer[e.Index + 3];
           short itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
 
-          e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(player, slotId, itemStackSize, itemPrefix, itemType));
+          if (slotIndex > 59)
+            break;
+
+          e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(player, slotIndex, itemStackSize, itemPrefix, itemType));
+          break;
+        }
+        case PacketTypes.LiquidSet: {
+          if (this.LiquidSet == null || e.Msg.readBuffer.Length - e.Index < 10)
+            break;
+
+          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+          byte liquidAmount = e.Msg.readBuffer[e.Index + 8];
+          byte lava = e.Msg.readBuffer[e.Index + 9];
+
+          e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, lava != 0));
           break;
         }
       }

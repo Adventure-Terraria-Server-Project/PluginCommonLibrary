@@ -90,7 +90,7 @@ namespace Terraria.Plugins.CoderCow {
 
 
     #region [Method: Constructor]
-    public PaginationUtil(int maxLinesPerPage = 4) {
+    public PaginationUtil() {
       Contract.Requires<ArgumentException>(maxLinesPerPage > 0);
 
       this.includeHeader = true;

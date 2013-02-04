@@ -130,22 +130,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="#Data\BossType.cs" />
-    <Compile Include="#Data\ChestKind.cs" />
-    <Compile Include="#Data\ChestType.cs" />
-    <Compile Include="#Data\Direction.cs" />
-    <Compile Include="#Data\ItemMetadata.cs" />
-    <Compile Include="#Data\LiquidKind.cs" />
-    <Compile Include="#Data\PlayerCommandInteraction.cs" />
-    <Compile Include="#Data\CommandInteractionResult.cs" />
-    <Compile Include="#Super Classes\MetadataHandlerBase.cs" />
-    <Compile Include="#Utility Classes\BoolEx.cs" />
-    <Compile Include="#Utility Classes\FrameTimer.cs" />
-    <Compile Include="#Utility Classes\PaginationUtil.cs" />
-    <Compile Include="#Utility Classes\Timer.cs" />
-    <Compile Include="#Utility Classes\TimerBase.cs" />
-    <Compile Include="#Utility Classes\TimerManager.cs" />
-    <Compile Include="#Utility Classes\TimeSpanEx.cs" />
+    <Compile Include="_Data\BossType.cs" />
+    <Compile Include="_Data\ChestKind.cs" />
+    <Compile Include="_Data\ChestType.cs" />
+    <Compile Include="_Data\Direction.cs" />
+    <Compile Include="_Data\ItemMetadata.cs" />
+    <Compile Include="_Data\LiquidKind.cs" />
+    <Compile Include="_Data\PlayerCommandInteraction.cs" />
+    <Compile Include="_Data\CommandInteractionResult.cs" />
+    <Compile Include="_Super Classes\MetadataHandlerBase.cs" />
+    <Compile Include="_Utility Classes\BoolEx.cs" />
+    <Compile Include="_Utility Classes\FrameTimer.cs" />
+    <Compile Include="_Utility Classes\PaginationUtil.cs" />
+    <Compile Include="_Utility Classes\Timer.cs" />
+    <Compile Include="_Utility Classes\TimerBase.cs" />
+    <Compile Include="_Utility Classes\TimerManager.cs" />
+    <Compile Include="_Utility Classes\TimeSpanEx.cs" />
     <Compile Include="Collections\PriorityList.cs" />
     <Compile Include="Hooks\BossSpawnEventArgs.cs" />
     <Compile Include="Hooks\ChestModifySlotEventArgs.cs" />
@@ -161,21 +161,21 @@
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
     <Compile Include="IMetadataFile.cs" />
-    <Compile Include="#Data\PluginInfo.cs" />
+    <Compile Include="_Data\PluginInfo.cs" />
     <Compile Include="PluginTrace.cs" />
-    <Compile Include="#Utility Classes\PointEx.cs" />
+    <Compile Include="_Utility Classes\PointEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
-    <Compile Include="#Data\StatueType.cs" />
+    <Compile Include="_Data\StatueType.cs" />
     <Compile Include="Collections\StringCollection.cs" />
     <Compile Include="Terraria.cs" />
     <Compile Include="Terraria.SpriteMeasureData.cs">
       <DependentUpon>Terraria.cs</DependentUpon>
     </Compile>
-    <Compile Include="#Data\TileEditType.cs" />
-    <Compile Include="#Utility Classes\TShockEx.cs" />
-    <Compile Include="#Super Classes\UserInteractionHandlerBase.cs" />
-    <Compile Include="#Super Classes\WorldMetadataHandlerBase.cs" />
+    <Compile Include="_Data\TileEditType.cs" />
+    <Compile Include="_Utility Classes\TShockEx.cs" />
+    <Compile Include="_Super Classes\UserInteractionHandlerBase.cs" />
+    <Compile Include="_Super Classes\WorldMetadataHandlerBase.cs" />
     <Compile Include="Test\TestContext.cs" />
     <Compile Include="Test\TestDelay.cs" />
     <Compile Include="Test\TestRunData.cs" />

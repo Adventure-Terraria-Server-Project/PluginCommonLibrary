@@ -130,14 +130,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="_Data\BlockType.cs" />
     <Compile Include="_Data\BossType.cs" />
     <Compile Include="_Data\ChestKind.cs" />
     <Compile Include="_Data\ChestType.cs" />
     <Compile Include="_Data\Direction.cs" />
     <Compile Include="_Data\ItemMetadata.cs" />
+    <Compile Include="_Data\ItemType.cs" />
     <Compile Include="_Data\LiquidKind.cs" />
     <Compile Include="_Data\PlayerCommandInteraction.cs" />
     <Compile Include="_Data\CommandInteractionResult.cs" />
+    <Compile Include="_Data\WallType.cs" />
     <Compile Include="_Super Classes\MetadataHandlerBase.cs" />
     <Compile Include="_Utility Classes\BoolEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
@@ -181,11 +184,11 @@
     <Compile Include="Test\TestRunData.cs" />
     <Compile Include="Test\TestRunnerBase.cs" />
     <Compile Include="TerrariaTiles.cs" />
-    <Compile Include="_Exceptions\InvalidTileTypeException.cs" />
-    <Compile Include="_Exceptions\LimitEnforcementException.cs" />
-    <Compile Include="_Exceptions\MissingPermissionException.cs" />
-    <Compile Include="_Exceptions\PlayerNotLoggedInException.cs" />
-    <Compile Include="_Exceptions\TileProtectedException.cs" />
+    <Compile Include="_General Exceptions\InvalidBlockTypeException.cs" />
+    <Compile Include="_General Exceptions\LimitEnforcementException.cs" />
+    <Compile Include="_General Exceptions\MissingPermissionException.cs" />
+    <Compile Include="_General Exceptions\PlayerNotLoggedInException.cs" />
+    <Compile Include="_General Exceptions\TileProtectedException.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

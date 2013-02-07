@@ -15,203 +15,14 @@ using TShockAPI;
 namespace Terraria.Plugins.CoderCow {
   public static partial class Terraria {
     #region [Constants]
-    public const int TileId_DirtBlock = 0;
-    public const int TileId_StoneBlock = 1;
-    public const int TileId_Grass = 2;
-    public const int TileId_GrassPlants = 3;
-    public const int TileId_Torch = 4;
-    public const int TileId_Tree = 5;
-    public const int TileId_IronOre = 6;
-    public const int TileId_CopperOre = 7;
-    public const int TileId_GoldOre = 8;
-    public const int TileId_SilverOre = 9;
-    public const int TileId_DoorClosed = 10;
-    public const int TileId_DoorOpened = 11;
-    public const int TileId_CrystalHeart = 12;
-    public const int TileId_Bottle = 13;
-    public const int TileId_WoodenTable = 14;
-    public const int TileId_WoodenChair = 15;
-    public const int TileId_IronAnvil = 16;
-    public const int TileId_Furnace = 17;
-    public const int TileId_WorkBench = 18;
-    public const int TileId_WoodPlatform = 19;
-    public const int TileId_Sapling = 20;
-    public const int TileId_Chest = 21;
-    public const int TileId_DemoniteOre = 22;
-    public const int TileId_CorruptGrass = 23;
-    public const int TileId_CorruptionPlants = 24;
-    public const int TileId_EbonstoneBlock = 25;
-    public const int TileId_DemonAltar = 26;
-    public const int TileId_Sunflower = 27;
-    public const int TileId_Pot = 28;
-    public const int TileId_PiggyBank = 29;
-    public const int TileId_Wood = 30;
-    public const int TileId_ShadowOrb = 31;
-    public const int TileId_CorruptionThornyBush = 32;
-    public const int TileId_Candle = 33;
-    public const int TileId_CopperChandelier = 34;
-    public const int TileId_SilverChandelier = 35;
-    public const int TileId_GoldChandelier = 36;
-    public const int TileId_Meteorite = 37;
-    public const int TileId_GrayBrick = 38;
-    public const int TileId_RedBrick = 39;
-    public const int TileId_Clay = 40;
-    public const int TileId_BlueBrick = 41;
-    public const int TileId_ChainLantern = 42;
-    public const int TileId_GreenBrick = 43;
-    public const int TileId_PinkBrick = 44;
-    public const int TileId_GoldBrick = 45;
-    public const int TileId_SilverBrick = 46;
-    public const int TileId_CopperBrick = 47;
-    public const int TileId_Spike = 48;
-    public const int TileId_WaterCandle = 49;
-    public const int TileId_Book = 50;
-    public const int TileId_Cobweb = 51;
-    public const int TileId_Vine = 52;
-    public const int TileId_SandBlock = 53;
-    public const int TileId_Glass = 54;
-    public const int TileId_Sign = 55;
-    public const int TileId_Obsidian = 56;
-    public const int TileId_AshBlock = 57;
-    public const int TileId_Hellstone = 58;
-    public const int TileId_MudBlock = 59;
-    public const int TileId_JungleGrass = 60;
-    public const int TileId_JunglePlants = 61;
-    public const int TileId_JungleVine = 62;
-    public const int TileId_SapphireBlock = 63;
-    public const int TileId_RubyBlock = 64;
-    public const int TileId_EmeraldBlock = 65;
-    public const int TileId_TopazBlock = 66;
-    public const int TileId_AmethystBlock = 67;
-    public const int TileId_DiamondBlock = 68;
-    public const int TileId_JungleThornyBush = 69;
-    public const int TileId_MushroomGrass = 70;
-    public const int TileId_GlowingMushroom = 71;
-    public const int TileId_GiantGlowingMushroom = 72;
-    public const int TileId_TallGrassPlants = 73;
-    public const int TileId_TallJunglePlants = 74;
-    public const int TileId_ObsidianBrick = 75;
-    public const int TileId_HellstoneBrick = 76;
-    public const int TileId_Hellforge = 77;
-    public const int TileId_ClayPot = 78;
-    public const int TileId_Bed = 79;
-    public const int TileId_Cactus = 80;
-    public const int TileId_Coral = 81;
-    public const int TileId_PlantablePlantsGrowing = 82;
-    public const int TileId_PlantablePlantsMature = 83;
-    public const int TileId_PlantablePlantsBlooming = 84;
-    public const int TileId_Tombstone = 85;
-    public const int TileId_Loom = 86;
-    public const int TileId_Piano = 87;
-    public const int TileId_Dresser = 88;
-    public const int TileId_Bench = 89;
-    public const int TileId_Bathtub = 90;
-    public const int TileId_Banner = 91;
-    public const int TileId_LampPost = 92;
-    public const int TileId_TikiTorch = 93;
-    public const int TileId_Keg = 94;
-    public const int TileId_ChineseLantern = 95;
-    public const int TileId_CookingPot = 96;
-    public const int TileId_Safe = 97;
-    public const int TileId_SkullLantern = 98;
-    public const int TileId_TashCan_UNUSED = 99;
-    public const int TileId_Candelabra = 100;
-    public const int TileId_Bookcase = 101;
-    public const int TileId_Throne = 102;
-    public const int TileId_Bowl = 103;
-    public const int TileId_GrandfatherClock = 104;
-    public const int TileId_Statue = 105;
-    public const int TileId_Sawmill = 106;
-    public const int TileId_CobaltOre = 107;
-    public const int TileId_MythrilOre = 108;
-    public const int TileId_HallowedGrass = 109;
-    public const int TileId_HallowedPlants = 110;
-    public const int TileId_AdamantiteOre = 111;
-    public const int TileId_EbonsandBlock = 112;
-    public const int TileId_TallHallowedPlants = 113;
-    public const int TileId_TinkerersWorkshop = 114;
-    public const int TileId_HallowedVine = 115;
-    public const int TileId_PearlsandBlock = 116;
-    public const int TileId_PearlstoneBlock = 117;
-    public const int TileId_PearlstoneBrick = 118;
-    public const int TileId_IridescentBrick = 119;
-    public const int TileId_MudstoneBlock = 120;
-    public const int TileId_CobaltBrick = 121;
-    public const int TileId_MythrilBrick = 122;
-    public const int TileId_SiltBlock = 123;
-    public const int TileId_WoodenBeam = 124;
-    public const int TileId_CrystalBall = 125;
-    public const int TileId_DiscoBall = 126;
-    public const int TileId_IceBlock = 127;
-    public const int TileId_Mannequin = 128;
-    public const int TileId_CrystalShard = 129;
-    public const int TileId_ActiveStone = 130;
-    public const int TileId_InactiveStone = 131;
-    public const int TileId_Lever = 132;
-    public const int TileId_AdamantiteForge = 133;
-    public const int TileId_MythrilAnvil = 134;
-    public const int TileId_PressurePlate = 135;
-    public const int TileId_Switch = 136;
-    public const int TileId_DartTrap = 137;
-    public const int TileId_Boulder = 138;
-    public const int TileId_MusicBox = 139;
-    public const int TileId_DemoniteBrick = 140;
-    public const int TileId_Explosives = 141;
-    public const int TileId_InletPump = 142;
-    public const int TileId_OutletPump = 143;
-    public const int TileId_XSecondTimer = 144;
-    public const int TileId_RedCandyCaneBlock = 145;
-    public const int TileId_GreenCandyCaneBlock = 146;
-    public const int TileId_SnowBlock = 147;
-    public const int TileId_SnowBrick = 148;
-    public const int TileId_XMasLight = 149;
+    public const int BlockType_Min = 0;
+    public const int BlockType_Max = 149;
 
-    public const int TileId_Min = 0;
-    public const int TileId_Max = 149;
+    public const int WallType_Min = 0;
+    public const int WallType_Max = 31;
 
-    public const int WallId_Sky = 0;
-    public const int WallId_StoneWall = 1;
-    public const int WallId_DirtWall = 2;
-    public const int WallId_EbonstoneWall = 3;
-    public const int WallId_WoodWall = 4;
-    public const int WallId_GrayBrickWall = 5;
-    public const int WallId_RedBrickWall = 6;
-    public const int WallId_DungeonBlueBrickWall = 7;
-    public const int WallId_DungeonGreenBrickWall = 8;
-    public const int WallId_DungeonPinkBrickWall = 9;
-    public const int WallId_GoldWall = 10;
-    public const int WallId_SilverWall = 11;
-    public const int WallId_CopperWall = 12;
-    public const int WallId_HellstoneWall = 13;
-    public const int WallId_ObsidianBrickWall = 14;
-    public const int WallId_MudWall = 15;
-    public const int WallId_PlayerDirtWall = 16;
-    public const int WallId_BlueBrickWall = 17;
-    public const int WallId_GreenBrickWall = 18;
-    public const int WallId_PinkBrickWall = 19;
-    public const int WallId_PlayerObsidianBrickWall = 20;
-    public const int WallId_GlassWall = 21;
-    public const int WallId_PearlstoneBrickWall = 22;
-    public const int WallId_IridecentBrickWall = 23;
-    public const int WallId_MudstoneBrickWall = 24;
-    public const int WallId_CobaltBrickWall = 25;
-    public const int WallId_MythrilBrickWall = 26;
-    public const int WallId_PlankedWall = 27;
-    public const int WallId_PearlstoneWall = 28;
-    public const int WallId_CandyCaneWall = 29;
-    public const int WallId_GreenCandyCaneWall = 30;
-    public const int WallId_SnowBrickWall = 31;
-
-    public const int WallId_Min = 0;
-    public const int WallId_Max = 31;
-
-    public const int ItemId_CobaltOre = 364;
-    public const int ItemId_Wire = 530;
-    public const int ItemId_DartTrap = 539;
-    public const int ItemId_Boulder = 540;
-
-    public const int ItemId_Min = 0;
-    public const int ItemId_Max = 603;
+    public const int ItemType_Min = 0;
+    public const int ItemType_Max = 603;
 
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;
@@ -244,72 +55,72 @@ namespace Terraria.Plugins.CoderCow {
         ));
       }
 
-      DPoint spriteSize = Terraria.GetSpriteSize(tile.type);
+      DPoint spriteSize = Terraria.GetSpriteSize((BlockType)tile.type);
       DPoint textureTileSize = new DPoint(Terraria.DefaultTextureTileSize, Terraria.DefaultTextureTileSize);
       int frameXOffsetAdd = 0;
-      switch (tile.type) {
+      switch ((BlockType)tile.type) {
         // Dynamic sprites, special handling
-        case Terraria.TileId_Tree:
+        case BlockType.Tree:
           textureTileSize = new DPoint(22, 22);
           break;
 
-        case Terraria.TileId_GrassPlants:
-        case Terraria.TileId_CorruptionPlants:
-        case Terraria.TileId_Candle:
-        case Terraria.TileId_WaterCandle:
-        case Terraria.TileId_JunglePlants:
-        case Terraria.TileId_GlowingMushroom:
-        case Terraria.TileId_PlantablePlantsGrowing:
-        case Terraria.TileId_PlantablePlantsMature:
-        case Terraria.TileId_PlantablePlantsBlooming:
-        case Terraria.TileId_HallowedPlants:
+        case BlockType.GrassPlants:
+        case BlockType.CorruptionPlants:
+        case BlockType.Candle:
+        case BlockType.WaterCandle:
+        case BlockType.JunglePlants:
+        case BlockType.GlowingMushroom:
+        case BlockType.PlantablePlantsGrowing:
+        case BlockType.PlantablePlantsMature:
+        case BlockType.PlantablePlantsBlooming:
+        case BlockType.HallowedPlants:
           textureTileSize = new DPoint(18, 20);
           break;
 
-        case Terraria.TileId_Coral:
+        case BlockType.Coral:
           textureTileSize = new DPoint(26, 28);
           break;
 
-        case Terraria.TileId_Torch:
+        case BlockType.Torch:
           frameXOffsetAdd = Terraria.DefaultTextureTileSize * 3;
           textureTileSize = new DPoint(22, 22);
           break;
 
-        case Terraria.TileId_PressurePlate:
+        case BlockType.PressurePlate:
           textureTileSize = new DPoint(16, 16);
           break;
 
-        case Terraria.TileId_XMasLight:
+        case BlockType.XMasLight:
           frameXOffsetAdd = Terraria.DefaultTextureTileSize * 2;
           break;
 
-        case Terraria.TileId_TallGrassPlants:
-        case Terraria.TileId_TallJunglePlants:
-        case Terraria.TileId_TallHallowedPlants:
+        case BlockType.TallGrassPlants:
+        case BlockType.TallJunglePlants:
+        case BlockType.TallHallowedPlants:
           textureTileSize = new DPoint(18, 16);
           break;
       }
 
       int originX, originY;
-      switch (tile.type) {
+      switch ((BlockType)tile.type) {
         // Removed dynamic measuring support for Cactus due to Terraria bugs...
-        case Terraria.TileId_Cactus:
+        case BlockType.Cactus:
           originX = anyTileLocation.X;
           originY = anyTileLocation.Y;
 
           break;
-        case Terraria.TileId_Tree: 
-        case Terraria.TileId_GiantGlowingMushroom: {
+        case BlockType.Tree: 
+        case BlockType.GiantGlowingMushroom: {
         //case Terraria.TileId_Cactus: {
           originX = anyTileLocation.X;
           originY = anyTileLocation.Y;
 
-          if (tile.type == Terraria.TileId_Tree) {
+          if (tile.type == (int)BlockType.Tree) {
             if (Terraria.IsLeftTreeBranch(tile))
               originX++;
             else if (Terraria.IsRightTreeBranch(tile))
               originX--;
-          } else if (tile.type == Terraria.TileId_Cactus) {
+          } else if (tile.type == (int)BlockType.Cactus) {
             if (Terraria.IsLeftCactusBranch(tile))
               originX++;
             else if (Terraria.IsRightCactusBranch(tile))
@@ -328,9 +139,9 @@ namespace Terraria.Plugins.CoderCow {
           spriteSize = new DPoint(3, 0);
           break;
         }
-        case Terraria.TileId_Vine:
-        case Terraria.TileId_JungleVine:
-        case Terraria.TileId_HallowedVine: {
+        case BlockType.Vine:
+        case BlockType.JungleVine:
+        case BlockType.HallowedVine: {
           originX = anyTileLocation.X;
           originY = anyTileLocation.Y;
 
@@ -346,7 +157,7 @@ namespace Terraria.Plugins.CoderCow {
           spriteSize = new DPoint(1, 0);
           break;
         }
-        case Terraria.TileId_DoorOpened: {
+        case BlockType.DoorOpened: {
           int tileIndexX = tile.frameX / textureTileSize.X;
           int frameIndexX = tileIndexX / spriteSize.X;
 
@@ -378,12 +189,12 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       return new Terraria.SpriteMeasureData(
-        tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, frameXOffsetAdd
+        (BlockType)tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, frameXOffsetAdd
       );
     }
 
     public static bool IsLeftTreeBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
+      if (tile.type != (int)BlockType.Tree)
         return false;
 
       int frameX = tile.frameX;
@@ -401,7 +212,7 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public static bool IsRightTreeBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Tree)
+      if (tile.type != (int)BlockType.Tree)
         return false;
 
       int frameX = tile.frameX;
@@ -422,7 +233,7 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public static bool IsLeftCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Cactus)
+      if (tile.type != (int)BlockType.Cactus)
         return false;
 
       int frameX = tile.frameX;
@@ -432,7 +243,7 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public static bool IsRightCactusBranch(Tile tile) {
-      if (tile.type != Terraria.TileId_Cactus)
+      if (tile.type != (int)BlockType.Cactus)
         return false;
 
       int frameX = tile.frameX;
@@ -444,20 +255,20 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Methods: IsSpriteToggleable, HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
     // Does not include doors or active stone!
-    public static bool IsSpriteToggleable(int blockId) {
+    public static bool IsSpriteToggleable(BlockType spriteType) {
       return (
-        blockId == Terraria.TileId_Torch ||
-        (blockId >= Terraria.TileId_Candle && blockId <= Terraria.TileId_GoldChandelier) ||
-        blockId == Terraria.TileId_ChainLantern ||
-        blockId == Terraria.TileId_LampPost ||
-        blockId == Terraria.TileId_TikiTorch ||
-        blockId == Terraria.TileId_ChineseLantern ||
-        blockId == Terraria.TileId_Candelabra ||
-        blockId == Terraria.TileId_DiscoBall ||
-        blockId == Terraria.TileId_Lever ||
-        blockId == Terraria.TileId_Switch ||
-        blockId == Terraria.TileId_XSecondTimer ||
-        blockId == Terraria.TileId_XMasLight
+        spriteType == BlockType.Torch ||
+        (spriteType >= BlockType.Candle && spriteType <= BlockType.GoldChandelier) ||
+        spriteType == BlockType.ChainLantern ||
+        spriteType == BlockType.LampPost ||
+        spriteType == BlockType.TikiTorch ||
+        spriteType == BlockType.ChineseLantern ||
+        spriteType == BlockType.Candelabra ||
+        spriteType == BlockType.DiscoBall ||
+        spriteType == BlockType.Lever ||
+        spriteType == BlockType.Switch ||
+        spriteType == BlockType.XSecondTimer ||
+        spriteType == BlockType.XMasLight
       );
     }
 
@@ -465,11 +276,11 @@ namespace Terraria.Plugins.CoderCow {
       Tile tile = Terraria.Tiles[measureData.OriginTileLocation];
 
       switch (measureData.SpriteType) {
-        case Terraria.TileId_Switch:
+        case BlockType.Switch:
           return (tile.frameY == 0);
-        case Terraria.TileId_XSecondTimer:
+        case BlockType.XSecondTimer:
           return (tile.frameY != 0);
-        case Terraria.TileId_MusicBox:
+        case BlockType.MusicBox:
           return (tile.frameX != 0);
         default:
           return (tile.frameX < measureData.FrameXOffsetAdd + 1);
@@ -482,7 +293,7 @@ namespace Terraria.Plugins.CoderCow {
       #if DEBUG
       if (Terraria.HasSpriteActiveFrame(measureData) == setActiveFrame) {
         throw new ArgumentException(string.Format(
-          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetBlockName(measureData.SpriteType), setActiveFrame
+          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetBlockTypeName(measureData.SpriteType), setActiveFrame
         ));
       }
       #endif
@@ -494,9 +305,9 @@ namespace Terraria.Plugins.CoderCow {
       short newFrameXOffset = 0;
       short newFrameYOffset = 0;
 
-      if (measureData.SpriteType != Terraria.TileId_Switch && measureData.SpriteType != Terraria.TileId_XSecondTimer) {
+      if (measureData.SpriteType != BlockType.Switch && measureData.SpriteType != BlockType.XSecondTimer) {
         int frameXOffset = (spriteWidth * measureData.TextureTileSize.X) + measureData.FrameXOffsetAdd;
-        if (measureData.SpriteType == Terraria.TileId_MusicBox)
+        if (measureData.SpriteType == BlockType.MusicBox)
           setActiveFrame = !setActiveFrame;
 
         if (setActiveFrame)
@@ -505,7 +316,7 @@ namespace Terraria.Plugins.CoderCow {
           newFrameXOffset = (short)frameXOffset;
       } else {
         int frameYOffset = (spriteHeight * measureData.TextureTileSize.Y);
-        if (measureData.SpriteType == Terraria.TileId_XSecondTimer)
+        if (measureData.SpriteType == BlockType.XSecondTimer)
           setActiveFrame = !setActiveFrame;
 
         if (setActiveFrame)
@@ -563,7 +374,7 @@ namespace Terraria.Plugins.CoderCow {
     #region [Methods: GetStatueType, GetItemTypeFromStatueType]
     public static StatueType GetStatueType(DPoint anyStatueTileLocation) {
       Tile tile = Terraria.Tiles[anyStatueTileLocation];
-      if (tile.type != Terraria.TileId_Statue)
+      if (tile.type != (int)BlockType.Statue)
         throw new ArgumentException("The tile at the given location is not of type Statue.", "anyStatueTileLocation");
 
       return (StatueType)(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
@@ -666,7 +477,7 @@ namespace Terraria.Plugins.CoderCow {
     #region [Methods: GetChestType, GetChestKind]
     public static ChestType GetChestType(DPoint anyChestTileLocation, out bool isLocked) {
       Tile tile = Terraria.Tiles[anyChestTileLocation];
-      if (tile.type != Terraria.TileId_Statue)
+      if (tile.type != (int)BlockType.Chest)
         throw new ArgumentException("The tile at the given location is not of type Chest.", "anyChestTileLocation");
 
       isLocked = false;
@@ -698,7 +509,7 @@ namespace Terraria.Plugins.CoderCow {
           Tile chestTile = Terraria.Tiles[anyChestTileLocation];
 
           if (isLocked) {
-            if (chestTile.wall < Terraria.WallId_DungeonBlueBrickWall || chestTile.wall > Terraria.WallId_DungeonPinkBrickWall)
+            if (chestTile.wall < (int)WallType.DungeonBlueBrickWall || chestTile.wall > (int)WallType.DungeonPinkBrickWall)
               return ChestKind.SkyIslandChest;
 
             return ChestKind.DungeonChest;
@@ -740,7 +551,7 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Methods: GetSpriteSize, GetSpriteOrientation]
     private static DPoint[] spriteSizes;
-    public static DPoint GetSpriteSize(int blockId) {
+    public static DPoint GetSpriteSize(BlockType spriteType) {
       if (Terraria.spriteSizes == null) {
         Terraria.spriteSizes = new[] {
           new DPoint(1, 1), // Dirt
@@ -896,18 +707,18 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (blockId < 0 || blockId >= Terraria.spriteSizes.Length)
-        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", blockId), "blockId");
+      if (spriteType < 0 || (int)spriteType >= Terraria.spriteSizes.Length)
+        throw new ArgumentException(string.Format("The sprite type \"{0}\" is invalid.", spriteType), "spriteType");
 
-      return Terraria.spriteSizes[blockId];
+      return Terraria.spriteSizes[(int)spriteType];
     }
 
     public static Direction GetSpriteOrientation(Tile anyTile) {
       if (!anyTile.active)
         return Direction.Unknown;
 
-      switch (anyTile.type) {
-        case Terraria.TileId_Torch:
+      switch ((BlockType)anyTile.type) {
+        case BlockType.Torch:
           if (anyTile.frameX == 44 || anyTile.frameX == 110)
             return Direction.Left;
 
@@ -916,7 +727,7 @@ namespace Terraria.Plugins.CoderCow {
 
           return Direction.Up;
 
-        case Terraria.TileId_Sign:
+        case BlockType.Sign:
           if (anyTile.frameX < 36)
             return Direction.Up;
 
@@ -928,7 +739,7 @@ namespace Terraria.Plugins.CoderCow {
 
           return Direction.Left;
 
-        case Terraria.TileId_CrystalShard:
+        case BlockType.CrystalShard:
           if (anyTile.frameY == 0)
             return Direction.Up;
 
@@ -940,7 +751,7 @@ namespace Terraria.Plugins.CoderCow {
 
           return Direction.Right;
 
-        case Terraria.TileId_Switch:
+        case BlockType.Switch:
           if (anyTile.frameX == 0)
             return Direction.Up;
 
@@ -955,9 +766,123 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: IsValidItemId]
-    public static bool IsValidItemId(int itemId) {
-      return (itemId >= Terraria.ItemId_Min && itemId <= Terraria.ItemId_Max);
+    #region [Methods: IsValidItemType, IsCraftableItem]
+    public static bool IsValidItemType(int itemType) {
+      return (itemType >= Terraria.ItemType_Min && itemType <= Terraria.ItemType_Max);
+    }
+
+    public static bool IsCraftableItem(ItemType itemType) {
+      return !(
+        itemType == ItemType.DirtBlock ||
+        itemType == ItemType.StoneBlock ||
+        itemType == ItemType.Mushroom ||
+        itemType == ItemType.Wood || (
+          itemType >= ItemType.IronOre && itemType <= ItemType.SilverOre
+        ) ||
+        itemType == ItemType.Gel ||
+        itemType == ItemType.Acorn ||
+        itemType == ItemType.LifeCrystal ||
+        itemType == ItemType.Lens ||
+        itemType == ItemType.Shuriken || (
+          itemType >= ItemType.BandofRegeneration && itemType <= ItemType.DemoniteOre
+        ) || (
+          itemType >= ItemType.Heart && itemType <= ItemType.Starfury
+        ) ||
+        itemType == ItemType.RottenChunk ||
+        itemType == ItemType.WormTooth ||
+        itemType == ItemType.FallenStar ||
+        itemType == ItemType.ShadowScale ||
+        itemType == ItemType.PiggyBank ||
+        itemType == ItemType.MiningHelmet || (
+          itemType >= ItemType.FlintlockPistol && itemType <= ItemType.Minishark
+        ) || (
+          itemType >= ItemType.BandofStarpower && itemType <= ItemType.Meteorite
+        ) ||
+        itemType == ItemType.Hook ||
+        itemType == ItemType.RocketBoots || (
+          itemType >= ItemType.ClayBlock && itemType <= ItemType.PinkBrickWall
+        ) || (
+          itemType >= ItemType.Spike && itemType <= ItemType.Cobweb
+        ) || (
+          itemType >= ItemType.Bone && itemType <= ItemType.SandBlock
+        ) || (
+          itemType >= ItemType.AshBlock && itemType <= ItemType.Hellstone
+        ) || (
+          itemType >= ItemType.MudBlock && itemType <= ItemType.Star
+        ) ||
+        itemType == ItemType.BreathingReed ||
+        itemType == ItemType.Flipper ||
+        itemType == ItemType.MushroomGrassSeeds ||
+        itemType == ItemType.JungleGrassSeeds || (
+          itemType >= ItemType.JungleRose && itemType <= ItemType.Shackle
+        ) ||
+        itemType == ItemType.Hellforge ||
+        itemType == ItemType.NaturesGift ||
+        itemType == ItemType.BlackLens ||
+        itemType == ItemType.WizardHat ||
+        itemType == ItemType.TopHat || (
+          itemType >= ItemType.SummerHat && itemType <= ItemType.PlumbersHat
+        ) ||
+        itemType == ItemType.ArchaeologistsHat ||
+        itemType == ItemType.BlackDye || (
+          itemType >= ItemType.NinjaHood && itemType <= ItemType.NinjaPants
+        ) ||
+        itemType == ItemType.RedHat ||
+        itemType == ItemType.Goldfish ||
+        itemType == ItemType.RobotHat || (
+          itemType >= ItemType.GuideVoodooDoll && itemType <= ItemType.DemonScythe
+        ) || (
+          itemType >= ItemType.Coral && itemType <= ItemType.Aglet
+        ) || (
+          itemType >= ItemType.GoldChest && itemType <= ItemType.ShadowKey
+        ) ||
+        itemType == ItemType.JungleSpores ||
+        itemType == ItemType.Safe ||
+        itemType == ItemType.TatteredCloth || (
+          itemType >= ItemType.CobaltOre && itemType <= ItemType.Pwnhammer
+        ) ||
+        itemType == ItemType.HallowedSeeds ||
+        itemType == ItemType.EbonsandBlock ||
+        itemType == ItemType.Compass ||
+        itemType == ItemType.TinkerersWorkshop || (
+          itemType >= ItemType.Toolbelt && itemType <= ItemType.MiningPants
+        ) ||
+        itemType == ItemType.SiltBlock ||
+        itemType == ItemType.BreakerBlade ||
+        itemType == ItemType.ClockworkAssaultRifle || (
+          itemType >= ItemType.DualHook && itemType <= ItemType.PiranhaStatue
+        ) || (
+          itemType >= ItemType.MoonCharm && itemType <= ItemType.RangerEmblem
+        ) || (
+          itemType >= ItemType.PixieDust && itemType <= ItemType.ClownPants
+        ) || (
+          itemType >= ItemType.Bell && itemType <= ItemType.WireCutter
+        ) ||
+        itemType == ItemType.Lever ||
+        itemType == ItemType.LaserRifle ||
+        itemType == ItemType.MagicDagger || (
+          itemType >= ItemType.SoulofLight && itemType <= ItemType.CursedFlame
+        ) || (
+          itemType >= ItemType.UnicornHorn && itemType <= ItemType.StarCloak
+        ) || (
+          itemType >= ItemType.Shotgun && itemType <= ItemType.TitanGlove
+        ) || 
+        itemType == ItemType.Switch ||
+        itemType == ItemType.DartTrap || (
+          itemType >= ItemType.GreenPressurePlate && itemType <= ItemType.BrownPressurePlate
+        ) || (
+          itemType >= ItemType.SoulofFright && itemType <= ItemType.SoulofSight
+        ) ||
+        itemType == ItemType.CrossNecklace || (
+          itemType >= ItemType.MusicBox_OverworldDay && itemType <= ItemType.MusicBox
+        ) || 
+        itemType == ItemType.CandyCaneBlock || (
+          itemType >= ItemType.SantaHat && itemType <= ItemType.GreenCandyCaneBlock
+        ) ||
+        itemType == ItemType.SnowBlock || (
+          itemType >= ItemType.BlueLight && itemType <= ItemType.Carrot
+        )
+      );
     }
     #endregion
 

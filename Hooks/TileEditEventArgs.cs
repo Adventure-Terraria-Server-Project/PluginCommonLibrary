@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file is provided unter the terms of the 
+// Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/.
+// 
+// Written by CoderCow
+
+using System;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
@@ -13,11 +19,11 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Property: BlockId]
-    private readonly byte blockId;
+    #region [Property: BlockType]
+    private readonly BlockType blockType;
 
-    public byte BlockId {
-      get { return this.blockId; }
+    public BlockType BlockType {
+      get { return this.blockType; }
     }
     #endregion
 
@@ -32,10 +38,10 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
     #region [Method: Constructor]
     public TileEditEventArgs(
-      TSPlayer player, TileEditType editType, DPoint location, byte blockId, byte spriteStyle
+      TSPlayer player, TileEditType editType, DPoint location, BlockType blockType, byte spriteStyle
     ): base(player, location) {
       this.editType = editType;
-      this.blockId = blockId;
+      this.blockType = blockType;
       this.spriteStyle = spriteStyle;
     }
     #endregion

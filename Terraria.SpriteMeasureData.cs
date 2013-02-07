@@ -20,9 +20,9 @@ namespace Terraria.Plugins.CoderCow {
       #endregion
 
       #region [Property: SpriteType]
-      private readonly int spriteType;
+      private readonly BlockType spriteType;
 
-      public int SpriteType {
+      public BlockType SpriteType {
         get { return this.spriteType; }
       }
       #endregion
@@ -62,7 +62,7 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: Constructor]
       public SpriteMeasureData(
-        int spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
+        BlockType spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
       ) {
         this.spriteType = spriteType;
         this.frameXOffsetAdd = frameXOffsetAdd;
@@ -75,7 +75,7 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: ToString]
       public override string ToString() {
-        return Terraria.Tiles.GetBlockName(this.SpriteType);
+        return this.SpriteType.ToString();
       }
       #endregion
     }

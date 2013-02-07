@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file is provided unter the terms of the 
+// Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/.
+// 
+// Written by CoderCow
+
+using System;
 using System.Diagnostics.Contracts;
 using System.Text;
 
@@ -262,14 +268,14 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           byte editType = e.Msg.readBuffer[e.Index];
           int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
           int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
-          byte blockId = e.Msg.readBuffer[e.Index + 9];
+          byte blockType = e.Msg.readBuffer[e.Index + 9];
           byte spriteStyle = e.Msg.readBuffer[e.Index + 10];
 
           if (!Terraria.Tiles.IsValidCoord(x, y) || editType > 6)
             return;
 
           e.Handled = this.OnTileEdit(
-            new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), blockId, spriteStyle
+            new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, spriteStyle
           ));
           break;
         }

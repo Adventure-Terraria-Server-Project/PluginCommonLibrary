@@ -45,7 +45,7 @@ namespace Terraria.Plugins.CoderCow.Test {
 
         throw new AssertException(string.Format(
           "Assert failed. {0} frame for sprite \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
-          expectedStateString, Terraria.Tiles.GetBlockName(tile.type), x, y, actualStateString
+          expectedStateString, Terraria.Tiles.GetBlockTypeName((BlockType)tile.type), x, y, actualStateString
         ));
       }
     }
@@ -83,21 +83,21 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
     #endregion
 
-    #region [Methods: IsTileId, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
-    public static void IsTileId(int x, int y, int expectedTileId) {
+    #region [Methods: IsBlockType, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
+    public static void IsBlockType(int x, int y, BlockType expectedBlockType) {
       Tile tile = Terraria.Tiles[x, y];
       
       if (!tile.active) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but there is no tile at all.",
-          Terraria.Tiles.GetBlockName(expectedTileId), x, y
+          Terraria.Tiles.GetBlockTypeName(expectedBlockType), x, y
         ));
       }
 
-      if (tile.type != expectedTileId) {
+      if (tile.type != (int)expectedBlockType) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but it is \"{3}\".",
-          Terraria.Tiles.GetBlockName(expectedTileId), x, y, Terraria.Tiles.GetBlockName(tile.type)
+          Terraria.Tiles.GetBlockTypeName(expectedBlockType), x, y, Terraria.Tiles.GetBlockTypeName((BlockType)tile.type)
         ));
       }
     }
@@ -151,7 +151,7 @@ namespace Terraria.Plugins.CoderCow.Test {
 
     #region [Methods: AreItemsInBlockRect, AreNPCsInBlockRect]
     public static void AreItemsInBlockRect(
-      int tileX, int tileY, int tileW, int tileH, int expectedItemId, int expectedCount, bool allowOtherNpcs = false
+      int tileX, int tileY, int tileW, int tileH, ItemType expectedItemType, int expectedCount, bool allowOtherNpcs = false
     ) {
       int x = tileX * Terraria.TileSize;
       int y = tileY * Terraria.TileSize;
@@ -169,7 +169,7 @@ namespace Terraria.Plugins.CoderCow.Test {
           item.position.X >= x && item.position.X <= r &&
           item.position.Y >= y && item.position.Y <= b
         ) {
-          if (item.type == expectedItemId) {
+          if (item.type == (int)expectedItemType) {
             if (!ofExpectedId)
               ofExpectedId = true;
 
@@ -211,7 +211,7 @@ namespace Terraria.Plugins.CoderCow.Test {
     }
 
     public static void AreNPCsInBlockRect(
-      int tileX, int tileY, int tileW, int tileH, int expectedNPCId, int expectedCount, bool allowOtherItems = false
+      int tileX, int tileY, int tileW, int tileH, int expectedNPCType, int expectedCount, bool allowOtherItems = false
     ) {
       int x = tileX * Terraria.TileSize;
       int y = tileY * Terraria.TileSize;
@@ -229,7 +229,7 @@ namespace Terraria.Plugins.CoderCow.Test {
           npc.position.X >= x && npc.position.X <= r &&
           npc.position.Y >= y && npc.position.Y <= b
         ) {
-          if (npc.type == expectedNPCId) {
+          if (npc.type == expectedNPCType) {
             if (!ofExpectedId)
               ofExpectedId = true;
 

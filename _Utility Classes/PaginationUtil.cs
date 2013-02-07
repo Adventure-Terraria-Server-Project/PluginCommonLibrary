@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This file is provided unter the terms of the 
+// Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/.
+// 
+// Written by CoderCow
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -91,8 +97,6 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: Constructor]
     public PaginationUtil() {
-      Contract.Requires<ArgumentException>(maxLinesPerPage > 0);
-
       this.includeHeader = true;
       this.headerFormat = "Page {0} of {1}";
       this.headerTextColor = Color.Yellow;

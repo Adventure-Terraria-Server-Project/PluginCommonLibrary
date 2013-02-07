@@ -1,8 +1,15 @@
-﻿using System;
+﻿// This file is provided unter the terms of the 
+// Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/.
+// 
+// Written by CoderCow
+
+using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using TShockAPI;
 using DPoint = System.Drawing.Point;
+
+using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
   public class TerrariaTiles {
@@ -27,7 +34,7 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
 
-    #region [Method: IsValidCoord, IsValidTileId]
+    #region [Method: IsValidCoord, IsValidBlockType]
     public bool IsValidCoord(int x, int y) {
       return (
         x >= 0 && x < Main.maxTilesX - 1 &&
@@ -39,15 +46,15 @@ namespace Terraria.Plugins.CoderCow {
       return this.IsValidCoord(point.X, point.Y);
     }
 
-    public bool IsValidTileId(int blockId) {
-      return (blockId >= Terraria.TileId_Min && blockId <= Terraria.TileId_Max);
+    public bool IsValidBlockType(int blockType) {
+      return (blockType >= Terraria.BlockType_Min && blockType <= Terraria.BlockType_Max);
     }
     #endregion
 
-    #region [Methods: GetBlockName, IsSolidBlock]
+    #region [Methods: GetBlockTypeName, IsSolidBlockType]
     private static string[] tileNames;
 
-    public string GetBlockName(int blockId) {
+    public string GetBlockTypeName(BlockType blockType) {
       if (TerrariaTiles.tileNames == null) {
         TerrariaTiles.tileNames = new[] {
           "Dirt Block",
@@ -203,46 +210,46 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (blockId < 0 || blockId >= TerrariaTiles.tileNames.Length)
-        throw new ArgumentException(string.Format("The tild id \"{0}\" is invalid.", blockId), "blockId");
+      if (blockType < 0 || (int)blockType >= TerrariaTiles.tileNames.Length)
+        throw new ArgumentException(string.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
 
-      return TerrariaTiles.tileNames[blockId];
+      return TerrariaTiles.tileNames[(int)blockType];
     }
 
-    // Note: A block is considered any non-sprite, so any tile type which blocks the player from passing through 
+    // Note: A block is considered any non-sprite, so any block type which blocks the player from passing through 
     // (cobwebs inclusive).
-    public bool IsSolidBlock(
-      int blockId, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
+    public bool IsSolidBlockType(
+      BlockType blockType, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
       bool takeBouldersAsBlocks = false, bool takeDartTrapsAsBlocks = false
     ) {
       return (
-        (blockId >= Terraria.TileId_DirtBlock && blockId <= Terraria.TileId_Grass) ||
-        (blockId >= Terraria.TileId_SandBlock && blockId <= Terraria.TileId_JungleGrass && blockId != Terraria.TileId_Sign) ||
-        (blockId >= Terraria.TileId_IronOre && blockId <= Terraria.TileId_SilverOre) ||
-        (blockId >= Terraria.TileId_PearlsandBlock && blockId <= Terraria.TileId_SiltBlock) ||
-        (takeWoodPlatformAsBlock && blockId == Terraria.TileId_WoodPlatform) ||
-        (blockId >= Terraria.TileId_Meteorite && blockId <= Terraria.TileId_Spike && blockId != Terraria.TileId_ChainLantern) ||
-        (blockId >= Terraria.TileId_ObsidianBrick && blockId <= Terraria.TileId_HellstoneBrick) ||
-        (blockId >= Terraria.TileId_RedCandyCaneBlock && blockId <= Terraria.TileId_SnowBrick) ||
-        (blockId >= Terraria.TileId_DemoniteOre && blockId <= Terraria.TileId_CorruptGrass) ||
-        (blockId == Terraria.TileId_Wood) ||
-        (blockId >= Terraria.TileId_SapphireBlock && blockId <= Terraria.TileId_DiamondBlock) ||
-        (blockId >= Terraria.TileId_CobaltOre && blockId <= Terraria.TileId_EbonsandBlock && blockId != Terraria.TileId_HallowedPlants) ||
-        (takeWireableStoneAsBlock && blockId >= Terraria.TileId_ActiveStone && blockId <= Terraria.TileId_InactiveStone) ||
-        (blockId == Terraria.TileId_EbonstoneBlock) ||
-        (takeBouldersAsBlocks && blockId == Terraria.TileId_Boulder) ||
-        (blockId == Terraria.TileId_MushroomGrass) ||
-        (blockId == Terraria.TileId_IceBlock) ||
-        (blockId == Terraria.TileId_Cobweb)
+        (blockType >= BlockType.DirtBlock && blockType <= BlockType.Grass) ||
+        (blockType >= BlockType.SandBlock && blockType <= BlockType.JungleGrass && blockType != BlockType.Sign) ||
+        (blockType >= BlockType.IronOre && blockType <= BlockType.SilverOre) ||
+        (blockType >= BlockType.PearlsandBlock && blockType <= BlockType.SiltBlock) ||
+        (takeWoodPlatformAsBlock && blockType == BlockType.WoodPlatform) ||
+        (blockType >= BlockType.Meteorite && blockType <= BlockType.Spike && blockType != BlockType.ChainLantern) ||
+        (blockType >= BlockType.ObsidianBrick && blockType <= BlockType.HellstoneBrick) ||
+        (blockType >= BlockType.RedCandyCaneBlock && blockType <= BlockType.SnowBrick) ||
+        (blockType >= BlockType.DemoniteOre && blockType <= BlockType.CorruptGrass) ||
+        (blockType == BlockType.Wood) ||
+        (blockType >= BlockType.SapphireBlock && blockType <= BlockType.DiamondBlock) ||
+        (blockType >= BlockType.CobaltOre && blockType <= BlockType.EbonsandBlock && blockType != BlockType.HallowedPlants) ||
+        (takeWireableStoneAsBlock && blockType >= BlockType.ActiveStone && blockType <= BlockType.InactiveStone) ||
+        (blockType == BlockType.EbonstoneBlock) ||
+        (takeBouldersAsBlocks && blockType == BlockType.Boulder) ||
+        (blockType == BlockType.MushroomGrass) ||
+        (blockType == BlockType.IceBlock) ||
+        (blockType == BlockType.Cobweb)
       );
     }
     #endregion
 
     #region [Methods: SetBlock, RemoveBlock]
-    public void SetBlock(DPoint tileLocation, byte blockId, bool localOnly = false) {
+    public void SetBlock(DPoint tileLocation, BlockType blockType, bool localOnly = false) {
       Tile tile = Terraria.Tiles[tileLocation];
 
-      tile.type = blockId;
+      tile.type = (byte)blockType;
       tile.active = true;
 
       WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);

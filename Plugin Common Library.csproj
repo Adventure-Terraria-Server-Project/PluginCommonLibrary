@@ -130,12 +130,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TerrariaItems.cs" />
     <Compile Include="_Data\BlockType.cs" />
     <Compile Include="_Data\BossType.cs" />
     <Compile Include="_Data\ChestKind.cs" />
     <Compile Include="_Data\ChestType.cs" />
     <Compile Include="_Data\Direction.cs" />
     <Compile Include="_Data\ItemMetadata.cs" />
+    <Compile Include="_Data\ItemPrefix.cs" />
     <Compile Include="_Data\ItemType.cs" />
     <Compile Include="_Data\LiquidKind.cs" />
     <Compile Include="_Data\PlayerCommandInteraction.cs" />

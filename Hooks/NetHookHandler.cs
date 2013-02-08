@@ -321,13 +321,15 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           short chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
           byte slotIndex = e.Msg.readBuffer[e.Index + 2];
           byte itemStackSize = e.Msg.readBuffer[e.Index + 3];
-          byte itemPrefix = e.Msg.readBuffer[e.Index + 4];
-          short itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
+          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
+          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
           if (chestIndex >= Main.chest.Length || slotIndex > 19)
             break;
           
-          e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(player, chestIndex, slotIndex, itemStackSize, itemPrefix, itemType));
+          e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(
+            player, chestIndex, slotIndex, itemPrefix, itemType, itemStackSize
+          ));
           break;
         }
         case PacketTypes.SignNew: {
@@ -393,15 +395,15 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           float velocityX = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 10);
           float velocityY = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 14);
           byte itemStackSize = e.Msg.readBuffer[e.Index + 18];
-          byte itemPrefix = e.Msg.readBuffer[e.Index + 19];
-          short itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
+          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 19];
+          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
 
           // If it is actually an item pick up, then ensure a valid item index.
           if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
             break;
 
           e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
-            player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), itemStackSize, itemPrefix, itemType
+            player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), itemPrefix, itemType, itemStackSize
           ));
           break;
         }
@@ -429,13 +431,15 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           //byte playerIndex = e.Msg.readBuffer[e.Index];
           byte slotIndex = e.Msg.readBuffer[e.Index + 1];
           byte itemStackSize = e.Msg.readBuffer[e.Index + 2];
-          byte itemPrefix = e.Msg.readBuffer[e.Index + 3];
-          short itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
+          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 3];
+          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
 
           if (slotIndex > 59)
             break;
-
-          e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(player, slotIndex, itemStackSize, itemPrefix, itemType));
+          
+          e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(
+            player, slotIndex, itemPrefix, itemType, itemStackSize
+          ));
           break;
         }
         case PacketTypes.LiquidSet: {

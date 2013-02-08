@@ -5,25 +5,26 @@
 // Written by CoderCow
 
 using System;
+
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
   public class ItemMetadata {
-    #region [Property: Type]
-    private int type;
+    #region [Property: Prefix]
+    private ItemPrefix prefix;
 
-    public int Type {
-      get { return this.type; }
-      set { this.type = value; }
+    public ItemPrefix Prefix {
+      get { return this.prefix; }
+      set { this.prefix = value; }
     }
     #endregion
 
-    #region [Property: Prefix]
-    private byte prefix;
+    #region [Property: Type]
+    private ItemType type;
 
-    public byte Prefix {
-      get { return this.prefix; }
-      set { this.prefix = value; }
+    public ItemType Type {
+      get { return this.type; }
+      set { this.type = value; }
     }
     #endregion
 
@@ -38,29 +39,41 @@ namespace Terraria.Plugins.CoderCow {
 
 
     #region [Method: Constructor]
-    public ItemMetadata(int type, byte prefix, int stackSize) {
-      this.type = type;
+    public ItemMetadata(ItemPrefix prefix, ItemType type, int stackSize) {
       this.prefix = prefix;
+      this.type = type;
       this.stackSize = stackSize;
     }
     #endregion
 
     #region [Method: Static FromItem, FromNetItem, ToItem]
     public static ItemMetadata FromItem(Item item) {
-      return new ItemMetadata(item.netID, (byte)item.stack, item.prefix);
+      return new ItemMetadata((ItemPrefix)item.prefix, (ItemType)item.netID, (byte)item.stack);
     }
 
     public static ItemMetadata FromNetItem(NetItem netItem) {
-      return new ItemMetadata(netItem.netID, (byte)netItem.prefix, netItem.stack);
+      return new ItemMetadata((ItemPrefix)netItem.prefix, (ItemType)netItem.netID, netItem.stack);
     }
 
     public Item ToItem() {
       Item item = new Item();
-      item.netDefaults(this.Type);
-      item.Prefix(this.Prefix);
+      item.netDefaults((int)this.Type);
+      item.Prefix((byte)this.Prefix);
       item.stack = this.StackSize;
 
       return item;
+    }
+    #endregion
+
+    #region [Method: ToString]
+    public override string ToString() {
+      string format;
+      if (this.Prefix == ItemPrefix.None)
+        format = "{1} ({2})";
+      else
+        format = "{0} {1} ({2})";
+
+      return string.Format(format, this.Prefix, this.Type, this.StackSize);
     }
     #endregion
   }

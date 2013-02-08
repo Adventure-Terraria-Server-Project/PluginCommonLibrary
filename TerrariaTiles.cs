@@ -34,7 +34,7 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
 
-    #region [Method: IsValidCoord, IsValidBlockType]
+    #region [Methods: IsValidCoord, IsValidBlockType]
     public bool IsValidCoord(int x, int y) {
       return (
         x >= 0 && x < Main.maxTilesX - 1 &&

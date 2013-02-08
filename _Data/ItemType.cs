@@ -7,7 +7,8 @@
 using System;
 
 namespace Terraria.Plugins.CoderCow {
-  public enum ItemType {
+  public enum ItemType: short {
+    None = 0,
     IronPickaxe = 1,
     DirtBlock = 2,
     StoneBlock = 3,

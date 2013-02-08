@@ -27,6 +27,22 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
+    #region [Property: ItemPrefix]
+    private readonly ItemPrefix itemPrefix;
+
+    public ItemPrefix ItemPrefix {
+      get { return this.itemPrefix; }
+    }
+    #endregion
+
+    #region [Property: ItemType]
+    private readonly ItemType itemType;
+
+    public ItemType ItemType {
+      get { return this.itemType; }
+    }
+    #endregion
+
     #region [Property: ItemStackSize]
     private readonly byte itemStackSize;
 
@@ -35,32 +51,16 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Property: ItemPrefix]
-    private readonly byte itemPrefix;
-
-    public byte ItemPrefix {
-      get { return this.itemPrefix; }
-    }
-    #endregion
-
-    #region [Property: ItemType]
-    private readonly short itemType;
-
-    public short ItemType {
-      get { return this.itemType; }
-    }
-    #endregion
-
 
     #region [Method: Constructor]
     public ChestModifySlotEventArgs(
-      TSPlayer player, short chestIndex, byte slotIndex, byte itemStackSize, byte itemPrefix, short itemType
+      TSPlayer player, short chestIndex, byte slotIndex, ItemPrefix itemPrefix, ItemType itemType, byte itemStackSize
     ): base(player) {
       this.chestIndex = chestIndex;
       this.slotIndex = slotIndex;
-      this.itemStackSize = itemStackSize;
       this.itemPrefix = itemPrefix;
       this.itemType = itemType;
+      this.itemStackSize = itemStackSize;
     }
     #endregion
   }

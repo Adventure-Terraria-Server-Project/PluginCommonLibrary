@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text;
+
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
@@ -103,7 +104,7 @@ namespace Terraria.Plugins.CoderCow {
       this.nothingToDisplayString = null;
       this.lineFormatter = null;
       this.lineTextColor = Color.White;
-      this.maxLinesPerPage = maxLinesPerPage;
+      this.maxLinesPerPage = 4;
       this.pageLimit = 0;
     }
     #endregion
@@ -157,9 +158,6 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: SendPage]
     public void SendPage(TSPlayer player, IEnumerable contents, int pageNumber, int contentCount) {
-      if (this.MaxLinesPerPage == 0)
-        throw new InvalidOperationException("This PaginationUtil object is invalid, use the non default constructor instead.");
-
       if (contentCount == 0) {
         if (this.NothingToDisplayString != null)
           player.SendMessage(this.NothingToDisplayString, this.HeaderTextColor);

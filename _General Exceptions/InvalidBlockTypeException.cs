@@ -13,31 +13,33 @@ namespace Terraria.Plugins.CoderCow {
   [Serializable]
   public class InvalidBlockTypeException: Exception {
     #region [Property: BlockType]
-    private readonly int blockType;
+    private readonly BlockType blockType;
 
-    public int BlockType {
+    public BlockType BlockType {
       get { return this.blockType; }
     }
     #endregion
 
 
     #region [Method: Constructor]
-    public InvalidBlockTypeException(string message, int blockType = -1): base(message, null) {
+    public InvalidBlockTypeException(string message, BlockType blockType = BlockType.Invalid): base(message, null) {
       this.blockType = blockType;
     }
 
-    public InvalidBlockTypeException(int blockType): base(string.Format("The given block type \"{0}\" is invalid.", blockType)) {
+    public InvalidBlockTypeException(BlockType blockType): base(string.Format(
+      "The given block type \"{0}\" was unexpected in this context.", blockType
+    )) {
       this.blockType = blockType;
     }
 
     public InvalidBlockTypeException(string message, Exception inner = null): base(message, inner) {}
 
-    public InvalidBlockTypeException(): base("The given block type is invalid.") {}
+    public InvalidBlockTypeException(): base("The given block type was unexpected in this context.") {}
     #endregion
 
     #region [Serializable Implementation]
-    protected InvalidBlockTypeException(SerializationInfo info, StreamingContext context) : base(info, context) {
-      this.blockType = info.GetInt32("InvalidBlockTypeException_BlockType");
+    protected InvalidBlockTypeException(SerializationInfo info, StreamingContext context): base(info, context) {
+      this.blockType = (BlockType)info.GetValue("InvalidBlockTypeException_BlockType", typeof(BlockType));
     }
 
     [SecurityCritical]

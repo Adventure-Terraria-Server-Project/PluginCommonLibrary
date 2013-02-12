@@ -116,6 +116,15 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>References\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>References\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Web">
+      <HintPath>References\MySql.Web.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -130,20 +139,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="_Threading\AsyncWorkQueue.cs" />
+    <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
-    <Compile Include="_Data\BlockType.cs" />
-    <Compile Include="_Data\BossType.cs" />
-    <Compile Include="_Data\ChestKind.cs" />
-    <Compile Include="_Data\ChestType.cs" />
-    <Compile Include="_Data\Direction.cs" />
-    <Compile Include="_Data\ItemMetadata.cs" />
-    <Compile Include="_Data\ItemPrefix.cs" />
-    <Compile Include="_Data\ItemType.cs" />
-    <Compile Include="_Data\LiquidKind.cs" />
-    <Compile Include="_Data\PlayerCommandInteraction.cs" />
-    <Compile Include="_Data\CommandInteractionResult.cs" />
-    <Compile Include="_Data\WallType.cs" />
-    <Compile Include="_Super Classes\MetadataHandlerBase.cs" />
+    <Compile Include="_Enums\BlockType.cs" />
+    <Compile Include="_Enums\BossType.cs" />
+    <Compile Include="_Enums\ChestKind.cs" />
+    <Compile Include="_Enums\ChestType.cs" />
+    <Compile Include="_Enums\Direction.cs" />
+    <Compile Include="_Enums\ItemMetadata.cs" />
+    <Compile Include="_Enums\ItemPrefix.cs" />
+    <Compile Include="_Enums\ItemType.cs" />
+    <Compile Include="_Enums\LiquidKind.cs" />
+    <Compile Include="_Interaction\PlayerCommandInteraction.cs" />
+    <Compile Include="_Interaction\CommandInteractionResult.cs" />
+    <Compile Include="_Enums\WallType.cs" />
+    <Compile Include="_Data\DatabaseHandlerBase.cs" />
+    <Compile Include="_Data\MetadataHandlerBase.cs" />
     <Compile Include="_Utility Classes\BoolEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
@@ -166,21 +178,21 @@
     <Compile Include="Test\AssertException.cs" />
     <Compile Include="Test\TAssert.cs" />
     <Compile Include="IMetadataFile.cs" />
-    <Compile Include="_Data\PluginInfo.cs" />
+    <Compile Include="PluginInfo.cs" />
     <Compile Include="PluginTrace.cs" />
     <Compile Include="_Utility Classes\PointEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
-    <Compile Include="_Data\StatueType.cs" />
+    <Compile Include="_Enums\StatueType.cs" />
     <Compile Include="Collections\StringCollection.cs" />
     <Compile Include="Terraria.cs" />
     <Compile Include="Terraria.SpriteMeasureData.cs">
       <DependentUpon>Terraria.cs</DependentUpon>
     </Compile>
-    <Compile Include="_Data\TileEditType.cs" />
+    <Compile Include="_Enums\TileEditType.cs" />
     <Compile Include="_Utility Classes\TShockEx.cs" />
-    <Compile Include="_Super Classes\UserInteractionHandlerBase.cs" />
-    <Compile Include="_Super Classes\WorldMetadataHandlerBase.cs" />
+    <Compile Include="_Interaction\UserInteractionHandlerBase.cs" />
+    <Compile Include="_Data\WorldMetadataHandlerBase.cs" />
     <Compile Include="Test\TestContext.cs" />
     <Compile Include="Test\TestDelay.cs" />
     <Compile Include="Test\TestRunData.cs" />

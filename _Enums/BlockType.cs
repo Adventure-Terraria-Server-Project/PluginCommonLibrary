@@ -8,6 +8,7 @@ using System;
 
 namespace Terraria.Plugins.CoderCow {
   public enum BlockType {
+    Invalid = -1,
     DirtBlock = 0,
     StoneBlock = 1,
     Grass = 2,
@@ -107,7 +108,7 @@ namespace Terraria.Plugins.CoderCow {
     CookingPot = 96,
     Safe = 97,
     SkullLantern = 98,
-    TashCan_UNUSED = 99,
+    TrashCan_UNUSED = 99,
     Candelabra = 100,
     Bookcase = 101,
     Throne = 102,

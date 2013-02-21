@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Terraria.Plugins.CoderCow {
   using CompletedWorkItem = Tuple<WorkItem,object>;
 
-  public class AsyncWorkQueue: IDisposable {
+  public class AsyncOrderedWorkQueue: IDisposable {
     #region [Property: IsBusy]
     public bool IsBusy {
       get {
@@ -28,7 +28,7 @@ namespace Terraria.Plugins.CoderCow {
 
 
     #region [Method: Constructor]
-    public AsyncWorkQueue() {
+    public AsyncOrderedWorkQueue() {
       this.enqueuedWorkItems = new List<WorkItem>();
       this.nonAsyncCompletedWorkItems = new List<CompletedWorkItem>();
     }
@@ -43,41 +43,56 @@ namespace Terraria.Plugins.CoderCow {
         this.enqueuedWorkItems.Add(workItem);
       }
 
-      if (!this.IsBusy) {
-        Contract.Assert(this.currentWorkTask == null);
-        this.cancellationTokenSource = new CancellationTokenSource();
-        this.currentWorkTask = Task.Factory.StartNew(
-          () => this.ProcessWorkItems(this.cancellationTokenSource.Token), this.cancellationTokenSource.Token
-        );
-      }
-    }
-
-    public void FinishAll() {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-
       lock (this.currentWorkTaskLock) {
-        if (this.currentWorkTask != null) {
-          this.currentWorkTask.Wait();
-
-          if (this.currentWorkTask.Exception != null)
-            throw this.currentWorkTask.Exception;
+        if (!this.IsBusy) {
+          Contract.Assert(this.currentWorkTask == null);
+          this.cancellationTokenSource = new CancellationTokenSource();
+          this.currentWorkTask = Task.Factory.StartNew(
+            () => this.ProcessWorkItems(this.cancellationTokenSource.Token), this.cancellationTokenSource.Token
+          );
         }
       }
     }
 
+    /// <remarks>
+    ///   Will do nothing when called by a work item.
+    /// </remarks>
+    public void FinishAll() {
+      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      
+      if (this.IsBusy) {
+        try {
+          // If this is called by a work item, it shall not cause it deadlock by waiting for itself.
+          if (Task.CurrentId != null && Task.CurrentId != this.currentWorkTask.Id)
+            this.currentWorkTask.Wait();
+        } catch (AggregateException ax) {
+          throw ax.InnerException;
+        // Because currentWorkTask might be set to null right between IsBusy and the call to Wait.
+        } catch (NullReferenceException) {}
+      }
+    }
+
+    /// <remarks>
+    ///   Should not be called by a work item.
+    /// </remarks>
     public void CancelAll() {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
 
-      this.cancellationTokenSource.Cancel();
       lock (this.currentWorkTaskLock) {
-        if (this.currentWorkTask != null) {
-          this.currentWorkTask.Wait();
+        this.cancellationTokenSource.Cancel();
+      }
 
-          if (this.currentWorkTask.Exception != null)
-            throw this.currentWorkTask.Exception;
+      try {
+        this.FinishAll();
+      } finally {
+        lock (this.enqueuedWorkItemsLock) {
+          this.enqueuedWorkItems.Clear();
         }
       }
-      this.enqueuedWorkItems.Clear();
+
+      lock (this.currentWorkTaskLock) {
+        this.cancellationTokenSource.Cancel();
+      }
     }
     #endregion
 
@@ -189,7 +204,7 @@ namespace Terraria.Plugins.CoderCow {
       GC.SuppressFinalize(this);
     }
 
-    ~AsyncWorkQueue() {
+    ~AsyncOrderedWorkQueue() {
       this.Dispose(false);
     }
     #endregion

@@ -22,9 +22,9 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Property: WorkQueue]
-    private readonly AsyncWorkQueue workQueue;
+    private readonly AsyncOrderedWorkQueue workQueue;
 
-    protected AsyncWorkQueue WorkQueue {
+    protected AsyncOrderedWorkQueue WorkQueue {
       get { return this.workQueue; }
     }
     #endregion
@@ -55,7 +55,7 @@ namespace Terraria.Plugins.CoderCow {
           throw new NotImplementedException();
       }
 
-      this.workQueue = new AsyncWorkQueue();
+      this.workQueue = new AsyncOrderedWorkQueue();
     }
     #endregion
 

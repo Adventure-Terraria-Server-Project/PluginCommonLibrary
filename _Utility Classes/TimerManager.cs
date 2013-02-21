@@ -10,7 +10,7 @@ using System.Diagnostics.Contracts;
 using Hooks;
 
 namespace Terraria.Plugins.CoderCow {
-  public class TimerManager: IDisposable {
+  public class TimerManager {
     #region [Constants]
     private const int FrameUpdateFreq = 10;
     #endregion
@@ -23,11 +23,11 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Property: Timers]
-    private readonly List<TimerBase> timers;
+    #region [Property: RunningTimers]
+    private readonly List<TimerBase> runningTimers;
 
-    protected List<TimerBase> Timers {
-      get { return this.timers; }
+    protected List<TimerBase> RunningTimers {
+      get { return this.runningTimers; }
     }
     #endregion
 
@@ -35,59 +35,54 @@ namespace Terraria.Plugins.CoderCow {
     #region [Method: Constructor]
     public TimerManager(PluginTrace pluginTrace) {
       this.pluginTrace = pluginTrace;
-      this.timers = new List<TimerBase>();
-
-      GameHooks.Update += this.Game_Update;
+      this.runningTimers = new List<TimerBase>();
     }
     #endregion
 
-    #region [Methods: StartTimer, StartOrResetTimer, RemoveTimer, HandleGameUpdate]
+    #region [Methods: StartTimer, StartOrResetTimer, RemoveTimer, IsTimerRunning, HandleGameUpdate]
     public void StartTimer(TimerBase timer) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-
-      if (!this.Timers.Contains(timer))
-        this.Timers.Add(timer);
+      if (!this.IsTimerRunning(timer)) {
+        this.RunningTimers.Add(timer);
+        timer.Reset();
+      }
     }
 
     public void StartOrResetTimer(TimerBase timer) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (!this.IsTimerRunning(timer))
+        this.RunningTimers.Add(timer);
 
-      int timerIndex = this.Timers.IndexOf(timer);
-      if (timerIndex == -1)
-        this.Timers.Add(timer);
-      else
-        this.Timers[timerIndex].Reset();
+      timer.Reset();
     }
 
     public void RemoveTimer(TimerBase timer, bool andInvokeCallback = false) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-
       try {
         if (andInvokeCallback)
           this.InvokeTimerCallback(timer);
       } finally {
-        this.Timers.Remove(timer);
+        this.RunningTimers.Remove(timer);
       }
     }
 
-    private int frameCounter;
-    public void Game_Update() {
-      if (this.frameCounter >= TimerManager.FrameUpdateFreq) {
-        if (this.Timers.Count > 0) {
-          for (int i = 0; i < this.Timers.Count; i++) {
-            TimerBase abstractTimer = this.Timers[i];
-            abstractTimer.Update(TimerManager.FrameUpdateFreq);
+    public bool IsTimerRunning(TimerBase timer) {
+      return this.RunningTimers.Contains(timer);
+    }
 
-            if (abstractTimer.IsExpired()) {
-              if (this.InvokeTimerCallback(abstractTimer))
-                abstractTimer.Reset();
-              else
-                this.Timers.RemoveAt(i--);
-            }
+    private int frameCounter;
+    public void HandleGameUpdate() {
+      if (this.frameCounter >= TimerManager.FrameUpdateFreq) {
+        this.frameCounter = 0;
+
+        for (int i = 0; i < this.RunningTimers.Count; i++) {
+          TimerBase abstractTimer = this.RunningTimers[i];
+          abstractTimer.Update(TimerManager.FrameUpdateFreq);
+
+          if (abstractTimer.IsExpired()) {
+            if (this.InvokeTimerCallback(abstractTimer))
+              abstractTimer.Reset();
+            else
+              this.RunningTimers.RemoveAt(i--);
           }
         }
-
-        this.frameCounter = 0;
       }
 
       this.frameCounter++;
@@ -105,34 +100,7 @@ namespace Terraria.Plugins.CoderCow {
 
     #region [Method: ToString]
     public override string ToString() {
-      return string.Format("{0} Timers running.", this.Timers.Count);
-    }
-    #endregion
-
-    #region [IDisposable Implementation]
-    private bool isDisposed;
-
-    public bool IsDisposed {
-      get { return this.isDisposed; } 
-    }
-
-    protected virtual void Dispose(bool isDisposing) {
-      if (this.isDisposed)
-        return;
-    
-      if (isDisposing)
-        GameHooks.Update -= this.Game_Update;
-    
-      this.isDisposed = true;
-    }
-
-    public void Dispose() {
-      this.Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    ~TimerManager() {
-      this.Dispose(false);
+      return string.Format("{0} Timers running.", this.RunningTimers.Count);
     }
     #endregion
   }

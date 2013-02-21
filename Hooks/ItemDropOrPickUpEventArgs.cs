@@ -35,41 +35,23 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Property: Prefix]
-    private readonly ItemPrefix prefix;
+    #region [Property: Item]
+    private readonly ItemMetadata item;
 
-    public ItemPrefix Prefix {
-      get { return this.prefix; }
-    }
-    #endregion
-
-    #region [Property: ItemType]
-    private readonly ItemType itemType;
-
-    public ItemType ItemType {
-      get { return this.itemType; }
-    }
-    #endregion
-
-    #region [Property: StackSize]
-    private readonly byte stackSize;
-
-    public byte StackSize {
-      get { return this.stackSize; }
+    public ItemMetadata Item {
+      get { return this.item; }
     }
     #endregion
 
 
     #region [Method: Constructor]
     public ItemDropOrPickUpEventArgs(
-      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, ItemPrefix prefix, ItemType itemType, byte stackSize
+      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, ItemMetadata item
     ): base(player) {
       this.itemIndex = itemIndex;
       this.location = location;
       this.velocity = velocity;
-      this.prefix = prefix;
-      this.itemType = itemType;
-      this.stackSize = stackSize;
+      this.item = item;
     }
     #endregion
   }

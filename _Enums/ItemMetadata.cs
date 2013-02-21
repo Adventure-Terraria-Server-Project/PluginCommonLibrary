@@ -9,31 +9,36 @@ using System;
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
-  public class ItemMetadata {
+  public struct ItemMetadata {
+    #region [Property: Static None]
+    private static readonly ItemMetadata none = default(ItemMetadata);
+
+    public static ItemMetadata None {
+      get { return ItemMetadata.none; }
+    }
+    #endregion
+
     #region [Property: Prefix]
-    private ItemPrefix prefix;
+    private readonly ItemPrefix prefix;
 
     public ItemPrefix Prefix {
       get { return this.prefix; }
-      set { this.prefix = value; }
     }
     #endregion
 
     #region [Property: Type]
-    private ItemType type;
+    private readonly ItemType type;
 
     public ItemType Type {
       get { return this.type; }
-      set { this.type = value; }
     }
     #endregion
 
     #region [Property: StackSize]
-    private int stackSize;
+    private readonly int stackSize;
 
     public int StackSize {
       get { return this.stackSize; }
-      set { this.stackSize = value; }
     }
     #endregion
 
@@ -62,6 +67,35 @@ namespace Terraria.Plugins.CoderCow {
       item.stack = this.StackSize;
 
       return item;
+    }
+    #endregion
+
+    #region [Methods: GetHashCode, Equals, ==, !=]
+    public override int GetHashCode() {
+      return (int)this.Prefix ^ (int)this.Type ^ this.StackSize;
+    }
+
+    public bool Equals(ItemMetadata other) {
+      return (
+        this.prefix == other.prefix &&
+        this.type == other.type &&
+        this.stackSize == other.stackSize
+      );
+    }
+
+    public override bool Equals(object obj) {
+      if (!(obj is ItemMetadata))
+        return false;
+
+      return this.Equals((ItemMetadata)obj);
+    }
+
+    public static bool operator ==(ItemMetadata a, ItemMetadata b) {
+      return a.Equals(b);
+    }
+
+    public static bool operator !=(ItemMetadata a, ItemMetadata b) {
+      return !a.Equals(b);
     }
     #endregion
 

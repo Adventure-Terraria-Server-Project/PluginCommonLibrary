@@ -27,40 +27,20 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Property: ItemPrefix]
-    private readonly ItemPrefix itemPrefix;
+    #region [Property: NewItem]
+    private readonly ItemMetadata newItem;
 
-    public ItemPrefix ItemPrefix {
-      get { return this.itemPrefix; }
-    }
-    #endregion
-
-    #region [Property: ItemType]
-    private readonly ItemType itemType;
-
-    public ItemType ItemType {
-      get { return this.itemType; }
-    }
-    #endregion
-
-    #region [Property: ItemStackSize]
-    private readonly byte itemStackSize;
-
-    public byte ItemStackSize {
-      get { return this.itemStackSize; }
+    public ItemMetadata NewItem {
+      get { return this.newItem; }
     }
     #endregion
 
 
     #region [Method: Constructor]
-    public ChestModifySlotEventArgs(
-      TSPlayer player, short chestIndex, byte slotIndex, ItemPrefix itemPrefix, ItemType itemType, byte itemStackSize
-    ): base(player) {
+    public ChestModifySlotEventArgs(TSPlayer player, short chestIndex, byte slotIndex, ItemMetadata newItem): base(player) {
       this.chestIndex = chestIndex;
       this.slotIndex = slotIndex;
-      this.itemPrefix = itemPrefix;
-      this.itemType = itemType;
-      this.itemStackSize = itemStackSize;
+      this.newItem = newItem;
     }
     #endregion
   }

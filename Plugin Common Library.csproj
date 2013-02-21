@@ -139,7 +139,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="_Threading\AsyncWorkQueue.cs" />
+    <Compile Include="_Threading\AsyncOrderedWorkQueue.cs" />
     <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
     <Compile Include="_Enums\BlockType.cs" />

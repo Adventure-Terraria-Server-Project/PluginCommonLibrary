@@ -24,13 +24,13 @@ namespace Terraria.Plugins.CoderCow {
       result = TimeSpan.Zero;
       if (string.IsNullOrWhiteSpace(input))
         return false;
-
+      
       Match regexMatch = TimeSpanEx.parseShortTimeSpanRegex.Match(input);
       if (!regexMatch.Success)
         return false;
 
       Group daysGroup = regexMatch.Groups["Days"];
-      if (daysGroup != null) {
+      if (daysGroup.Success) {
         int days;
         if (!int.TryParse(daysGroup.Value, out days))
           return false;
@@ -38,7 +38,7 @@ namespace Terraria.Plugins.CoderCow {
         result += TimeSpan.FromDays(days);
       }
       Group hoursGroup = regexMatch.Groups["Hours"];
-      if (hoursGroup != null) {
+      if (hoursGroup.Success) {
         int hours;
         if (!int.TryParse(hoursGroup.Value, out hours))
           return false;
@@ -47,7 +47,7 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       Group minutesGroup = regexMatch.Groups["Minutes"];
-      if (minutesGroup != null) {
+      if (minutesGroup.Success) {
         int minutes;
         if (!int.TryParse(minutesGroup.Value, out minutes))
           return false;
@@ -56,7 +56,7 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       Group secondsGroup = regexMatch.Groups["Seconds"];
-      if (secondsGroup != null) {
+      if (secondsGroup.Success) {
         int seconds;
         if (!int.TryParse(secondsGroup.Value, out seconds))
           return false;
@@ -71,11 +71,10 @@ namespace Terraria.Plugins.CoderCow {
     #region [Method: Static ToLongString]
     public static string ToLongString(this TimeSpan timeSpan) {
       StringBuilder result = new StringBuilder();
-      int totalDays = (int)timeSpan.TotalDays;
-      if (totalDays == 1) {
+      if (timeSpan.Days == 1) {
         result.Append("1 day");
-      } else if (totalDays > 0) {
-        result.Append(timeSpan.TotalDays);
+      } else if (timeSpan.Days > 0) {
+        result.Append(timeSpan.Days);
         result.Append(" days");
       }
 
@@ -103,6 +102,26 @@ namespace Terraria.Plugins.CoderCow {
 
         result.Append(timeSpan.Minutes);
         result.Append(" minutes");
+      }
+
+      if (timeSpan.Seconds == 1) {
+        if (result.Length > 0)
+          result.Append(' ');
+
+        result.Append("1 second");
+      } else if (timeSpan.Seconds > 0) {
+        if (result.Length > 0)
+          result.Append(' ');
+
+        result.Append(timeSpan.Seconds);
+        result.Append(" seconds");
+      }
+
+      if (result.Length == 0) {
+        if (timeSpan.Milliseconds > 0)
+          result.Append("Less than a second.");
+        else
+          result.Append("Zero");
       }
 
       return result.ToString();

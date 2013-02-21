@@ -328,7 +328,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
           
           e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(
-            player, chestIndex, slotIndex, itemPrefix, itemType, itemStackSize
+            player, chestIndex, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
           ));
           break;
         }
@@ -403,7 +403,8 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
 
           e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
-            player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), itemPrefix, itemType, itemStackSize
+            player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
+            new ItemMetadata(itemPrefix, itemType, itemStackSize)
           ));
           break;
         }
@@ -438,7 +439,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
           
           e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(
-            player, slotIndex, itemPrefix, itemType, itemStackSize
+            player, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
           ));
           break;
         }

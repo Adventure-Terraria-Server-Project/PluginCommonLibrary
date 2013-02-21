@@ -34,7 +34,7 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
 
-    #region [Methods: IsValidCoord, IsValidBlockType]
+    #region [Methods: IsValidCoord, IsValidBlockType, IsSwitchableBlockType]
     public bool IsValidCoord(int x, int y) {
       return (
         x >= 0 && x < Main.maxTilesX - 1 &&
@@ -49,14 +49,23 @@ namespace Terraria.Plugins.CoderCow {
     public bool IsValidBlockType(int blockType) {
       return (blockType >= Terraria.BlockType_Min && blockType <= Terraria.BlockType_Max);
     }
+
+    public bool IsSwitchableBlockType(BlockType blockType) {
+      return (
+        blockType == BlockType.Switch ||
+        blockType == BlockType.Lever ||
+        blockType == BlockType.PressurePlate ||
+        blockType == BlockType.XSecondTimer
+      );
+    }
     #endregion
 
     #region [Methods: GetBlockTypeName, IsSolidBlockType]
     private static string[] tileNames;
 
     public string GetBlockTypeName(BlockType blockType) {
-      if (TerrariaTiles.tileNames == null) {
-        TerrariaTiles.tileNames = new[] {
+      if (tileNames == null) {
+        tileNames = new[] {
           "Dirt Block",
           "Stone Block",
           "Grass",
@@ -210,10 +219,10 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (blockType < 0 || (int)blockType >= TerrariaTiles.tileNames.Length)
-        throw new ArgumentException(string.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
+      if (blockType < 0 || (int)blockType >= tileNames.Length)
+        throw new ArgumentException(String.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
 
-      return TerrariaTiles.tileNames[(int)blockType];
+      return tileNames[(int)blockType];
     }
 
     // Note: A block is considered any non-sprite, so any block type which blocks the player from passing through 

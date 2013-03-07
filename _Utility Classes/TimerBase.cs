@@ -13,7 +13,7 @@ namespace Terraria.Plugins.CoderCow {
 
     public DateTime StartTime {
       get { return this.startTime; }
-      internal set { this.startTime = value; }
+      set { this.startTime = value; }
     }
     #endregion
 
@@ -27,10 +27,11 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Property: Callback]
-    private readonly Func<TimerBase,bool> callback;
+    private Func<TimerBase,bool> callback;
 
-    internal Func<TimerBase,bool> Callback {
+    public Func<TimerBase,bool> Callback {
       get { return this.callback; }
+      set { this.callback = value; }
     }
     #endregion
 

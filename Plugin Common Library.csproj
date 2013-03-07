@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.CoderCow</RootNamespace>
-    <AssemblyName>Plugin Common Lib 1.5</AssemblyName>
+    <AssemblyName>Plugin Common Lib 1.6</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -139,6 +139,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hooks\DoorUseEventArgs.cs" />
+    <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />
+    <Compile Include="_General Exceptions\ChestNotEmptyException.cs" />
     <Compile Include="_Threading\AsyncOrderedWorkQueue.cs" />
     <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
@@ -157,6 +160,7 @@
     <Compile Include="_Data\DatabaseHandlerBase.cs" />
     <Compile Include="_Data\MetadataHandlerBase.cs" />
     <Compile Include="_Utility Classes\BoolEx.cs" />
+    <Compile Include="_Utility Classes\CollectionEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
     <Compile Include="_Utility Classes\Timer.cs" />

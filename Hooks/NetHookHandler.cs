@@ -223,12 +223,44 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
     protected virtual bool OnLiquidSet(LiquidSetEventArgs e) {
       Contract.Requires<ArgumentNullException>(e != null);
-
+      
       try {
         if (this.LiquidSet != null)
           this.LiquidSet(this, e);
       } catch (Exception ex) {
         this.ReportEventHandlerException("LiquidSet", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+    
+    #region [Event: DoorUse]
+    public event EventHandler<DoorUseEventArgs> DoorUse;
+
+    protected virtual bool OnDoorUse(DoorUseEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.DoorUse != null)
+          this.DoorUse(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("DoorUse", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
+    #region [Event: PlayerSpawn]
+    public event EventHandler<PlayerSpawnEventArgs> PlayerSpawn;
+
+    protected virtual bool OnPlayerSpawn(PlayerSpawnEventArgs e) {
+      try {
+        if (this.PlayerSpawn != null)
+          this.PlayerSpawn(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("PlayerSpawn", ex);
       }
 
       return e.Handled;
@@ -255,206 +287,249 @@ namespace Terraria.Plugins.CoderCow.Hooks {
       TSPlayer player = TShock.Players[e.Msg.whoAmI];
       if (player == null)
         return;
+
+      try {
+        switch (e.MsgID) {
+          // Note: As for DestroyTile and DestroyTileNoItem, blockId will be of "1" if the player attempted to destroy
+          // a tile but didn't succeed yet, and will be of "0" as the tile is actually destroyed.
+          // However, there's one exception with Chests, they will never send their actual destroy packet, except a hack
+          // tool is used, it seems.
+          case PacketTypes.Tile: {
+            if (this.TileEdit == null || e.Msg.readBuffer.Length - e.Index < 11)
+              break;
+
+            byte editType = e.Msg.readBuffer[e.Index];
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
+            byte blockType = e.Msg.readBuffer[e.Index + 9];
+            byte spriteStyle = e.Msg.readBuffer[e.Index + 10];
+
+            if (!Terraria.Tiles.IsValidCoord(x, y) || editType > 6)
+              return;
+
+            e.Handled = this.OnTileEdit(
+              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, spriteStyle
+            ));
+            break;
+          }
+          // Note: TShock ensures that this packet reaches us here only if the tile to be killed is of type 21 (Chest)
+          // OR the maximum amount of Chests has been placed on the map and the tile to be killed is of type 0 (Dirt) - for
+          // whatever reason.
+          // The packet is also sent if there are still items in the chest.
+          case PacketTypes.TileKill: {
+            if ((this.TileEdit == null && this.ChestKill == null) || e.Msg.readBuffer.Length - e.Index < 8)
+              break;
+
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+          
+            if (!Terraria.Tiles.IsValidCoord(x, y) || Terraria.Tiles[x, y].type == 0)
+              break;
+          
+            if (this.InvokeTileEditOnChestKill)
+              e.Handled = this.OnTileEdit(new TileEditEventArgs(player, TileEditType.DestroyTile, new DPoint(x, y), 0, 0));
+
+            if (!e.Handled)
+              e.Handled = this.OnChestKill(new TileLocationEventArgs(player, new DPoint(x, y)));
+
+            break;
+          }
+          case PacketTypes.ChestGetContents: {
+            if (this.ChestGetContents == null || e.Msg.readBuffer.Length - e.Index < 8)
+              break;
+          
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+
+            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+              return;
+          
+            e.Handled = this.OnChestGetContents(new TileLocationEventArgs(player, new DPoint(x, y)));
+            break;
+          }
+          case PacketTypes.ChestItem: {
+            if (this.ChestModifySlot == null || e.Msg.readBuffer.Length - e.Index < 7)
+              break;
+
+            short chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            byte slotIndex = e.Msg.readBuffer[e.Index + 2];
+            byte itemStackSize = e.Msg.readBuffer[e.Index + 3];
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
+
+            if (chestIndex >= Main.chest.Length || slotIndex > 19)
+              break;
+          
+            e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(
+              player, chestIndex, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
+            ));
+            break;
+          }
+          case PacketTypes.SignNew: {
+            if (this.SignEdit == null || e.Msg.readBuffer.Length - e.Index < 10)
+              break;
+
+            short signIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+            string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - e.Index - 11);
+
+            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+              return;
+
+            e.Handled = this.OnSignEdit(new SignEditEventArgs(player, signIndex, new DPoint(x, y), newText));
+            break;
+          }
+          case PacketTypes.SignRead: {
+            if (this.SignRead == null || e.Msg.readBuffer.Length - e.Index < 8)
+              break;
+
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+
+            e.Handled = this.OnSignRead(new TileLocationEventArgs(player, new DPoint(x, y)));
+            break;
+          }
+          case PacketTypes.HitSwitch: {
+            if (this.HitSwitch == null || e.Msg.readBuffer.Length - e.Index < 5)
+              break;
+
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
       
-      switch (e.MsgID) {
-        // Note: As for DestroyTile and DestroyTileNoItem, blockId will be of "1" if the player attempted to destroy
-        // a tile but didn't succeed yet, and will be of "0" as the tile is actually destroyed.
-        // However, there's one exception with Chests, they will never send their actual destroy packet, except a hack
-        // tool is used, it seems.
-        case PacketTypes.Tile: {
-          if (this.TileEdit == null || e.Msg.readBuffer.Length - e.Index < 11)
-            break;
-
-          byte editType = e.Msg.readBuffer[e.Index];
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
-          byte blockType = e.Msg.readBuffer[e.Index + 9];
-          byte spriteStyle = e.Msg.readBuffer[e.Index + 10];
-
-          if (!Terraria.Tiles.IsValidCoord(x, y) || editType > 6)
-            return;
-
-          e.Handled = this.OnTileEdit(
-            new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, spriteStyle
-          ));
-          break;
-        }
-        // Note: TShock ensures that this packet reaches us here only if the tile to be killed is of type 21 (Chest)
-        // OR the maximum amount of Chests has been placed on the map and the tile to be killed is of type 0 (Dirt) - for
-        // whatever reason.
-        // The packet is also sent if there are still items in the chest.
-        case PacketTypes.TileKill: {
-          if ((this.TileEdit == null && this.ChestKill == null) || e.Msg.readBuffer.Length - e.Index < 8)
-            break;
-
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-          
-          if (!Terraria.Tiles.IsValidCoord(x, y) || Terraria.Tiles[x, y].type == 0)
-            break;
-          
-          if (this.InvokeTileEditOnChestKill)
-            e.Handled = this.OnTileEdit(new TileEditEventArgs(player, TileEditType.DestroyTile, new DPoint(x, y), 0, 0));
-
-          if (!e.Handled)
-            e.Handled = this.OnChestKill(new TileLocationEventArgs(player, new DPoint(x, y)));
-
-          break;
-        }
-        case PacketTypes.ChestGetContents: {
-          if (this.ChestGetContents == null || e.Msg.readBuffer.Length - e.Index < 8)
-            break;
-          
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-
-          if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
-            return;
-          
-          e.Handled = this.OnChestGetContents(new TileLocationEventArgs(player, new DPoint(x, y)));
-          break;
-        }
-        case PacketTypes.ChestItem: {
-          if (this.ChestModifySlot == null || e.Msg.readBuffer.Length - e.Index < 7)
-            break;
-
-          short chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-          byte slotIndex = e.Msg.readBuffer[e.Index + 2];
-          byte itemStackSize = e.Msg.readBuffer[e.Index + 3];
-          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
-          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
-
-          if (chestIndex >= Main.chest.Length || slotIndex > 19)
-            break;
-          
-          e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(
-            player, chestIndex, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
-          ));
-          break;
-        }
-        case PacketTypes.SignNew: {
-          if (this.SignEdit == null || e.Msg.readBuffer.Length - e.Index < 10)
-            break;
-
-          short signIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
-          string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - e.Index - 11);
-
-          if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
-            return;
-
-          e.Handled = this.OnSignEdit(new SignEditEventArgs(player, signIndex, new DPoint(x, y), newText));
-          break;
-        }
-        case PacketTypes.SignRead: {
-          if (this.SignRead == null || e.Msg.readBuffer.Length - e.Index < 8)
-            break;
-
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-
-          e.Handled = this.OnSignRead(new TileLocationEventArgs(player, new DPoint(x, y)));
-          break;
-        }
-        case PacketTypes.HitSwitch: {
-          if (this.HitSwitch == null || e.Msg.readBuffer.Length - e.Index < 5)
-            break;
-
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+              return;
+            // For some reason, TShock doesn't handle this packet so we just do our own checks.
+            if (TShock.CheckIgnores(player))
+              return;
+            if (TShock.CheckRangePermission(player, x, y, 32))
+              return;
       
-          if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
-            return;
-          // For some reason, TShock doesn't handle this packet so we just do our own checks.
-          if (TShock.CheckIgnores(player))
-            return;
-          if (TShock.CheckRangePermission(player, x, y, 32))
-            return;
-      
-          e.Handled = this.OnHitSwitch(new TileLocationEventArgs(player, new DPoint(x, y)));
-          break;
-        }
-        case PacketTypes.SpawnBossorInvasion: {
-          if (this.BossSpawn == null || e.Msg.readBuffer.Length - e.Index < 8)
+            e.Handled = this.OnHitSwitch(new TileLocationEventArgs(player, new DPoint(x, y)));
             break;
+          }
+          case PacketTypes.SpawnBossorInvasion: {
+            if (this.BossSpawn == null || e.Msg.readBuffer.Length - e.Index < 8)
+              break;
 
-          //int playerIndex = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int bossType = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            //int playerIndex = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int bossType = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
 
-          e.Handled = this.OnBossSpawn(new BossSpawnEventArgs(player, (BossType)bossType));
-          break;
-        }
-        case PacketTypes.ItemDrop: {
-          if (this.ItemDropOrPickUp == null || e.Msg.readBuffer.Length - e.Index < 22)
+            e.Handled = this.OnBossSpawn(new BossSpawnEventArgs(player, (BossType)bossType));
             break;
+          }
+          case PacketTypes.ItemDrop: {
+            if (this.ItemDropOrPickUp == null || e.Msg.readBuffer.Length - e.Index < 22)
+              break;
 
-          short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-          float x = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 2);
-          float y = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 6);
-          float velocityX = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 10);
-          float velocityY = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 14);
-          byte itemStackSize = e.Msg.readBuffer[e.Index + 18];
-          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 19];
-          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
+            short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            float x = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 2);
+            float y = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 6);
+            float velocityX = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 10);
+            float velocityY = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 14);
+            byte itemStackSize = e.Msg.readBuffer[e.Index + 18];
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 19];
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
 
-          // If it is actually an item pick up, then ensure a valid item index.
-          if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
+            // If it is actually an item pick up, then ensure a valid item index.
+            if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
+              break;
+
+            e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
+              player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
+              new ItemMetadata(itemPrefix, itemType, itemStackSize)
+            ));
             break;
+          }
+          case PacketTypes.ItemOwner: {
+            if (this.ItemOwner == null || e.Msg.readBuffer.Length - e.Index < 3)
+              break;
 
-          e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
-            player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
-            new ItemMetadata(itemPrefix, itemType, itemStackSize)
-          ));
-          break;
-        }
-        case PacketTypes.ItemOwner: {
-          if (this.ItemOwner == null || e.Msg.readBuffer.Length - e.Index < 3)
+            short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            byte newOwnerPlayerIndex = e.Msg.readBuffer[e.Index + 2];
+            TSPlayer newOwner;
+            if (newOwnerPlayerIndex == -1)
+              newOwner = TSPlayer.Server;
+            else if (newOwnerPlayerIndex < 255)
+              newOwner = TShock.Players[newOwnerPlayerIndex];
+            else 
+              break;
+
+            e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
             break;
+          }
+          case PacketTypes.PlayerSlot: {
+            if (this.PlayerModifySlot == null || e.Msg.readBuffer.Length - e.Index < 6)
+              break;
 
-          short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-          byte newOwnerPlayerIndex = e.Msg.readBuffer[e.Index + 2];
-          TSPlayer newOwner;
-          if (newOwnerPlayerIndex == -1)
-            newOwner = TSPlayer.Server;
-          else if (newOwnerPlayerIndex < 255)
-            newOwner = TShock.Players[newOwnerPlayerIndex];
-          else 
-            break;
+            //byte playerIndex = e.Msg.readBuffer[e.Index];
+            byte slotIndex = e.Msg.readBuffer[e.Index + 1];
+            byte itemStackSize = e.Msg.readBuffer[e.Index + 2];
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 3];
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
 
-          e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
-          break;
-        }
-        case PacketTypes.PlayerSlot: {
-          if (this.PlayerModifySlot == null || e.Msg.readBuffer.Length - e.Index < 6)
-            break;
-
-          //byte playerIndex = e.Msg.readBuffer[e.Index];
-          byte slotIndex = e.Msg.readBuffer[e.Index + 1];
-          byte itemStackSize = e.Msg.readBuffer[e.Index + 2];
-          ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 3];
-          ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
-
-          if (slotIndex > 59)
-            break;
+            if (slotIndex > 59)
+              break;
           
-          e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(
-            player, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
-          ));
-          break;
-        }
-        case PacketTypes.LiquidSet: {
-          if (this.LiquidSet == null || e.Msg.readBuffer.Length - e.Index < 10)
+            e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(
+              player, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
+            ));
             break;
+          }
+          case PacketTypes.LiquidSet: {
+            if (this.LiquidSet == null || e.Msg.readBuffer.Length - e.Index < 10)
+              break;
 
-          int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-          int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-          byte liquidAmount = e.Msg.readBuffer[e.Index + 8];
-          byte lava = e.Msg.readBuffer[e.Index + 9];
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            byte liquidAmount = e.Msg.readBuffer[e.Index + 8];
+            byte lava = e.Msg.readBuffer[e.Index + 9];
 
-          e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, lava != 0));
-          break;
+            if (!Terraria.Tiles.IsValidCoord(x, y))
+              break;
+
+            e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, lava != 0));
+            break;
+          }
+          case PacketTypes.DoorUse: {
+            if (this.DoorUse == null || e.Msg.readBuffer.Length - e.Index < 13)
+              break;
+
+            byte isOpening = e.Msg.readBuffer[e.Index];
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
+            int direction = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 9);
+
+            if (!Terraria.Tiles.IsValidCoord(x, y))
+              break;
+
+            Direction actualDirection;
+            if (direction == 0)
+              actualDirection = Direction.Left;
+            else
+              actualDirection = Direction.Right;
+
+            e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), isOpening == 1, actualDirection));
+            break;
+          }
+          case PacketTypes.PlayerSpawn:
+            if (this.PlayerSpawn == null || e.Msg.readBuffer.Length - e.Index < 9)
+              break;
+
+            byte playerIndex = e.Msg.readBuffer[e.Index];
+            int spawnX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
+            int spawnY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
+
+            if (!Terraria.Tiles.IsValidCoord(spawnX, spawnY))
+              break;
+
+            e.Handled = this.OnPlayerSpawn(new PlayerSpawnEventArgs(player, new DPoint(spawnX, spawnY)));
+            break;
         }
+      } catch (Exception ex) {
+        this.PluginTrace.WriteLineError(string.Format(
+          "Internal error on handling data packet {0}. Exception details: \n{1}", e.MsgID, ex
+        ));
       }
     }
     #endregion

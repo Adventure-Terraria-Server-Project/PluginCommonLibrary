@@ -66,6 +66,18 @@ namespace Terraria.Plugins.CoderCow {
 
       return true;
     }
+
+    public static bool TryParseShort(string input, out TimeSpan? result) {
+      TimeSpan realResult;
+
+      if (TimeSpanEx.TryParseShort(input, out realResult)) {
+        result = realResult;
+        return true;
+      } else {
+        result = null;
+        return false;
+      }
+    }
     #endregion
 
     #region [Method: Static ToLongString]

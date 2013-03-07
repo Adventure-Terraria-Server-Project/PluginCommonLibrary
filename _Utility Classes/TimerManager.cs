@@ -39,7 +39,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: StartTimer, StartOrResetTimer, RemoveTimer, IsTimerRunning, HandleGameUpdate]
+    #region [Methods: StartTimer, StartOrResetTimer, ContinueTimer, RemoveTimer, IsTimerRunning, HandleGameUpdate]
     public void StartTimer(TimerBase timer) {
       if (!this.IsTimerRunning(timer)) {
         this.RunningTimers.Add(timer);
@@ -52,6 +52,11 @@ namespace Terraria.Plugins.CoderCow {
         this.RunningTimers.Add(timer);
 
       timer.Reset();
+    }
+
+    public void ContinueTimer(TimerBase timer) {
+      if (!this.IsTimerRunning(timer))
+        this.RunningTimers.Add(timer);
     }
 
     public void RemoveTimer(TimerBase timer, bool andInvokeCallback = false) {

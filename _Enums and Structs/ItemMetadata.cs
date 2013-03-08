@@ -6,10 +6,37 @@
 
 using System;
 
+using Newtonsoft.Json;
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
+  [JsonConverter(typeof(ItemMetadata.CJsonConverter))]
   public struct ItemMetadata {
+    #region [Nested: CJsonConverter Class]
+    public class CJsonConverter: JsonConverter {
+      public override bool CanConvert(Type objectType) {
+        return (objectType == typeof(ItemMetadata));
+      }
+
+      public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+        if (reader.TokenType != JsonToken.String)
+          return ItemMetadata.None;
+
+        string[] rawData = ((string)reader.Value).Split(',');
+        return new ItemMetadata(
+          (ItemPrefix)int.Parse(rawData[0]),
+          (ItemType)int.Parse(rawData[1]),
+          int.Parse(rawData[2])
+        );
+      }
+
+      public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+        ItemMetadata itemMetadata = (ItemMetadata)value;
+        writer.WriteValue(string.Format("{0}, {1}, {2}", (int)itemMetadata.Prefix, (int)itemMetadata.Type, itemMetadata.StackSize));
+      }
+    }
+    #endregion
+
     #region [Property: Static None]
     private static readonly ItemMetadata none = default(ItemMetadata);
 

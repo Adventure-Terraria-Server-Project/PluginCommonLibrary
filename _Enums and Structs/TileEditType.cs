@@ -8,11 +8,11 @@ using System;
 
 namespace Terraria.Plugins.CoderCow {
   public enum TileEditType {
-    DestroyTile,
+    TileKill,
     PlaceTile,
     DestroyWall,
     PlaceWall,
-    DestroyTileNoItem,
+    TileKillNoItem,
     PlaceWire,
     DestroyWire,
   }

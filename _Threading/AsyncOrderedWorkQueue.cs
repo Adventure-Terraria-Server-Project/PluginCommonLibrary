@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
@@ -192,7 +193,12 @@ namespace Terraria.Plugins.CoderCow {
         try {
           this.FinishAll();
         } catch {
-          this.CancelAll();
+          try {
+            this.CancelAll();
+          } catch (OperationCanceledException) {
+          } catch (Exception ex) {
+            Debug.WriteLine("Unexpected exception thrown by a work item on disposing the work queue:\n" + ex);
+          }
         }
       }
     

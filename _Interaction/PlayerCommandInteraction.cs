@@ -23,9 +23,9 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Property: TileEditCallback]
-    private Func<TSPlayer,TileEditType,BlockType,DPoint,CommandInteractionResult> tileEditCallback;
+    private Func<TSPlayer,TileEditType,BlockType,DPoint,int,CommandInteractionResult> tileEditCallback;
 
-    public Func<TSPlayer,TileEditType,BlockType,DPoint,CommandInteractionResult> TileEditCallback {
+    public Func<TSPlayer,TileEditType,BlockType,DPoint,int,CommandInteractionResult> TileEditCallback {
       get { return this.tileEditCallback; }
       set { this.tileEditCallback = value; }
     }

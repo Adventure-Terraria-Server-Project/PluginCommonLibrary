@@ -38,6 +38,11 @@ namespace Terraria.Plugins.CoderCow {
       }
     }
 
+    public static DPoint OffsetEx(this DPoint point, int xOffset, int yOffset) {
+      point.Offset(xOffset, yOffset);
+      return point;
+    }
+
     public static Tile ByPoint(this TileCollection tileCollection, DPoint point) {
       return tileCollection[point.X, point.Y];
     }

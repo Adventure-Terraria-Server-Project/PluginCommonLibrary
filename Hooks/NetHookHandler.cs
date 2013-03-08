@@ -290,7 +290,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
       try {
         switch (e.MsgID) {
-          // Note: As for DestroyTile and DestroyTileNoItem, blockId will be of "1" if the player attempted to destroy
+          // Note: As for TileKill and TileKillNoItem, blockId will be of "1" if the player attempted to destroy
           // a tile but didn't succeed yet, and will be of "0" as the tile is actually destroyed.
           // However, there's one exception with Chests, they will never send their actual destroy packet, except a hack
           // tool is used, it seems.
@@ -314,7 +314,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           }
           // Note: TShock ensures that this packet reaches us here only if the tile to be killed is of type 21 (Chest)
           // OR the maximum amount of Chests has been placed on the map and the tile to be killed is of type 0 (Dirt) - for
-          // whatever reason.
+          // whatever reason. Also, the Terraria Server itself does handle this packet only if the tile is of type 21.
           // The packet is also sent if there are still items in the chest.
           case PacketTypes.TileKill: {
             if ((this.TileEdit == null && this.ChestKill == null) || e.Msg.readBuffer.Length - e.Index < 8)
@@ -322,12 +322,12 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-          
-            if (!Terraria.Tiles.IsValidCoord(x, y) || Terraria.Tiles[x, y].type == 0)
+            
+            if (!Terraria.Tiles.IsValidCoord(x, y) || Terraria.Tiles[x, y].type != (int)BlockType.Chest)
               break;
           
             if (this.InvokeTileEditOnChestKill)
-              e.Handled = this.OnTileEdit(new TileEditEventArgs(player, TileEditType.DestroyTile, new DPoint(x, y), 0, 0));
+              e.Handled = this.OnTileEdit(new TileEditEventArgs(player, TileEditType.TileKill, new DPoint(x, y), 0, 0));
 
             if (!e.Handled)
               e.Handled = this.OnChestKill(new TileLocationEventArgs(player, new DPoint(x, y)));

@@ -27,22 +27,22 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Property: SpriteStyle]
-    private readonly byte spriteStyle;
+    #region [Property: ObjectStyle]
+    private readonly byte objectStyle;
 
-    public byte SpriteStyle {
-      get { return this.spriteStyle; }
+    public byte ObjectStyle {
+      get { return this.objectStyle; }
     }
     #endregion
 
 
     #region [Method: Constructor]
     public TileEditEventArgs(
-      TSPlayer player, TileEditType editType, DPoint location, BlockType blockType, byte spriteStyle
+      TSPlayer player, TileEditType editType, DPoint location, BlockType blockType, byte objectStyle
     ): base(player, location) {
       this.editType = editType;
       this.blockType = blockType;
-      this.spriteStyle = spriteStyle;
+      this.objectStyle = objectStyle;
     }
     #endregion
   }

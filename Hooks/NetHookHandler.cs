@@ -302,13 +302,13 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
             byte blockType = e.Msg.readBuffer[e.Index + 9];
-            byte spriteStyle = e.Msg.readBuffer[e.Index + 10];
+            byte objectStyle = e.Msg.readBuffer[e.Index + 10];
 
             if (!Terraria.Tiles.IsValidCoord(x, y) || editType > 6)
               return;
 
             e.Handled = this.OnTileEdit(
-              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, spriteStyle
+              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, objectStyle
             ));
             break;
           }

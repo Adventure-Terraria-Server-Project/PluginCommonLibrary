@@ -52,11 +52,11 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: MeasureSprite, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
-    // Note: A sprite is considered any tile type the player is not blocked from passing through plus 
+    #region [Methods: MeasureObject, IsLeftTreeBranch, IsRightTreeBranch, IsLeftCactusBranch, IsRightCactusBranch]
+    // Note: A object is considered any tile type the player is not blocked from passing through plus 
     // Active Stone, Boulders, Wood Platforms and Dart Traps.
-    // This function is currently unable to calculate the height of dynamic sprites.
-    public static Terraria.SpriteMeasureData MeasureSprite(DPoint anyTileLocation) {
+    // This function is currently unable to calculate the height of objects of dynamic sizes.
+    public static Terraria.ObjectMeasureData MeasureObject(DPoint anyTileLocation) {
       Tile tile = Terraria.Tiles[anyTileLocation];
       if (!tile.active) {
         throw new ArgumentException(string.Format(
@@ -64,11 +64,11 @@ namespace Terraria.Plugins.CoderCow {
         ));
       }
 
-      DPoint spriteSize = Terraria.GetSpriteSize((BlockType)tile.type);
+      DPoint objectSize = Terraria.GetObjectSize((BlockType)tile.type);
       DPoint textureTileSize = new DPoint(Terraria.DefaultTextureTileSize, Terraria.DefaultTextureTileSize);
       int frameXOffsetAdd = 0;
       switch ((BlockType)tile.type) {
-        // Dynamic sprites, special handling
+        // Dynamic objects, special handling
         case BlockType.Tree:
           textureTileSize = new DPoint(22, 22);
           break;
@@ -145,7 +145,7 @@ namespace Terraria.Plugins.CoderCow {
               break;
           }
 
-          spriteSize = new DPoint(3, 0);
+          objectSize = new DPoint(3, 0);
           break;
         }
         case BlockType.Vine:
@@ -163,33 +163,33 @@ namespace Terraria.Plugins.CoderCow {
               break;
           }
 
-          spriteSize = new DPoint(1, 0);
+          objectSize = new DPoint(1, 0);
           break;
         }
         case BlockType.DoorOpened: {
           int tileIndexX = tile.frameX / textureTileSize.X;
-          int frameIndexX = tileIndexX / spriteSize.X;
+          int frameIndexX = tileIndexX / objectSize.X;
 
           // Is opened to the right side?
           if (frameIndexX == 0) {
             originX = anyTileLocation.X - tileIndexX;
             originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
           } else {
-            originX = (anyTileLocation.X - (tileIndexX - (frameIndexX * spriteSize.X))) + 1;
+            originX = (anyTileLocation.X - (tileIndexX - (frameIndexX * objectSize.X))) + 1;
             originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
           }
 
           break;
         }
         default: {
-          if (spriteSize.X == 1 && spriteSize.Y == 1) {
+          if (objectSize.X == 1 && objectSize.Y == 1) {
             originX = anyTileLocation.X;
             originY = anyTileLocation.Y;
           } else {
             int tileIndexX = tile.frameX / textureTileSize.X;
-            int frameIndexX = tileIndexX / spriteSize.X;
+            int frameIndexX = tileIndexX / objectSize.X;
 
-            originX = anyTileLocation.X - (tileIndexX - (frameIndexX * spriteSize.X));
+            originX = anyTileLocation.X - (tileIndexX - (frameIndexX * objectSize.X));
             originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
           }
 
@@ -197,8 +197,8 @@ namespace Terraria.Plugins.CoderCow {
         }
       }
 
-      return new Terraria.SpriteMeasureData(
-        (BlockType)tile.type, new DPoint(originX, originY), spriteSize, textureTileSize, frameXOffsetAdd
+      return new Terraria.ObjectMeasureData(
+        (BlockType)tile.type, new DPoint(originX, originY), objectSize, textureTileSize, frameXOffsetAdd
       );
     }
 
@@ -262,29 +262,29 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: IsSpriteToggleable, HasSpriteActiveFrame, SetSpriteActiveFrame, IsSpriteWired]
+    #region [Methods: IsMultistateObject, ObjectHasActiveState, SetObjectState, IsObjectWired]
     // Does not include doors or active stone!
-    public static bool IsSpriteToggleable(BlockType spriteType) {
+    public static bool IsMultistateObject(BlockType objectType) {
       return (
-        spriteType == BlockType.Torch ||
-        (spriteType >= BlockType.Candle && spriteType <= BlockType.GoldChandelier) ||
-        spriteType == BlockType.ChainLantern ||
-        spriteType == BlockType.LampPost ||
-        spriteType == BlockType.TikiTorch ||
-        spriteType == BlockType.ChineseLantern ||
-        spriteType == BlockType.Candelabra ||
-        spriteType == BlockType.DiscoBall ||
-        spriteType == BlockType.Lever ||
-        spriteType == BlockType.Switch ||
-        spriteType == BlockType.XSecondTimer ||
-        spriteType == BlockType.XMasLight
+        objectType == BlockType.Torch ||
+        (objectType >= BlockType.Candle && objectType <= BlockType.GoldChandelier) ||
+        objectType == BlockType.ChainLantern ||
+        objectType == BlockType.LampPost ||
+        objectType == BlockType.TikiTorch ||
+        objectType == BlockType.ChineseLantern ||
+        objectType == BlockType.Candelabra ||
+        objectType == BlockType.DiscoBall ||
+        objectType == BlockType.Lever ||
+        objectType == BlockType.Switch ||
+        objectType == BlockType.XSecondTimer ||
+        objectType == BlockType.XMasLight
       );
     }
 
-    public static bool HasSpriteActiveFrame(Terraria.SpriteMeasureData measureData) {
+    public static bool ObjectHasActiveState(Terraria.ObjectMeasureData measureData) {
       Tile tile = Terraria.Tiles[measureData.OriginTileLocation];
 
-      switch (measureData.SpriteType) {
+      switch (measureData.BlockType) {
         case BlockType.Switch:
           return (tile.frameY == 0);
         case BlockType.XSecondTimer:
@@ -296,46 +296,46 @@ namespace Terraria.Plugins.CoderCow {
       }
     }
 
-    public static void SetSpriteActiveFrame(
-      Terraria.SpriteMeasureData measureData, bool setActiveFrame, bool sendTileSquare = true
+    public static void SetObjectState(
+      Terraria.ObjectMeasureData measureData, bool activeState, bool sendTileSquare = true
     ) {
       #if DEBUG
-      if (Terraria.HasSpriteActiveFrame(measureData) == setActiveFrame) {
+      if (Terraria.ObjectHasActiveState(measureData) == activeState) {
         throw new ArgumentException(string.Format(
-          "The sprite \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetBlockTypeName(measureData.SpriteType), setActiveFrame
+          "The object \"{0}\" does already have the state \"{1}\".", Terraria.Tiles.GetBlockTypeName(measureData.BlockType), activeState
         ));
       }
       #endif
 
       int originX = measureData.OriginTileLocation.X;
       int originY = measureData.OriginTileLocation.Y;
-      int spriteWidth = measureData.Size.X;
-      int spriteHeight = measureData.Size.Y;
+      int objectWidth = measureData.Size.X;
+      int objectHeight = measureData.Size.Y;
       short newFrameXOffset = 0;
       short newFrameYOffset = 0;
 
-      if (measureData.SpriteType != BlockType.Switch && measureData.SpriteType != BlockType.XSecondTimer) {
-        int frameXOffset = (spriteWidth * measureData.TextureTileSize.X) + measureData.FrameXOffsetAdd;
-        if (measureData.SpriteType == BlockType.MusicBox)
-          setActiveFrame = !setActiveFrame;
+      if (measureData.BlockType != BlockType.Switch && measureData.BlockType != BlockType.XSecondTimer) {
+        int frameXOffset = (objectWidth * measureData.TextureTileSize.X) + measureData.FrameXOffsetAdd;
+        if (measureData.BlockType == BlockType.MusicBox)
+          activeState = !activeState;
 
-        if (setActiveFrame)
+        if (activeState)
           newFrameXOffset = (short)-frameXOffset;
         else
           newFrameXOffset = (short)frameXOffset;
       } else {
-        int frameYOffset = (spriteHeight * measureData.TextureTileSize.Y);
-        if (measureData.SpriteType == BlockType.XSecondTimer)
-          setActiveFrame = !setActiveFrame;
+        int frameYOffset = (objectHeight * measureData.TextureTileSize.Y);
+        if (measureData.BlockType == BlockType.XSecondTimer)
+          activeState = !activeState;
 
-        if (setActiveFrame)
+        if (activeState)
           newFrameYOffset = (short)-frameYOffset;
         else
           newFrameYOffset = (short)frameYOffset;
       }
         
-      for (int tx = 0; tx < spriteWidth; tx++) {
-        for (int ty = 0; ty < spriteHeight; ty++) {
+      for (int tx = 0; tx < objectWidth; tx++) {
+        for (int ty = 0; ty < objectHeight; ty++) {
           int absoluteX = originX + tx;
           int absoluteY = originY + ty;
 
@@ -345,10 +345,10 @@ namespace Terraria.Plugins.CoderCow {
       }
             
       if (sendTileSquare)
-        TSPlayer.All.SendTileSquareEx(originX, originY, Math.Max(spriteWidth, spriteHeight));
+        TSPlayer.All.SendTileSquareEx(originX, originY, Math.Max(objectWidth, objectHeight));
     }
 
-    public static bool IsSpriteWired(DPoint originTileLocation, DPoint size, out DPoint firstWirePosition) {
+    public static bool IsObjectWired(DPoint originTileLocation, DPoint size, out DPoint firstWirePosition) {
       for (int tx = 0; tx < size.X; tx++) {
         for (int ty = 0; ty < size.Y; ty++) {
           int ax = originTileLocation.X + tx;
@@ -365,18 +365,18 @@ namespace Terraria.Plugins.CoderCow {
       return false;
     }
 
-    public static bool IsSpriteWired(DPoint originTileLocation, DPoint size) {
+    public static bool IsObjectWired(DPoint originTileLocation, DPoint size) {
       DPoint dummy;
-      return Terraria.IsSpriteWired(originTileLocation, size, out dummy);
+      return Terraria.IsObjectWired(originTileLocation, size, out dummy);
     }
 
-    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData) {
+    public static bool IsObjectWired(Terraria.ObjectMeasureData measureData) {
       DPoint dummy;
-      return Terraria.IsSpriteWired(measureData.OriginTileLocation, measureData.Size, out dummy);
+      return Terraria.IsObjectWired(measureData.OriginTileLocation, measureData.Size, out dummy);
     }
 
-    public static bool IsSpriteWired(Terraria.SpriteMeasureData measureData, out DPoint firstWirePosition) {
-      return Terraria.IsSpriteWired(measureData.OriginTileLocation, measureData.Size, out firstWirePosition);
+    public static bool IsObjectWired(Terraria.ObjectMeasureData measureData, out DPoint firstWirePosition) {
+      return Terraria.IsObjectWired(measureData.OriginTileLocation, measureData.Size, out firstWirePosition);
     }
     #endregion
 
@@ -540,8 +540,8 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: EnumerateSpriteTileLocations, EnumerateSpriteTiles]
-    public static IEnumerable<DPoint> EnumerateSpriteTileLocations(Terraria.SpriteMeasureData measureData) {
+    #region [Methods: EnumerateObjectTileLocations, EnumerateObjectTiles]
+    public static IEnumerable<DPoint> EnumerateObjectTileLocations(Terraria.ObjectMeasureData measureData) {
       for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
         for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
           yield return new DPoint(x, y);
@@ -549,7 +549,7 @@ namespace Terraria.Plugins.CoderCow {
       }
     }
 
-    public static IEnumerable<Tile> EnumerateSpriteTiles(Terraria.SpriteMeasureData measureData) {
+    public static IEnumerable<Tile> EnumerateObjectTiles(Terraria.ObjectMeasureData measureData) {
       for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
         for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
           yield return Terraria.Tiles[x, y];
@@ -558,11 +558,11 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: GetSpriteSize, GetSpriteOrientation]
-    private static DPoint[] spriteSizes;
-    public static DPoint GetSpriteSize(BlockType spriteType) {
-      if (Terraria.spriteSizes == null) {
-        Terraria.spriteSizes = new[] {
+    #region [Methods: GetObjectSize, GetObjectOrientation]
+    private static DPoint[] objectSizes;
+    public static DPoint GetObjectSize(BlockType objectType) {
+      if (Terraria.objectSizes == null) {
+        Terraria.objectSizes = new[] {
           new DPoint(1, 1), // Dirt
           new DPoint(1, 1), // Stone
           new DPoint(1, 1), // Grass
@@ -716,13 +716,13 @@ namespace Terraria.Plugins.CoderCow {
         };
       }
 
-      if (spriteType < 0 || (int)spriteType >= Terraria.spriteSizes.Length)
-        throw new ArgumentException(string.Format("The sprite type \"{0}\" is invalid.", spriteType), "spriteType");
+      if (objectType < 0 || (int)objectType >= Terraria.objectSizes.Length)
+        throw new ArgumentException(string.Format("The object type \"{0}\" is invalid.", objectType), "objectType");
 
-      return Terraria.spriteSizes[(int)spriteType];
+      return Terraria.objectSizes[(int)objectType];
     }
 
-    public static Direction GetSpriteOrientation(Tile anyTile) {
+    public static Direction GetObjectOrientation(Tile anyTile) {
       if (!anyTile.active)
         return Direction.Unknown;
 

@@ -11,16 +11,16 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.CoderCow.Test {
   public static class TAssert {
-    #region [Methods: IsSpriteActive, IsSpriteInactive]
-    public static void IsSpriteActive(int x, int y) {
-      TAssert.IsSpriteActive(x, y, true);
+    #region [Methods: IsObjectActive, IsObjectInactive]
+    public static void IsObjectActive(int x, int y) {
+      TAssert.IsObjectActive(x, y, true);
     }
 
-    public static void IsSpriteInactive(int x, int y) {
-      TAssert.IsSpriteActive(x, y, false);
+    public static void IsObjectInactive(int x, int y) {
+      TAssert.IsObjectActive(x, y, false);
     }
 
-    public static void IsSpriteActive(int x, int y, bool expectedState) {
+    public static void IsObjectActive(int x, int y, bool expectedState) {
       Tile tile = Terraria.Tiles[x, y];
       if (!tile.active) {
         throw new AssertException(
@@ -28,8 +28,8 @@ namespace Terraria.Plugins.CoderCow.Test {
         );
       }
 
-      Terraria.SpriteMeasureData measureData = Terraria.MeasureSprite(new DPoint(x, y));
-      bool isActive = Terraria.HasSpriteActiveFrame(measureData);
+      Terraria.ObjectMeasureData measureData = Terraria.MeasureObject(new DPoint(x, y));
+      bool isActive = Terraria.ObjectHasActiveState(measureData);
       if (isActive != expectedState) {
         string actualStateString;
         if (isActive)
@@ -44,7 +44,7 @@ namespace Terraria.Plugins.CoderCow.Test {
           expectedStateString = "Inactive";
 
         throw new AssertException(string.Format(
-          "Assert failed. {0} frame for sprite \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
+          "Assert failed. {0} frame for object \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
           expectedStateString, Terraria.Tiles.GetBlockTypeName((BlockType)tile.type), x, y, actualStateString
         ));
       }

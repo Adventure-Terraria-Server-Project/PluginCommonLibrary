@@ -5,25 +5,24 @@
 // Written by CoderCow
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.CoderCow {
   public static partial class Terraria {
-    public struct SpriteMeasureData {
+    public struct ObjectMeasureData {
       #region [Property: Static Invalid]
-      public static SpriteMeasureData Invalid {
-        get { return default(SpriteMeasureData); }
+      public static ObjectMeasureData Invalid {
+        get { return default(ObjectMeasureData); }
       }
       #endregion
 
-      #region [Property: SpriteType]
-      private readonly BlockType spriteType;
+      #region [Property: BlockType]
+      private readonly BlockType blockType;
 
-      public BlockType SpriteType {
-        get { return this.spriteType; }
+      public BlockType BlockType {
+        get { return this.blockType; }
       }
       #endregion
 
@@ -61,10 +60,10 @@ namespace Terraria.Plugins.CoderCow {
 
 
       #region [Method: Constructor]
-      public SpriteMeasureData(
-        BlockType spriteType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
+      public ObjectMeasureData(
+        BlockType blockType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
       ) {
-        this.spriteType = spriteType;
+        this.blockType = blockType;
         this.frameXOffsetAdd = frameXOffsetAdd;
         this.originTileLocation = originTileLocation;
         this.size = size;
@@ -75,7 +74,7 @@ namespace Terraria.Plugins.CoderCow {
 
       #region [Method: ToString]
       public override string ToString() {
-        return this.SpriteType.ToString();
+        return this.BlockType.ToString();
       }
       #endregion
     }

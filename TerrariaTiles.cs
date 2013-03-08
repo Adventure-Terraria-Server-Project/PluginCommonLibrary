@@ -220,12 +220,12 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       if (blockType < 0 || (int)blockType >= tileNames.Length)
-        throw new ArgumentException(String.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
+        throw new ArgumentException(string.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
 
       return tileNames[(int)blockType];
     }
 
-    // Note: A block is considered any non-sprite, so any block type which blocks the player from passing through 
+    // Note: A block is considered any non-object, so any block type which blocks the player from passing through 
     // (cobwebs inclusive).
     public bool IsSolidBlockType(
       BlockType blockType, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 

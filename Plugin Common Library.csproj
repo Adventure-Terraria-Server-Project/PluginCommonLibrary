@@ -193,7 +193,7 @@
     <Compile Include="_Enums and Structs\StatueType.cs" />
     <Compile Include="Collections\StringCollection.cs" />
     <Compile Include="Terraria.cs" />
-    <Compile Include="Terraria.SpriteMeasureData.cs">
+    <Compile Include="Terraria.ObjectMeasureData.cs">
       <DependentUpon>Terraria.cs</DependentUpon>
     </Compile>
     <Compile Include="_Enums and Structs\TileEditType.cs" />

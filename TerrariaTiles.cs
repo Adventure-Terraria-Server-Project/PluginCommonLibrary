@@ -55,7 +55,8 @@ namespace Terraria.Plugins.CoderCow {
         blockType == BlockType.Switch ||
         blockType == BlockType.Lever ||
         blockType == BlockType.PressurePlate ||
-        blockType == BlockType.XSecondTimer
+        blockType == BlockType.XSecondTimer ||
+        blockType == BlockType.MusicBox
       );
     }
     #endregion

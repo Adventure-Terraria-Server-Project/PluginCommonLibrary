@@ -13,103 +13,179 @@ using System.Text;
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
-  public class PaginationUtil {
-    #region [Property: IncludeHeader]
-    private bool includeHeader;
+  public static class PaginationUtil {
+    public delegate Tuple<string,Color> LineFormatterDelegate(object lineData, int lineIndex, int pageNumber);
 
-    public bool IncludeHeader {
-      get { return this.includeHeader; }
-      set { this.includeHeader = value; }
-    }
-    #endregion
+    #region [Nested: Settings Class]
+    public class Settings {
+      #region [Property: IncludeHeader]
+      private bool includeHeader;
 
-    #region [Property: HeaderFormat]
-    private string headerFormat;
-
-    public string HeaderFormat {
-      get { return this.headerFormat; }
-      set {
-        Contract.Requires<ArgumentNullException>(value != null);
-        this.headerFormat = value;
+      public bool IncludeHeader {
+        get { return this.includeHeader; }
+        set { this.includeHeader = value; }
       }
-    }
-    #endregion
+      #endregion
 
-    #region [Property: HeaderTextColor]
-    private Color headerTextColor;
+      #region [Property: HeaderFormat]
+      private string headerFormat;
 
-    public Color HeaderTextColor {
-      get { return this.headerTextColor; }
-      set { this.headerTextColor = value; }
-    }
-    #endregion
-
-    #region [Property: NothingToDisplayString]
-    private string nothingToDisplayString;
-
-    public string NothingToDisplayString {
-      get { return this.nothingToDisplayString; }
-      set { this.nothingToDisplayString = value; }
-    }
-    #endregion
-
-    #region [Property: LineFormatter]
-    private Func<object, string> lineFormatter;
-
-    public Func<object,string> LineFormatter {
-      get { return this.lineFormatter; }
-      set { this.lineFormatter = value; }
-    }
-    #endregion
-
-    #region [Property: LineTextColor]
-    private Color lineTextColor;
-
-    public Color LineTextColor {
-      get { return this.lineTextColor; }
-      set { this.lineTextColor = value; }
-    }
-    #endregion
-
-    #region [Property: MaxLinesPerPage]
-    private int maxLinesPerPage;
-
-    public int MaxLinesPerPage {
-      get { return this.maxLinesPerPage; }
-      set {
-        Contract.Requires<ArgumentException>(value > 0);
-        this.maxLinesPerPage = value;
+      public string HeaderFormat {
+        get { return this.headerFormat; }
+        set {
+          Contract.Requires<ArgumentNullException>(value != null);
+          this.headerFormat = value;
+        }
       }
-    }
-    #endregion
+      #endregion
 
-    #region [Property: PageLimit]
-    private int pageLimit;
+      #region [Property: HeaderTextColor]
+      private Color headerTextColor;
 
-    public int PageLimit {
-      get { return this.pageLimit; }
-      set {
-        Contract.Requires<ArgumentException>(value >= 0);
-        this.pageLimit = value;
+      public Color HeaderTextColor {
+        get { return this.headerTextColor; }
+        set { this.headerTextColor = value; }
       }
+      #endregion
+
+      #region [Property: NothingToDisplayString]
+      private string nothingToDisplayString;
+
+      public string NothingToDisplayString {
+        get { return this.nothingToDisplayString; }
+        set { this.nothingToDisplayString = value; }
+      }
+      #endregion
+
+      #region [Property: LineFormatter]
+      private LineFormatterDelegate lineFormatter;
+
+      public LineFormatterDelegate LineFormatter {
+        get { return this.lineFormatter; }
+        set { this.lineFormatter = value; }
+      }
+      #endregion
+
+      #region [Property: LineTextColor]
+      private Color lineTextColor;
+
+      public Color LineTextColor {
+        get { return this.lineTextColor; }
+        set { this.lineTextColor = value; }
+      }
+      #endregion
+
+      #region [Property: MaxLinesPerPage]
+      private int maxLinesPerPage;
+
+      public int MaxLinesPerPage {
+        get { return this.maxLinesPerPage; }
+        set {
+          Contract.Requires<ArgumentException>(value > 0);
+          this.maxLinesPerPage = value;
+        }
+      }
+      #endregion
+
+      #region [Property: PageLimit]
+      private int pageLimit;
+
+      public int PageLimit {
+        get { return this.pageLimit; }
+        set {
+          Contract.Requires<ArgumentException>(value >= 0);
+          this.pageLimit = value;
+        }
+      }
+      #endregion
+
+
+      #region [Method: Constructor]
+      public Settings() {
+        this.includeHeader = true;
+        this.headerFormat = "Page {0} of {1}";
+        this.headerTextColor = Color.Yellow;
+        this.nothingToDisplayString = null;
+        this.lineFormatter = null;
+        this.lineTextColor = Color.White;
+        this.maxLinesPerPage = 4;
+        this.pageLimit = 0;
+      }
+      #endregion
     }
     #endregion
 
+    #region [Method: SendPage]
+    public static void SendPage(
+      TSPlayer player, int pageNumber, IEnumerable dataToPaginate, int dataToPaginateCount, Settings settings = null
+    ) {
+      if (settings == null)
+        settings = new Settings();
 
-    #region [Method: Constructor]
-    public PaginationUtil() {
-      this.includeHeader = true;
-      this.headerFormat = "Page {0} of {1}";
-      this.headerTextColor = Color.Yellow;
-      this.nothingToDisplayString = null;
-      this.lineFormatter = null;
-      this.lineTextColor = Color.White;
-      this.maxLinesPerPage = 4;
-      this.pageLimit = 0;
+      if (dataToPaginateCount == 0) {
+        if (settings.NothingToDisplayString != null)
+          player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+
+        return;
+      }
+
+      int pageCount = ((dataToPaginateCount - 1) / settings.MaxLinesPerPage) + 1;
+      if (settings.PageLimit > 0 && pageCount > settings.PageLimit)
+        pageCount = settings.PageLimit;
+      if (pageNumber > pageCount)
+        pageNumber = pageCount;
+
+      if (settings.IncludeHeader)
+        player.SendMessage(string.Format(settings.HeaderFormat, pageNumber, pageCount), settings.HeaderTextColor);
+
+      int listOffset = (pageNumber - 1) * settings.MaxLinesPerPage;
+      int offsetCounter = 0;
+      int lineCounter = 0;
+      foreach (object lineData in dataToPaginate) {
+        if (lineData == null)
+          continue;
+        if (offsetCounter++ < listOffset)
+          continue;
+        if (lineCounter++ == settings.MaxLinesPerPage)
+          break;
+
+        string lineMessage;
+        Color lineColor = settings.LineTextColor;
+        if (lineData is Tuple<string,Color>) {
+          var lineFormat = (Tuple<string,Color>)lineData;
+          lineMessage = lineFormat.Item1;
+          lineColor = lineFormat.Item2;
+        } else if (settings.LineFormatter != null) {
+          try {
+            Tuple<string,Color> lineFormat = settings.LineFormatter(lineData, offsetCounter, pageNumber);
+            if (lineFormat == null)
+              continue;
+
+            lineMessage = lineFormat.Item1;
+            lineColor = lineFormat.Item2;
+          } catch (Exception ex) {
+            throw new InvalidOperationException(
+              "The method represented by LineFormatter has thrown an exception. See inner exception for details.", ex
+            );
+          }
+        } else {
+          lineMessage = lineData.ToString();
+        }
+
+        if (lineMessage != null)
+          player.SendMessage(lineMessage, lineColor);
+      }
+
+      if (lineCounter == 0 && settings.NothingToDisplayString != null)
+        player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+    }
+
+    public static void SendPage(TSPlayer player, int pageNumber, IList dataToPaginate, Settings settings = null) {
+      PaginationUtil.SendPage(player, pageNumber, dataToPaginate, dataToPaginate.Count, settings);
     }
     #endregion
 
-    #region [Method: Static BuildLinesFromTerms]
+    #region [Method: BuildLinesFromTerms]
     public static List<string> BuildLinesFromTerms(
       IEnumerable terms, Func<object,string> termFormatter = null, string separator = ", ", int maxCharsPerLine = 80
     ) {
@@ -156,58 +232,24 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: SendPage]
-    public void SendPage(TSPlayer player, IEnumerable contents, int pageNumber, int contentCount) {
-      if (contentCount == 0) {
-        if (this.NothingToDisplayString != null)
-          player.SendMessage(this.NothingToDisplayString, this.HeaderTextColor);
+    #region [Method: TryParsePageNumber]
+    public static bool TryParsePageNumber(
+      List<string> commandParameters, int expectedParamterIndex, TSPlayer errorMessageReceiver, out int pageNumber
+    ) {
+      pageNumber = 1;
+      if (commandParameters.Count <= expectedParamterIndex)
+        return true;
 
-        return;
+      string pageNumberRaw = commandParameters[expectedParamterIndex];
+      if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1) {
+        if (errorMessageReceiver != null)
+          errorMessageReceiver.SendErrorMessage(string.Format("\"{0}\" is not a valid page number.", pageNumberRaw));
+
+        pageNumber = 1;
+        return false;
       }
 
-      int pageCount = ((contentCount - 1) / this.MaxLinesPerPage) + 1;
-      if (this.PageLimit > 0 && pageCount > this.PageLimit)
-        pageCount = this.PageLimit;
-      if (pageNumber > pageCount)
-        pageNumber = pageCount;
-
-      if (this.IncludeHeader)
-        player.SendMessage(string.Format(this.HeaderFormat, pageNumber, pageCount), this.HeaderTextColor);
-
-      int listOffset = (pageNumber - 1) * this.MaxLinesPerPage;
-      int offsetCounter = 0;
-      int lineCounter = 0;
-      foreach (object lineContent in contents) {
-        if (lineContent == null)
-          continue;
-        if (offsetCounter++ < listOffset)
-          continue;
-        if (lineCounter++ == this.MaxLinesPerPage)
-          break;
-
-        string lineMessage;
-        if (this.LineFormatter != null) {
-          try {
-            lineMessage = this.LineFormatter(lineContent);
-          } catch (Exception ex) {
-            throw new InvalidOperationException(
-              "The method represented by LineFormatter has thrown an exception. See inner exception for details.", ex
-            );
-          }
-        } else {
-          lineMessage = lineContent.ToString();
-        }
-
-        if (lineMessage != null)
-          player.SendMessage(lineMessage, this.LineTextColor);
-      }
-
-      if (lineCounter == 0 && this.NothingToDisplayString != null)
-        player.SendMessage(this.NothingToDisplayString, this.HeaderTextColor);
-    }
-
-    public void SendPage(TSPlayer player, IList contents, int pageNumber) {
-      this.SendPage(player, contents, pageNumber, contents.Count);
+      return true;
     }
     #endregion
   }

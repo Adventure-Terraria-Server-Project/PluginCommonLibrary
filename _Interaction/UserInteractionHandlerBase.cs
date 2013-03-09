@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
@@ -27,6 +29,14 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
+    #region [Property: RegisteredCommands]
+    private readonly Collection<Command> registeredCommands;
+
+    protected Collection<Command> RegisteredCommands {
+      get { return this.registeredCommands; }
+    }
+    #endregion
+
     #region [Property: ActiveCommandInteractions]
     private readonly Dictionary<string,PlayerCommandInteraction> activeCommandInteractions = 
       new Dictionary<string,PlayerCommandInteraction>();
@@ -38,16 +48,93 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
+    private readonly Dictionary<Command,CommandDelegate> commandHelpCallbacks;
+    private readonly Command originalHelpCommand;
+    private readonly Command customHelpCommand;
+
 
     #region [Method: Constructor]
     protected UserInteractionHandlerBase(PluginTrace pluginTrace) {
       this.pluginTrace = pluginTrace;
+      this.registeredCommands = new Collection<Command>();
       this.activeCommandInteractions = new Dictionary<string,PlayerCommandInteraction>();
+      this.commandHelpCallbacks = new Dictionary<Command,CommandDelegate>();
+
+      try {
+        this.originalHelpCommand = TShockAPI.Commands.ChatCommands.Single(cmd => cmd.Name == "help");
+      } catch (InvalidOperationException) {
+        this.PluginTrace.WriteLineError("Failed overriding /help command. Make sure you're creating the UserInteractionHandler instance after TShock has initialized.");
+      }
+
+      if (this.originalHelpCommand != null) {
+        TShockAPI.Commands.ChatCommands.Remove(this.originalHelpCommand);
+
+        this.customHelpCommand = new Command(this.CustomHelpCommand_Exec, "help", "cmds");
+        TShockAPI.Commands.ChatCommands.Add(this.customHelpCommand);
+      }
+    }
+    #endregion
+
+    #region [Methods: RegisterCommand, DeregisterCommand, CustomHelpCommand_Exec]
+    protected void RegisterCommand(Command tshockCommand, CommandDelegate helpCallback) {
+      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      Contract.Requires<ArgumentNullException>(tshockCommand != null);
+      Contract.Requires<ArgumentNullException>(helpCallback != null);
+      
+      if (TShockAPI.Commands.ChatCommands.Contains(tshockCommand))
+        throw new ArgumentException("Command already registered.", "tshockCommand");
+
+      TShockAPI.Commands.ChatCommands.Add(tshockCommand);
+      this.commandHelpCallbacks.Add(tshockCommand, helpCallback);
+    }
+
+    protected void DeregisterCommand(Command tshockCommand) {
+      Contract.Requires<ArgumentNullException>(tshockCommand != null);
+
+      if (!TShockAPI.Commands.ChatCommands.Contains(tshockCommand))
+        throw new InvalidOperationException("Command is not registered.");
+
+      if (this.commandHelpCallbacks.ContainsKey(tshockCommand))
+        this.commandHelpCallbacks.Remove(tshockCommand);
+    }
+
+    private void CustomHelpCommand_Exec(CommandArgs args) {
+      if (args.Parameters.Count > 0) {
+        string commandName = args.Parameters[0].ToLowerInvariant();
+
+        CommandDelegate helpCallback = null;
+        try {
+          KeyValuePair<Command,CommandDelegate> commandHelpPair = this.commandHelpCallbacks.Single(
+            pair => pair.Key.Names.Contains(commandName)
+          );
+          helpCallback = commandHelpPair.Value;
+        } catch (InvalidOperationException) {}
+          
+        if (helpCallback != null) {
+          try {
+            helpCallback(args);
+            return;
+          } catch (Exception ex) {
+            this.PluginTrace.WriteLineError(
+              "The help callback delegate of command \"/{0}\" has thrown an exception: {1}", commandName, ex
+            );
+          }
+        // Did we override TShock's real help command?
+        } else if (this.originalHelpCommand.Names.Count == 1) {
+          args.Player.SendErrorMessage("There is no help for this command available.");
+          return;
+        }
+      }
+
+      this.originalHelpCommand.Run(args.Message, args.Player, args.Parameters);
     }
     #endregion
 
     #region [Method: StartOrResetCommandInteraction]
     protected PlayerCommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer) {
+      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      Contract.Requires<ArgumentNullException>(forPlayer != null);
+
       PlayerCommandInteraction newInteraction = new PlayerCommandInteraction(
         UserInteractionHandlerBase.CommandInteractionTimeout
       );
@@ -226,6 +313,15 @@ namespace Terraria.Plugins.CoderCow {
         lock (this.activeCommandInteractionsLock) {
           this.activeCommandInteractions.Clear();
         }
+
+        if (TShockAPI.Commands.ChatCommands.Contains(this.customHelpCommand)) {
+          TShockAPI.Commands.ChatCommands.Remove(this.customHelpCommand);
+          TShockAPI.Commands.ChatCommands.Add(this.originalHelpCommand);
+        }
+
+        foreach (Command command in this.registeredCommands)
+          if (TShockAPI.Commands.ChatCommands.Contains(command))
+            TShockAPI.Commands.ChatCommands.Remove(command);
       }
 
       this.isDisposed = true;

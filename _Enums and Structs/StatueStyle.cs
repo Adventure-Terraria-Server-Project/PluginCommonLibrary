@@ -7,7 +7,7 @@
 using System;
 
 namespace Terraria.Plugins.CoderCow {
-  public enum StatueType {
+  public enum StatueStyle {
     None,
     Armor,
     Angel,

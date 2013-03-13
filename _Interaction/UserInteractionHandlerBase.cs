@@ -99,7 +99,8 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     private void CustomHelpCommand_Exec(CommandArgs args) {
-      if (args.Parameters.Count > 0) {
+      int dummy;
+      if (args.Parameters.Count > 0 && !int.TryParse(args.Parameters[0], out dummy)) {
         string commandName = args.Parameters[0].ToLowerInvariant();
 
         CommandDelegate helpCallback = null;

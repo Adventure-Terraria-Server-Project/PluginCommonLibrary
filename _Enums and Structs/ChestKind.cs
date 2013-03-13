@@ -13,7 +13,7 @@ namespace Terraria.Plugins.CoderCow {
     Unknown,
     OceanChest,
     DungeonChest,
-    ShadowChest,
+    HellShadowChest,
     SkyIslandChest,
     TreasureChest
   }

@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.CoderCow {
-  public enum ChestType {
+  public enum ChestStyle {
     None,
     WoodenChest,
     GoldChest,

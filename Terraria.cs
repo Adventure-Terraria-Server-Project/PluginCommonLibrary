@@ -380,151 +380,151 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: GetStatueType, GetItemTypeFromStatueType, GetChestType, GetItemTypeFromChestType]
-    public static StatueType GetStatueType(Tile tile) {
+    #region [Methods: GetStatueType, GetItemTypeFromStatueType, GetChestType, GetItemTypeFromChestType, LockChest]
+    public static StatueStyle GetStatueType(Tile tile) {
       return Terraria.GetStatueType(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
     }
 
-    public static StatueType GetStatueType(int objectStyle) {
-      return (StatueType)(objectStyle + 1);
+    public static StatueStyle GetStatueType(int objectStyle) {
+      return (StatueStyle)(objectStyle + 1);
     }
 
-    public static ItemType GetItemTypeFromStatueType(StatueType statueType) {
-      switch (statueType) {
-        case StatueType.Armor:
+    public static ItemType GetItemTypeFromStatueType(StatueStyle statueStyle) {
+      switch (statueStyle) {
+        case StatueStyle.Armor:
           return ItemType.Statue;
-        case StatueType.Angel:
+        case StatueStyle.Angel:
           return ItemType.AngelStatue;
-        case StatueType.Star:
+        case StatueStyle.Star:
           return ItemType.StarStatue;
-        case StatueType.Sword:
+        case StatueStyle.Sword:
           return ItemType.SwordStatue;
-        case StatueType.Slime:
+        case StatueStyle.Slime:
           return ItemType.SlimeStatue;
-        case StatueType.Goblin:
+        case StatueStyle.Goblin:
           return ItemType.GoblinStatue;
-        case StatueType.Shield:
+        case StatueStyle.Shield:
           return ItemType.ShieldStatue;
-        case StatueType.Bat:
+        case StatueStyle.Bat:
           return ItemType.BatStatue;
-        case StatueType.Fish:
+        case StatueStyle.Fish:
           return ItemType.FishStatue;
-        case StatueType.Bunny:
+        case StatueStyle.Bunny:
           return ItemType.BunnyStatue;
-        case StatueType.Skeleton:
+        case StatueStyle.Skeleton:
           return ItemType.SkeletonStatue;
-        case StatueType.Reaper:
+        case StatueStyle.Reaper:
           return ItemType.ReaperStatue;
-        case StatueType.Woman:
+        case StatueStyle.Woman:
           return ItemType.WomanStatue;
-        case StatueType.Imp:
+        case StatueStyle.Imp:
           return ItemType.ImpStatue;
-        case StatueType.Gargoyle:
+        case StatueStyle.Gargoyle:
           return ItemType.GargoyleStatue;
-        case StatueType.Gloom:
+        case StatueStyle.Gloom:
           return ItemType.GloomStatue;
-        case StatueType.Hornet:
+        case StatueStyle.Hornet:
           return ItemType.HornetStatue;
-        case StatueType.Bomb:
+        case StatueStyle.Bomb:
           return ItemType.BombStatue;
-        case StatueType.Crab:
+        case StatueStyle.Crab:
           return ItemType.CrabStatue;
-        case StatueType.Hammer:
+        case StatueStyle.Hammer:
           return ItemType.HammerStatue;
-        case StatueType.Potion:
+        case StatueStyle.Potion:
           return ItemType.PotionStatue;
-        case StatueType.Spear:
+        case StatueStyle.Spear:
           return ItemType.SpearStatue;
-        case StatueType.Cross:
+        case StatueStyle.Cross:
           return ItemType.CrossStatue;
-        case StatueType.Jellyfish:
+        case StatueStyle.Jellyfish:
           return ItemType.JellyfishStatue;
-        case StatueType.Bow:
+        case StatueStyle.Bow:
           return ItemType.BowStatue;
-        case StatueType.Boomerang:
+        case StatueStyle.Boomerang:
           return ItemType.BoomerangStatue;
-        case StatueType.Boot:
+        case StatueStyle.Boot:
           return ItemType.BootStatue;
-        case StatueType.Chest:
+        case StatueStyle.Chest:
           return ItemType.ChestStatue;
-        case StatueType.Bird:
+        case StatueStyle.Bird:
           return ItemType.BirdStatue;
-        case StatueType.Axe:
+        case StatueStyle.Axe:
           return ItemType.AxeStatue;
-        case StatueType.Corrupt:
+        case StatueStyle.Corrupt:
           return ItemType.CorruptStatue;
-        case StatueType.Tree:
+        case StatueStyle.Tree:
           return ItemType.TreeStatue;
-        case StatueType.Anvil:
+        case StatueStyle.Anvil:
           return ItemType.AnvilStatue;
-        case StatueType.Pickaxe:
+        case StatueStyle.Pickaxe:
           return ItemType.PickaxeStatue;
-        case StatueType.Mushroom:
+        case StatueStyle.Mushroom:
           return ItemType.MushroomStatue;
-        case StatueType.Eyeball:
+        case StatueStyle.Eyeball:
           return ItemType.EyeballStatue;
-        case StatueType.Pillar:
+        case StatueStyle.Pillar:
           return ItemType.PillarStatue;
-        case StatueType.Heart:
+        case StatueStyle.Heart:
           return ItemType.HeartStatue;
-        case StatueType.Pot:
+        case StatueStyle.Pot:
           return ItemType.PotStatue;
-        case StatueType.Sunflower:
+        case StatueStyle.Sunflower:
           return ItemType.SunflowerStatue;
-        case StatueType.King:
+        case StatueStyle.King:
           return ItemType.KingStatue;
-        case StatueType.Queen:
+        case StatueStyle.Queen:
           return ItemType.QueenStatue;
-        case StatueType.Piranha:
+        case StatueStyle.Piranha:
           return ItemType.PiranhaStatue;
         default:
-          throw new ArgumentException("statueType");
+          throw new ArgumentException("StatueStyle");
       }
     }
 
-    public static ChestType GetChestType(Tile tile, out bool isLocked) {
+    public static ChestStyle GetChestType(Tile tile, out bool isLocked) {
       return Terraria.GetChestType((tile.frameX / (Terraria.DefaultTextureTileSize * 2)), out isLocked);
     }
 
-    public static ChestType GetChestType(int objectStyle, out bool isLocked) {
+    public static ChestStyle GetChestType(int objectStyle, out bool isLocked) {
       isLocked = false;
 
       switch (objectStyle) {
         case 0:
-          return ChestType.WoodenChest;
+          return ChestStyle.WoodenChest;
         case 1:
-          return ChestType.GoldChest;
+          return ChestStyle.GoldChest;
         case 2:
           isLocked = true;
-          return ChestType.GoldChest;
+          return ChestStyle.GoldChest;
         case 3:
-          return ChestType.ShadowChest;
+          return ChestStyle.ShadowChest;
         case 4:
           isLocked = true;
-          return ChestType.GoldChest;
+          return ChestStyle.GoldChest;
         case 5:
-          return ChestType.Barrel;
+          return ChestStyle.Barrel;
         case 6:
-          return ChestType.TrashCan;
+          return ChestStyle.TrashCan;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }
     }
 
-    public static ItemType GetItemTypeFromChestType(ChestType chestType) {
-      switch (chestType) {
-        case ChestType.WoodenChest:
+    public static ItemType GetItemTypeFromChestType(ChestStyle chestStyle) {
+      switch (chestStyle) {
+        case ChestStyle.WoodenChest:
           return ItemType.Chest;
-        case ChestType.GoldChest:
+        case ChestStyle.GoldChest:
           return ItemType.GoldChest;
-        case ChestType.ShadowChest:
+        case ChestStyle.ShadowChest:
           return ItemType.ShadowChest;
-        case ChestType.Barrel:
+        case ChestStyle.Barrel:
           return ItemType.Barrel;
-        case ChestType.TrashCan:
+        case ChestStyle.TrashCan:
           return ItemType.TrashCan;
         default:
-          throw new ArgumentException("chestType");
+          throw new ArgumentException("ChestStyle");
       }
     }
  
@@ -534,15 +534,15 @@ namespace Terraria.Plugins.CoderCow {
         throw new ArgumentException("The tile on the given location is not active.");
 
       bool isLocked;
-      ChestType chestType = Terraria.GetChestType(chestTile, out isLocked);
-
-      switch (chestType) {
-        case ChestType.GoldChest:
+      ChestStyle chestStyle = Terraria.GetChestType(chestTile, out isLocked);
+      switch (chestStyle) {
+        case ChestStyle.GoldChest:
           if (isLocked) {
-            if (chestTile.wall < (int)WallType.DungeonBlueBrickWall || chestTile.wall > (int)WallType.DungeonPinkBrickWall)
-              return ChestKind.SkyIslandChest;
+            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall >= (int)WallType.DungeonPinkBrickWall)
+              return ChestKind.DungeonChest;
 
-            return ChestKind.DungeonChest;
+            if (anyChestTileLocation.Y < Main.worldSurface)
+              return ChestKind.SkyIslandChest;
           }
 
           if (chestTile.liquid < 255 || chestTile.lava)
@@ -553,11 +553,34 @@ namespace Terraria.Plugins.CoderCow {
             return ChestKind.Unknown;
 
           return ChestKind.OceanChest;
-        case ChestType.ShadowChest:
-          return ChestKind.ShadowChest;
+        case ChestStyle.ShadowChest:
+          if (!isLocked)
+            return ChestKind.Unknown;
+          
+          if (anyChestTileLocation.Y < Main.maxTilesY * 0.143)
+            return ChestKind.Unknown;
+
+          return ChestKind.HellShadowChest;
         default:
           return ChestKind.Unknown;
       }
+    }
+    
+    public static void LockChest(DPoint anyChestTileLocation) {
+      Tile chestTile = Terraria.Tiles[anyChestTileLocation];
+      if (!chestTile.active || chestTile.type != (int)BlockType.Chest)
+        throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
+
+      bool isLocked;
+      ChestStyle chestStyle = Terraria.GetChestType(chestTile, out isLocked);
+      if (isLocked || (chestStyle != ChestStyle.GoldChest && chestStyle != ChestStyle.ShadowChest))
+        throw new InvalidChestStyleException("Chest has to be a gold- or shadow chest.", chestStyle);
+
+      Terraria.ObjectMeasureData measureData = Terraria.MeasureObject(anyChestTileLocation);
+      foreach (Tile tile in Terraria.EnumerateObjectTiles(measureData))
+        tile.frameX += 36;
+      
+      TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
     }
     #endregion
 

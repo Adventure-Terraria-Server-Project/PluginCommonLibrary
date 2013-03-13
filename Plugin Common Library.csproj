@@ -145,13 +145,14 @@
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />
     <Compile Include="_General Exceptions\ChestNotEmptyException.cs" />
+    <Compile Include="_General Exceptions\InvalidChestStyleException.cs" />
     <Compile Include="_Threading\AsyncOrderedWorkQueue.cs" />
     <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
     <Compile Include="_Enums and Structs\BlockType.cs" />
     <Compile Include="_Enums and Structs\BossType.cs" />
     <Compile Include="_Enums and Structs\ChestKind.cs" />
-    <Compile Include="_Enums and Structs\ChestType.cs" />
+    <Compile Include="_Enums and Structs\ChestStyle.cs" />
     <Compile Include="_Enums and Structs\Direction.cs" />
     <Compile Include="_Enums and Structs\ItemMetadata.cs" />
     <Compile Include="_Enums and Structs\ItemPrefix.cs" />
@@ -190,7 +191,7 @@
     <Compile Include="_Utility Classes\PointEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
-    <Compile Include="_Enums and Structs\StatueType.cs" />
+    <Compile Include="_Enums and Structs\StatueStyle.cs" />
     <Compile Include="Collections\StringCollection.cs" />
     <Compile Include="Terraria.cs" />
     <Compile Include="Terraria.ObjectMeasureData.cs">

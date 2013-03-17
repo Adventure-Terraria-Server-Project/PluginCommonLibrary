@@ -55,12 +55,11 @@ namespace Terraria.Plugins.CoderCow {
         }
       } else {
         this.metadata = this.InitMetadata();
-        this.WriteMetadata();
       }
     }
     #endregion
 
-    #region [Methods: InitMetadata, ReadMetadataFromFile, WriteMetadata]
+    #region [Methods: InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
     protected abstract IMetadataFile InitMetadata();
     protected abstract IMetadataFile ReadMetadataFromFile(string filePath);
 
@@ -73,6 +72,30 @@ namespace Terraria.Plugins.CoderCow {
       }
 
       this.Metadata.Write(this.MetadataFilePath);
+    }
+
+    public virtual void CreateMetadataSnapshot() {
+      if (!File.Exists(this.MetadataFilePath))
+        throw new InvalidOperationException("Theres no actual metadata file, a snapshot can not be created.");
+
+      DateTime actualMetadataTime = File.GetLastWriteTime(this.MetadataFilePath);
+      string directoryPath = Path.GetDirectoryName(this.MetadataFilePath);
+      string snapShotFileName = string.Concat(
+        Path.GetFileNameWithoutExtension(this.MetadataFilePath), " snapshot ",
+        actualMetadataTime.ToString("yyyy-MM-dd_HH-mm-ss"), ".json"
+      );
+
+      File.Move(this.MetadataFilePath, Path.Combine(directoryPath, snapShotFileName));
+      this.Metadata.Write(this.MetadataFilePath);
+    }
+    #endregion
+
+    #region [Method: IsWorldOlderThanLastWrittenMetadata]
+    public bool IsWorldOlderThanLastWrittenMetadata() {
+      if (!File.Exists(this.MetadataFilePath))
+        return false;
+
+      return (File.GetLastWriteTime(Main.worldPathName) < File.GetLastWriteTime(this.MetadataFilePath));
     }
     #endregion
 

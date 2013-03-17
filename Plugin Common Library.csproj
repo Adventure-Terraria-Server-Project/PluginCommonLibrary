@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.CoderCow</RootNamespace>
-    <AssemblyName>Plugin Common Lib 1.6</AssemblyName>
+    <AssemblyName>Plugin Common Lib 1.7</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

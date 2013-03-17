@@ -145,7 +145,7 @@ namespace Terraria.Plugins.CoderCow {
           "Obsidian Brick",
           "Hellstone Brick",
           "Hellforge",
-          "ClayPot",
+          "Clay Pot",
           "Bed",
           "Cactus",
           "Coral",
@@ -229,15 +229,15 @@ namespace Terraria.Plugins.CoderCow {
     // Note: A block is considered any non-object, so any block type which blocks the player from passing through 
     // (cobwebs inclusive).
     public bool IsSolidBlockType(
-      BlockType blockType, bool takeWireableStoneAsBlock = false, bool takeWoodPlatformAsBlock = false, 
-      bool takeBouldersAsBlocks = false, bool takeDartTrapsAsBlocks = false
+      BlockType blockType, bool takeWireableStoneAsSolid = false, bool takeWoodPlatformAsSolid = false, 
+      bool takeBouldersAsSolid = false, bool takeDartTrapsAsSolid = false
     ) {
       return (
         (blockType >= BlockType.DirtBlock && blockType <= BlockType.Grass) ||
         (blockType >= BlockType.SandBlock && blockType <= BlockType.JungleGrass && blockType != BlockType.Sign) ||
         (blockType >= BlockType.IronOre && blockType <= BlockType.SilverOre) ||
         (blockType >= BlockType.PearlsandBlock && blockType <= BlockType.SiltBlock) ||
-        (takeWoodPlatformAsBlock && blockType == BlockType.WoodPlatform) ||
+        (takeWoodPlatformAsSolid && blockType == BlockType.WoodPlatform) ||
         (blockType >= BlockType.Meteorite && blockType <= BlockType.Spike && blockType != BlockType.ChainLantern) ||
         (blockType >= BlockType.ObsidianBrick && blockType <= BlockType.HellstoneBrick) ||
         (blockType >= BlockType.RedCandyCaneBlock && blockType <= BlockType.SnowBrick) ||
@@ -245,9 +245,9 @@ namespace Terraria.Plugins.CoderCow {
         (blockType == BlockType.Wood) ||
         (blockType >= BlockType.SapphireBlock && blockType <= BlockType.DiamondBlock) ||
         (blockType >= BlockType.CobaltOre && blockType <= BlockType.EbonsandBlock && blockType != BlockType.HallowedPlants) ||
-        (takeWireableStoneAsBlock && blockType >= BlockType.ActiveStone && blockType <= BlockType.InactiveStone) ||
+        (takeWireableStoneAsSolid && blockType >= BlockType.ActiveStone && blockType <= BlockType.InactiveStone) ||
         (blockType == BlockType.EbonstoneBlock) ||
-        (takeBouldersAsBlocks && blockType == BlockType.Boulder) ||
+        (takeBouldersAsSolid && blockType == BlockType.Boulder) ||
         (blockType == BlockType.MushroomGrass) ||
         (blockType == BlockType.IceBlock) ||
         (blockType == BlockType.Cobweb)

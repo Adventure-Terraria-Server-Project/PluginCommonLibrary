@@ -17,7 +17,7 @@ using TShockAPI;
 namespace Terraria.Plugins.CoderCow {
   public abstract class UserInteractionHandlerBase: IDisposable {
     #region [Constants]
-    public const int CommandInteractionTimeout = 600; // In frames
+    public const int CommandInteractionTimeout = 1200; // In frames
     private const int UpdateFrameRate = 60;
     #endregion
 
@@ -131,7 +131,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: StartOrResetCommandInteraction]
+    #region [Method: StartOrResetCommandInteraction, StopInteraction]
     protected PlayerCommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
       Contract.Requires<ArgumentNullException>(forPlayer != null);
@@ -150,6 +150,16 @@ namespace Terraria.Plugins.CoderCow {
 
       return newInteraction;
     }
+
+    protected void StopInteraction(TSPlayer forPlayer) {
+      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      Contract.Requires<ArgumentNullException>(forPlayer != null);
+
+      lock (this.activeCommandInteractionsLock) {
+        if (this.ActiveCommandInteractions.ContainsKey(forPlayer.Name))
+          this.ActiveCommandInteractions.Remove(forPlayer.Name);
+      }
+    }
     #endregion
 
     #region [Methods: HandleTileEdit, HandleChestGetContents, HandleSignEdit, HandleSignRead, HandleHitSwitch, HandleGameUpdate]
@@ -167,7 +177,9 @@ namespace Terraria.Plugins.CoderCow {
           return false;
 
         CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, blockType, location, objectStyle);
-        if (result.IsInteractionCompleted)
+        if (commandInteraction.DoesNeverComplete)
+          commandInteraction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player.Name);
 
         return result.IsHandled;
@@ -188,7 +200,9 @@ namespace Terraria.Plugins.CoderCow {
           return false;
 
         CommandInteractionResult result = commandInteraction.ChestOpenCallback(player, location);
-        if (result.IsInteractionCompleted)
+        if (commandInteraction.DoesNeverComplete)
+          commandInteraction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player.Name);
 
         return result.IsHandled;
@@ -209,7 +223,9 @@ namespace Terraria.Plugins.CoderCow {
           return false;
 
         CommandInteractionResult result = commandInteraction.SignEditCallback(player, signIndex, location, newText);
-        if (result.IsInteractionCompleted)
+        if (commandInteraction.DoesNeverComplete)
+          commandInteraction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player.Name);
 
         return result.IsHandled;
@@ -230,7 +246,9 @@ namespace Terraria.Plugins.CoderCow {
           return false;
       
         CommandInteractionResult result = commandInteraction.SignReadCallback(player, location);
-        if (result.IsInteractionCompleted)
+        if (commandInteraction.DoesNeverComplete)
+          commandInteraction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player.Name);
 
         return result.IsHandled;
@@ -251,7 +269,9 @@ namespace Terraria.Plugins.CoderCow {
           return false;
 
         CommandInteractionResult result = commandInteraction.HitSwitchCallback(player, location);
-        if (result.IsInteractionCompleted)
+        if (commandInteraction.DoesNeverComplete)
+          commandInteraction.FramesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player.Name);
 
         return result.IsHandled;

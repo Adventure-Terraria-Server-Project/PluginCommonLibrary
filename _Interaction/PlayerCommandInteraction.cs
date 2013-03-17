@@ -85,6 +85,15 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
+    #region [Property: DoesNeverComplete]
+    private bool doesNeverComplete;
+
+    public bool DoesNeverComplete {
+      get { return this.doesNeverComplete; }
+      set { this.doesNeverComplete = value; }
+    }
+    #endregion
+
 
     #region [Method: Constructor]
     public PlayerCommandInteraction(int timeToInteract) {

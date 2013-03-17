@@ -134,6 +134,15 @@ namespace Terraria.Plugins.CoderCow {
 
       return builder.ToString();
     }
+
+    public static bool ContainsParameter(this CommandArgs args, string parameter, StringComparison comparison) {
+      foreach (string param in args.Parameters) {
+        if (param.Equals(parameter, comparison))
+          return true;
+      }
+
+      return false;
+    }
     #endregion
   }
 }

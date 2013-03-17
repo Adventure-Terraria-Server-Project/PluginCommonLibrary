@@ -212,7 +212,9 @@
     <Compile Include="_General Exceptions\PlayerNotLoggedInException.cs" />
     <Compile Include="_General Exceptions\TileProtectedException.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="License.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

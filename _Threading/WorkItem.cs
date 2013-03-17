@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.CoderCow {

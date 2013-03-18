@@ -161,17 +161,17 @@ namespace Terraria.Plugins.CoderCow.Hooks {
     }
     #endregion
 
-    #region [Event: ItemDropOrPickUp]
-    public event EventHandler<ItemDropOrPickUpEventArgs> ItemDropOrPickUp;
+    #region [Event: ItemUpdate]
+    public event EventHandler<ItemUpdateEventArgs> ItemUpdate;
 
-    protected virtual bool OnItemDropOrPickUp(ItemDropOrPickUpEventArgs e) {
+    protected virtual bool OnItemUpdate(ItemUpdateEventArgs e) {
       Contract.Requires<ArgumentNullException>(e != null);
       
       try {
-        if (this.ItemDropOrPickUp != null)
-          this.ItemDropOrPickUp(this, e);
+        if (this.ItemUpdate != null)
+          this.ItemUpdate(this, e);
       } catch (Exception ex) {
-        this.ReportEventHandlerException("ItemDropOrPickUp", ex);
+        this.ReportEventHandlerException("ItemUpdate", ex);
       }
 
       return e.Handled;
@@ -255,6 +255,23 @@ namespace Terraria.Plugins.CoderCow.Hooks {
           this.PlayerSpawn(this, e);
       } catch (Exception ex) {
         this.ReportEventHandlerException("PlayerSpawn", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
+    #region [Event: ChestUnlock]
+    public event EventHandler<TileLocationEventArgs> ChestUnlock;
+
+    protected virtual bool OnChestUnlock(TileLocationEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.ChestUnlock != null)
+          this.ChestUnlock(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("ChestUnlock", ex);
       }
 
       return e.Handled;
@@ -413,7 +430,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             break;
           }
           case PacketTypes.ItemDrop: {
-            if (this.ItemDropOrPickUp == null || e.Msg.readBuffer.Length - e.Index < 22)
+            if (this.ItemUpdate == null || e.Msg.readBuffer.Length - e.Index < 22)
               break;
 
             short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
@@ -429,7 +446,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
               break;
 
-            e.Handled = this.OnItemDropOrPickUp(new ItemDropOrPickUpEventArgs(
+            e.Handled = this.OnItemUpdate(new ItemUpdateEventArgs(
               player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
               new ItemMetadata(itemPrefix, itemType, itemStackSize)
             ));
@@ -506,7 +523,7 @@ namespace Terraria.Plugins.CoderCow.Hooks {
             e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), isOpening == 1, actualDirection));
             break;
           }
-          case PacketTypes.PlayerSpawn:
+          case PacketTypes.PlayerSpawn: {
             if (this.PlayerSpawn == null || e.Msg.readBuffer.Length - e.Index < 9)
               break;
 
@@ -519,6 +536,22 @@ namespace Terraria.Plugins.CoderCow.Hooks {
 
             e.Handled = this.OnPlayerSpawn(new PlayerSpawnEventArgs(player, new DPoint(spawnX, spawnY)));
             break;
+          }
+          case PacketTypes.ChestUnlock: {
+            if (this.ChestUnlock == null || e.Msg.readBuffer.Length - e.Index < 10)
+              break;
+
+            byte dummy1 = e.Msg.readBuffer[e.Index];
+            byte dummy2 = e.Msg.readBuffer[e.Index + 1];
+            int chestX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
+            int chestY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+
+            if (!Terraria.Tiles.IsValidCoord(chestX, chestY))
+              break;
+
+            e.Handled = this.OnChestUnlock(new TileLocationEventArgs(player, new DPoint(chestX, chestY)));
+            break;
+          }
         }
       } catch (Exception ex) {
         this.PluginTrace.WriteLineError(string.Format(

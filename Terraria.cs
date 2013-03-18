@@ -374,12 +374,12 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Methods: GetStatueType, GetItemTypeFromStatueType, GetChestType, GetItemTypeFromChestType, LockChest]
-    public static StatueStyle GetStatueType(Tile tile) {
-      return Terraria.GetStatueType(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
+    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GetChestStyle, GetItemTypeFromChestType, LockChest]
+    public static StatueStyle GetStatueStyle(Tile tile) {
+      return Terraria.GetStatueStyle(tile.frameX / (Terraria.DefaultTextureTileSize * 2));
     }
 
-    public static StatueStyle GetStatueType(int objectStyle) {
+    public static StatueStyle GetStatueStyle(int objectStyle) {
       return (StatueStyle)(objectStyle + 1);
     }
 
@@ -476,11 +476,11 @@ namespace Terraria.Plugins.CoderCow {
       }
     }
 
-    public static ChestStyle GetChestType(Tile tile, out bool isLocked) {
-      return Terraria.GetChestType((tile.frameX / (Terraria.DefaultTextureTileSize * 2)), out isLocked);
+    public static ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
+      return Terraria.GetChestStyle((tile.frameX / (Terraria.DefaultTextureTileSize * 2)), out isLocked);
     }
 
-    public static ChestStyle GetChestType(int objectStyle, out bool isLocked) {
+    public static ChestStyle GetChestStyle(int objectStyle, out bool isLocked) {
       isLocked = false;
 
       switch (objectStyle) {
@@ -495,7 +495,7 @@ namespace Terraria.Plugins.CoderCow {
           return ChestStyle.ShadowChest;
         case 4:
           isLocked = true;
-          return ChestStyle.GoldChest;
+          return ChestStyle.ShadowChest;
         case 5:
           return ChestStyle.Barrel;
         case 6:
@@ -528,22 +528,24 @@ namespace Terraria.Plugins.CoderCow {
         throw new ArgumentException("The tile on the given location is not active.");
 
       bool isLocked;
-      ChestStyle chestStyle = Terraria.GetChestType(chestTile, out isLocked);
+      ChestStyle chestStyle = Terraria.GetChestStyle(chestTile, out isLocked);
       switch (chestStyle) {
         case ChestStyle.GoldChest:
           if (isLocked) {
-            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall >= (int)WallType.DungeonPinkBrickWall)
+            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
               return ChestKind.DungeonChest;
 
             if (anyChestTileLocation.Y < Main.worldSurface)
               return ChestKind.SkyIslandChest;
+
+            return ChestKind.Unknown;
           }
 
           if (chestTile.liquid < 255 || chestTile.lava)
             return ChestKind.Unknown;
-          if (anyChestTileLocation.X > 250 && anyChestTileLocation.X > Main.maxTilesX - 250)
+          if (anyChestTileLocation.X > 250 && anyChestTileLocation.X < Main.maxTilesX - 250)
             return ChestKind.Unknown;
-          if (anyChestTileLocation.Y < Main.worldSurface - 450 || anyChestTileLocation.Y > Main.worldSurface)
+          if (anyChestTileLocation.Y < Main.worldSurface - 200 || anyChestTileLocation.Y > Main.worldSurface + 50)
             return ChestKind.Unknown;
 
           return ChestKind.OceanChest;
@@ -551,7 +553,7 @@ namespace Terraria.Plugins.CoderCow {
           if (!isLocked)
             return ChestKind.Unknown;
           
-          if (anyChestTileLocation.Y < Main.maxTilesY * 0.143)
+          if (anyChestTileLocation.Y < Main.maxTilesY * (1.0 - 0.143))
             return ChestKind.Unknown;
 
           return ChestKind.HellShadowChest;
@@ -566,7 +568,7 @@ namespace Terraria.Plugins.CoderCow {
         throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
 
       bool isLocked;
-      ChestStyle chestStyle = Terraria.GetChestType(chestTile, out isLocked);
+      ChestStyle chestStyle = Terraria.GetChestStyle(chestTile, out isLocked);
       if (isLocked || (chestStyle != ChestStyle.GoldChest && chestStyle != ChestStyle.ShadowChest))
         throw new InvalidChestStyleException("Chest has to be a gold- or shadow chest.", chestStyle);
 

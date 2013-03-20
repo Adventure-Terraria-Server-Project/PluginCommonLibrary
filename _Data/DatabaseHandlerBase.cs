@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-
+using System.Diagnostics.Contracts;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 
@@ -10,7 +10,7 @@ using TShockAPI.DB;
 namespace Terraria.Plugins.CoderCow {
   public abstract class DatabaseHandlerBase: IDisposable {
     #region [Property: DbConnection, SqlType]
-    private readonly IDbConnection dbConnection;
+    private IDbConnection dbConnection;
 
     protected IDbConnection DbConnection {
       get { return this.dbConnection; }
@@ -29,9 +29,24 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
+    private readonly string sqliteDatabaseFilePath;
+
 
     #region [Method: Constructor]
     protected DatabaseHandlerBase(string sqliteDatabaseFilePath) {
+      Contract.Requires<ArgumentNullException>(sqliteDatabaseFilePath != null);
+      Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(sqliteDatabaseFilePath));
+
+      this.sqliteDatabaseFilePath = sqliteDatabaseFilePath;
+      this.workQueue = new AsyncOrderedWorkQueue();
+    }
+    #endregion
+
+    #region [Methods: EnsureDataStructure, GetQueryBuilder]
+    public void EstablishConnection() {
+      if (this.dbConnection != null)
+        throw new InvalidOperationException("Database connection already established.");
+
       switch (TShock.Config.StorageType.ToLower()) {
         case "mysql":
           string[] host = TShock.Config.MySqlHost.Split(':');
@@ -54,12 +69,8 @@ namespace Terraria.Plugins.CoderCow {
         default:
           throw new NotImplementedException();
       }
-
-      this.workQueue = new AsyncOrderedWorkQueue();
     }
-    #endregion
 
-    #region [Methods: EnsureDataStructure, GetQueryBuilder]
     public abstract void EnsureDataStructure();
 
     protected IQueryBuilder GetQueryBuilder() {

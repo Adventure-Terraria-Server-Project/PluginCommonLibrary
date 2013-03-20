@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 
 namespace Terraria.Plugins.CoderCow {
@@ -12,7 +13,7 @@ namespace Terraria.Plugins.CoderCow {
     #endregion
 
     #region [Property: Metadata]
-    private readonly IMetadataFile metadata;
+    private IMetadataFile metadata;
 
     public IMetadataFile Metadata {
       get { return this.metadata; }
@@ -32,7 +33,11 @@ namespace Terraria.Plugins.CoderCow {
     protected MetadataHandlerBase(PluginTrace pluginTrace, string metadataFilePath) {
       this.pluginTrace = pluginTrace;
       this.metadataFilePath = metadataFilePath;
+    }
+    #endregion
 
+    #region [Methods: InitOrReadMetdata, InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
+    public void InitOrReadMetdata() {
       if (File.Exists(this.metadataFilePath)) {
         try {
           this.metadata = this.ReadMetadataFromFile(this.metadataFilePath);
@@ -51,13 +56,13 @@ namespace Terraria.Plugins.CoderCow {
         this.metadata = this.InitMetadata();
       }
     }
-    #endregion
 
-    #region [Methods: InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
     protected abstract IMetadataFile InitMetadata();
     protected abstract IMetadataFile ReadMetadataFromFile(string filePath);
 
     public virtual void WriteMetadata() {
+      Contract.Requires<InvalidOperationException>(this.Metadata != null, "No present metadata.");
+
       // Make a backup of the old file if it exists.
       if (File.Exists(this.MetadataFilePath)) {
         string backupFileName = Path.GetFileNameWithoutExtension(this.MetadataFilePath) + ".bak";
@@ -69,6 +74,8 @@ namespace Terraria.Plugins.CoderCow {
     }
 
     public virtual void CreateMetadataSnapshot() {
+      Contract.Requires<InvalidOperationException>(this.Metadata != null, "No present metadata.");
+
       if (!File.Exists(this.MetadataFilePath))
         throw new InvalidOperationException("Theres no actual metadata file, a snapshot can not be created.");
 

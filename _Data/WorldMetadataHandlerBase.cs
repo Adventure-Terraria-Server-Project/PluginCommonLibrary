@@ -9,19 +9,25 @@ namespace Terraria.Plugins.CoderCow {
     private const string WorldMetadataFileNameFormat = @"{0}.json";
     #endregion
 
+    #region [Property: MetadataDirectoryPath]
+    private readonly string metadataDirectoryPath;
+
+    public string MetadataDirectoryPath {
+      get { return this.metadataDirectoryPath; }
+    }
+    #endregion
+
 
     #region [Method: Constructor]
     protected WorldMetadataHandlerBase(PluginTrace pluginTrace, string metadataDirectoryPath): base(
-      pluginTrace, WorldMetadataHandlerBase.GetMetadataFilePath(metadataDirectoryPath)
-    ) {}
-
-    private static string GetMetadataFilePath(string metadataDirectoryPath) {
+      pluginTrace, Path.Combine(
+        metadataDirectoryPath, string.Format(WorldMetadataHandlerBase.WorldMetadataFileNameFormat, Main.worldID)
+      )
+    ) {
       if (!Directory.Exists(metadataDirectoryPath))
         Directory.CreateDirectory(metadataDirectoryPath);
 
-      return Path.Combine(
-        metadataDirectoryPath, string.Format(WorldMetadataHandlerBase.WorldMetadataFileNameFormat, Main.worldID)
-      );
+      this.metadataDirectoryPath = metadataDirectoryPath;
     }
     #endregion
   }

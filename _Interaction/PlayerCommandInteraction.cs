@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
 namespace Terraria.Plugins.CoderCow {
   public class PlayerCommandInteraction {
-    #region [Property: FramesLeft]
-    private int framesLeft;
+    #region [Property: ForPlayer]
+    private readonly TSPlayer forPlayer;
 
-    public int FramesLeft {
-      get { return this.framesLeft; }
-      set { this.framesLeft = value; }
+    public TSPlayer ForPlayer {
+      get { return this.forPlayer; }
+    }
+    #endregion
+
+    #region [Property: TimeoutTask]
+    private Task timeoutTask;
+
+    internal Task TimeoutTask {
+      get { return this.timeoutTask; }
+      set { this.timeoutTask = value; }
     }
     #endregion
 
@@ -88,10 +97,14 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
+    internal volatile int framesLeft;
+
 
     #region [Method: Constructor]
-    public PlayerCommandInteraction(int timeToInteract) {
-      this.framesLeft = timeToInteract;
+    public PlayerCommandInteraction(TSPlayer forPlayer) {
+      Contract.Requires<ArgumentNullException>(forPlayer != null);
+
+      this.forPlayer = forPlayer;
     }
     #endregion
   }

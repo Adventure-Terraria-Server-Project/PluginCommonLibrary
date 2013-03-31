@@ -22,8 +22,8 @@ namespace Terraria.Plugins.Common.Test {
         );
       }
 
-      Terraria.ObjectMeasureData measureData = Terraria.MeasureObject(new DPoint(x, y));
-      bool isActive = Terraria.ObjectHasActiveState(measureData);
+      Terraria.ObjectMeasureData measureData = Terraria.Tiles.MeasureObject(new DPoint(x, y));
+      bool isActive = Terraria.Tiles.ObjectHasActiveState(measureData);
       if (isActive != expectedState) {
         string actualStateString;
         if (isActive)

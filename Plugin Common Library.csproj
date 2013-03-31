@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 1.7</AssemblyName>
+    <AssemblyName>Plugin Common Lib 1.8</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -142,6 +142,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="_Threading\AsyncWorkQueue.cs" />
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />

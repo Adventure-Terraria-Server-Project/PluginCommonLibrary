@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public enum BlockType {
     Invalid = -1,
     DirtBlock = 0,

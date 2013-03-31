@@ -4,7 +4,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class TerrariaItems {
     #region [Methods: IsValidItemType, IsCraftableItem, IsEquipableItem, GetItemName]
     public bool IsValidItemType(int itemType) {

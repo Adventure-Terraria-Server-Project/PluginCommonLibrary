@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow.Hooks {
+namespace Terraria.Plugins.Common.Hooks {
   public class NetHookEventArgs: HandledEventArgs {
     #region [Property: Player]
     private readonly TSPlayer player;

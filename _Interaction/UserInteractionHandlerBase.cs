@@ -10,7 +10,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public abstract class UserInteractionHandlerBase: IDisposable {
     #region [Constants]
     public const int CommandInteractionTimeout = 1200; // In frames

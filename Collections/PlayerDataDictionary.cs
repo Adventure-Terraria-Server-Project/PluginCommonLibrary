@@ -7,7 +7,7 @@ using System.Diagnostics.Contracts;
 using Hooks;
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow.Collections {
+namespace Terraria.Plugins.Common.Collections {
   public class PlayerDataDictionary<DataType>: Dictionary<Player,DataType>, IDisposable {
     #region [Property: ConstructDataFunction]
     private Func<Player, DataType> constructDataFunction;

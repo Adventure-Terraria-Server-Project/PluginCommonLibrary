@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class PlayerEventArgs: EventArgs {
     #region [Property: TPlayer]
     private readonly Player tPlayer;

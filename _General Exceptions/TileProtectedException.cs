@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow.Protector {
+namespace Terraria.Plugins.Common.Protector {
   [Serializable]
   public class TileProtectedException: Exception {
     #region [Property: TileLocation]

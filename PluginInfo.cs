@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public struct PluginInfo {
     public static PluginInfo Empty = default(PluginInfo);
 

@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Test {
+namespace Terraria.Plugins.Common.Test {
   public class TestContext {
     #region [Property: Phase]
     private string phase;

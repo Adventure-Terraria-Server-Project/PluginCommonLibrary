@@ -6,7 +6,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class PlayerCommandInteraction {
     #region [Property: ForPlayer]
     private readonly TSPlayer forPlayer;

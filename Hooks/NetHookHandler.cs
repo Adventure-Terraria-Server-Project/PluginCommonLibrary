@@ -6,7 +6,7 @@ using Hooks;
 using TShockAPI;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow.Hooks {
+namespace Terraria.Plugins.Common.Hooks {
   public class NetHookHandler: IDisposable {
     #region [Property: PluginTrace]
     private readonly PluginTrace pluginTrace;

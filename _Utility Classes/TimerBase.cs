@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public abstract class TimerBase {
     #region [Property: StartTime]
     private DateTime startTime;

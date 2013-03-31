@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static class TimeSpanEx {
     #region [Method: Static TryParseShort]
     // Group identifiers: Days, Hours, Minutes, Seconds

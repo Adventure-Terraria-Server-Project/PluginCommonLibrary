@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static class PointEx {
     public static string ToSimpleString(this DPoint point) {
       return string.Concat(point.X, ',', point.Y);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public enum ItemType: short {
     None = 0,
     IronPickaxe = 1,

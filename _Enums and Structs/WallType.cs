@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public enum WallType {
     Sky = 0,
     StoneWall = 1,

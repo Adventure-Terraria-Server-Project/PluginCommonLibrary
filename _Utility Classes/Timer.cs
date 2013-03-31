@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class Timer: TimerBase {
     #region [Property: TimeSpan]
     private TimeSpan timeSpan;

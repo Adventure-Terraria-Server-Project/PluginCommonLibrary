@@ -5,7 +5,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class TerrariaTiles {
     #region [Indexers]
     public Tile this[int x, int y] {

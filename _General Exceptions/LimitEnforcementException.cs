@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   [Serializable]
   public class LimitEnforcementException: Exception {
     public LimitEnforcementException(string message, Exception inner = null): base(message, inner) {}

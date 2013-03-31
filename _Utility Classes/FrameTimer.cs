@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class FrameTimer: TimerBase {
     #region [Property: FrameSpan]
     private int frameSpan;

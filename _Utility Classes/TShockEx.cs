@@ -7,7 +7,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static class TShockEx {
     #region [Method: Static MatchUserAccountNameByPlayerName, MatchUserIdByPlayerName, MatchUserByPlayerName]
     public static bool MatchUserAccountNameByPlayerName(string playerName, out string exactName, TSPlayer messagesReceiver = null) {

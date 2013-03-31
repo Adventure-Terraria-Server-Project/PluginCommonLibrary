@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Test {
+namespace Terraria.Plugins.Common.Test {
   public class TestRunData {
     #region [Property: TestAction]
     private readonly Action<TestContext> testAction;

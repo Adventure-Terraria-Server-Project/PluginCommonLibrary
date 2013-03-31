@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   [Serializable]
   public class ChestNotEmptyException: Exception {
     #region [Property: ChestLocation]

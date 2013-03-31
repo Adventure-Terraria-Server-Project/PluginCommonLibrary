@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Collections {
+namespace Terraria.Plugins.Common.Collections {
   public class StringCollection: Collection<string> {
     #region [Method: Constructor]
     public StringCollection() {}

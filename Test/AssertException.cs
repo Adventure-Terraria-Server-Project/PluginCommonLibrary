@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Test {
+namespace Terraria.Plugins.Common.Test {
   [Serializable]
   public class AssertException: Exception {
     public AssertException(string message, Exception inner): base(message, inner) {}

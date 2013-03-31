@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 using TShockAPI;
 using TShockAPI.DB;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public abstract class DatabaseHandlerBase: IDisposable {
     #region [Property: DbConnection, SqlType]
     private IDbConnection dbConnection;

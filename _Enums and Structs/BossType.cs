@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public enum BossType {
     GoblinArmy = -1,
     FrostLegion = -2,

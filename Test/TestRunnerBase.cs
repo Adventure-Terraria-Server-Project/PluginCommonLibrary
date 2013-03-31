@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Test {
+namespace Terraria.Plugins.Common.Test {
   public abstract class TestRunnerBase {
     private readonly Dictionary<string,TestRunData> testRunData;
     private IEnumerator<KeyValuePair<string,TestRunData>> testRunEnumerator;

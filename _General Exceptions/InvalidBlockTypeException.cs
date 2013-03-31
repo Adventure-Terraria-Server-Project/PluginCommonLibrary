@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Runtime.Serialization;
 using System.Security;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   [Serializable]
   public class InvalidBlockTypeException: Exception {
     #region [Property: BlockType]

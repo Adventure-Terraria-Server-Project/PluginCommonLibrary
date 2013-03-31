@@ -3,7 +3,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow.Hooks {
+namespace Terraria.Plugins.Common.Hooks {
   public class LiquidSetEventArgs: TileLocationEventArgs {
     #region [Property: LiquidAmount]
     private readonly byte liquidAmount;

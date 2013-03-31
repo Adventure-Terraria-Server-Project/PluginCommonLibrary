@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.IO;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public abstract class MetadataHandlerBase {
     #region [Property: MetadataFilePath]
     private readonly string metadataFilePath;

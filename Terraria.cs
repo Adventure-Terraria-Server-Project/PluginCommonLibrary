@@ -6,7 +6,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static partial class Terraria {
     #region [Constants]
     public const int BlockType_Min = 0;

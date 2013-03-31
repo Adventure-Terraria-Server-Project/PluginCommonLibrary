@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class AsyncWorkQueue: IDisposable {
     private struct WorkItem {
       #region [Property: CompletionSource]

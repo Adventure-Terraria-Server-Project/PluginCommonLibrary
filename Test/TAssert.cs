@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
-namespace Terraria.Plugins.CoderCow.Test {
+namespace Terraria.Plugins.Common.Test {
   public static class TAssert {
     #region [Methods: IsObjectActive, IsObjectInactive]
     public static void IsObjectActive(int x, int y) {

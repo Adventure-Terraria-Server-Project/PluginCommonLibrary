@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow.Collections {
+namespace Terraria.Plugins.Common.Collections {
   public class PriorityList<T>: Collection<T> {
     #region [Property: Priorities]
     private readonly List<int> priorities;

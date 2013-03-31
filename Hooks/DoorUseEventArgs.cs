@@ -4,7 +4,7 @@ using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow.Hooks {
+namespace Terraria.Plugins.Common.Hooks {
   public class DoorUseEventArgs: TileLocationEventArgs {
     #region [Property: IsOpening]
     private readonly bool isOpening;

@@ -6,7 +6,7 @@ using System.Text;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static class PaginationUtil {
     public delegate Tuple<string,Color> LineFormatterDelegate(object lineData, int lineIndex, int pageNumber);
 

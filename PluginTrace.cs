@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public class PluginTrace {
     #region [Constants]
     public const ConsoleColor ConsoleErrorColor = ConsoleColor.Red;

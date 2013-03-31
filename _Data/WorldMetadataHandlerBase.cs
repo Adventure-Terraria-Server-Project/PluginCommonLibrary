@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public abstract class WorldMetadataHandlerBase: MetadataHandlerBase {
     #region [Constants]
     private const string WorldMetadataFileNameFormat = @"{0}.json";

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   public static class CollectionEx {
     public static void AddRangeWithoutClones(this IList list, IEnumerable enumerable) {
       Contract.Requires<ArgumentNullException>(list != null);

@@ -3,7 +3,7 @@
 using Newtonsoft.Json;
 using TShockAPI;
 
-namespace Terraria.Plugins.CoderCow {
+namespace Terraria.Plugins.Common {
   [JsonConverter(typeof(ItemMetadata.CJsonConverter))]
   public struct ItemMetadata {
     #region [Nested: CJsonConverter Class]

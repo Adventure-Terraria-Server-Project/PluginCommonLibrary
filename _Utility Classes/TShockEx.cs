@@ -67,7 +67,9 @@ namespace Terraria.Plugins.CoderCow {
 
       List<TSPlayer> players = TShock.Utils.FindPlayer(name);
       if (players.Count == 0) {
-        messagesReceiver.SendErrorMessage(string.Format("Could not match any players for \"{0}\".", name));
+        if (messagesReceiver != null)
+          messagesReceiver.SendErrorMessage(string.Format("Could not match any players for \"{0}\".", name));
+
         return false;
       } if (players.Count > 1) {
         if (messagesReceiver != null) {
@@ -88,14 +90,36 @@ namespace Terraria.Plugins.CoderCow {
       return true;
     }
 
-    public static TSPlayer GetPlayerByName(
-      string name, StringComparison stringComparison = StringComparison.InvariantCulture
-    ) {
+    public static TSPlayer GetPlayerByName(string name, StringComparison stringComparison = StringComparison.InvariantCulture) {
       foreach (TSPlayer tsPlayer in TShock.Players) {
         if (tsPlayer == null)
           continue;
 
         if (tsPlayer.Name.Equals(name, stringComparison))
+          return tsPlayer;
+      }
+
+      return null;
+    }
+
+    public static TSPlayer GetPlayerByIp(string ip) {
+      foreach (TSPlayer tsPlayer in TShock.Players) {
+        if (tsPlayer == null)
+          continue;
+
+        if (tsPlayer.IP == ip)
+          return tsPlayer;
+      }
+
+      return null;
+    }
+
+    public static TSPlayer GetPlayerByTPlayer(Player tPlayer) {
+      foreach (TSPlayer tsPlayer in TShock.Players) {
+        if (tsPlayer == null)
+          continue;
+
+        if (tsPlayer.TPlayer == tPlayer)
           return tsPlayer;
       }
 

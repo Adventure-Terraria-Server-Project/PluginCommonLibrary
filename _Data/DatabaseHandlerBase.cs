@@ -21,14 +21,6 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Property: WorkQueue]
-    private readonly AsyncOrderedWorkQueue workQueue;
-
-    protected AsyncOrderedWorkQueue WorkQueue {
-      get { return this.workQueue; }
-    }
-    #endregion
-
     private readonly string sqliteDatabaseFilePath;
 
 
@@ -38,7 +30,6 @@ namespace Terraria.Plugins.CoderCow {
       Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(sqliteDatabaseFilePath));
 
       this.sqliteDatabaseFilePath = sqliteDatabaseFilePath;
-      this.workQueue = new AsyncOrderedWorkQueue();
     }
     #endregion
 
@@ -81,12 +72,6 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Method: HandleGameUpdate]
-    public void HandleGameUpdate() {
-      this.WorkQueue.HandleGameUpdate();
-    }
-    #endregion
-
     #region [IDisposable Implementation]
     private bool isDisposed;
 
@@ -99,8 +84,6 @@ namespace Terraria.Plugins.CoderCow {
         return;
     
       if (isDisposing) {
-        if (this.workQueue != null) 
-          this.workQueue.Dispose();
         if (this.dbConnection != null)
           this.dbConnection.Dispose();
       }

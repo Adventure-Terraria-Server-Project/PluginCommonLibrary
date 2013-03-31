@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using DPoint = System.Drawing.Point;
 
+using TShockAPI;
+
 namespace Terraria.Plugins.CoderCow {
   public class TerrariaItems {
-    #region [Methods: IsValidItemType, IsCraftableItem, IsEquipableItem]
+    #region [Methods: IsValidItemType, IsCraftableItem, IsEquipableItem, GetItemName]
     public bool IsValidItemType(int itemType) {
       return (itemType >= Terraria.ItemType_Min && itemType <= Terraria.ItemType_Max);
     }
@@ -148,6 +150,20 @@ namespace Terraria.Plugins.CoderCow {
         itemType == ItemType.MusicBox ||
         (itemType >= ItemType.SantaHat && itemType <= ItemType.SantaPants)
       );
+    }
+
+    public string GetItemName(ItemType itemType) {
+      return Main.itemName[(int)itemType];
+    }
+    #endregion
+
+    #region [Method: CreateNew]
+    public void CreateNew(TSPlayer forPlayer, DPoint location, ItemMetadata itemData) {
+      int itemIndex = Item.NewItem(
+        location.X, location.Y, 16, 16, (int)itemData.Type, itemData.StackSize, true, (int)itemData.Prefix
+      );
+
+      forPlayer.SendData(PacketTypes.ItemDrop, string.Empty, itemIndex);
     }
     #endregion
 

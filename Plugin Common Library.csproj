@@ -142,10 +142,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="_Threading\AsyncWorkQueue.cs" />
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />
     <Compile Include="_General Exceptions\ChestNotEmptyException.cs" />
     <Compile Include="_General Exceptions\InvalidChestStyleException.cs" />
+    <Compile Include="_General Exceptions\PlayerDataCreationException.cs" />
     <Compile Include="_Threading\AsyncOrderedWorkQueue.cs" />
     <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
@@ -167,6 +169,8 @@
     <Compile Include="_Utility Classes\CollectionEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
+    <Compile Include="Collections\PlayerDataDictionary.cs" />
+    <Compile Include="_Utility Classes\PlayerEventArgs.cs" />
     <Compile Include="_Utility Classes\Timer.cs" />
     <Compile Include="_Utility Classes\TimerBase.cs" />
     <Compile Include="_Utility Classes\TimerManager.cs" />

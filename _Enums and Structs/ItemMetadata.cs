@@ -31,13 +31,7 @@ namespace Terraria.Plugins.CoderCow {
     }
     #endregion
 
-    #region [Property: Static None]
-    private static readonly ItemMetadata none = default(ItemMetadata);
-
-    public static ItemMetadata None {
-      get { return ItemMetadata.none; }
-    }
-    #endregion
+    public static readonly ItemMetadata None = default(ItemMetadata);
 
     #region [Property: Prefix]
     private readonly ItemPrefix prefix;

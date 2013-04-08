@@ -7,7 +7,7 @@ using DPoint = System.Drawing.Point;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common {
-  public static partial class Terraria {
+  public static partial class TerrariaUtils {
     #region [Constants]
     public const int BlockType_Min = 0;
     public const int BlockType_Max = 149;
@@ -18,6 +18,9 @@ namespace Terraria.Plugins.Common {
     public const int ItemType_Min = 0;
     public const int ItemType_Max = 603;
 
+    public const int NpcType_Min = -17;
+    public const int NpcType_Max = 145;
+
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;
     #endregion
@@ -26,7 +29,7 @@ namespace Terraria.Plugins.Common {
     private static readonly TerrariaTiles tiles;
 
     public static TerrariaTiles Tiles {
-      get { return Terraria.tiles; }
+      get { return TerrariaUtils.tiles; }
     }
     #endregion
 
@@ -34,24 +37,30 @@ namespace Terraria.Plugins.Common {
     private static readonly TerrariaItems items;
 
     public static TerrariaItems Items {
-      get { return Terraria.items; }
+      get { return TerrariaUtils.items; }
     }
     #endregion
 
-    #region [Property: Static Npcs]
+    #region [Property: Npcs]
     private static readonly TerrariaNpcs npcs;
 
     public static TerrariaNpcs Npcs {
-      get { return Terraria.npcs; }
+      get { return TerrariaUtils.npcs; }
+    }
+    #endregion
+
+    #region [Property: InvasionType]
+    public static InvasionType InvasionType {
+      get { return (Common.InvasionType)Main.invasionType; }
     }
     #endregion
 
 
     #region [Method: Constructor]
-    static Terraria() {
-      Terraria.tiles = new TerrariaTiles();
-      Terraria.items = new TerrariaItems();
-      Terraria.npcs = new TerrariaNpcs();
+    static TerrariaUtils() {
+      TerrariaUtils.tiles = new TerrariaTiles();
+      TerrariaUtils.items = new TerrariaItems();
+      TerrariaUtils.npcs = new TerrariaNpcs();
     }
     #endregion
   }

@@ -87,8 +87,13 @@ namespace Terraria.Plugins.Common.Collections {
         return;
 
       Player tPlayer = Main.player[playerIndex];
+      TSPlayer tsPlayer = TShockEx.GetPlayerByTPlayer(tPlayer);
+      if (this.addAfterLogin && !tsPlayer.IsLoggedIn)
+        return;
+
       this.AddPlayerData(tPlayer);
-      if (!TShock.Config.DisableLoginBeforeJoin)
+
+      if (tsPlayer.IsLoggedIn)
         this.OnPlayerLogin(new PlayerEventArgs(tPlayer));
     }
 

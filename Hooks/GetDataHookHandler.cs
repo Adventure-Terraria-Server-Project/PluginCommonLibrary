@@ -7,7 +7,7 @@ using TShockAPI;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Hooks {
-  public class NetHookHandler: IDisposable {
+  public class GetDataHookHandler: IDisposable {
     #region [Property: PluginTrace]
     private readonly PluginTrace pluginTrace;
 
@@ -280,7 +280,7 @@ namespace Terraria.Plugins.Common.Hooks {
 
 
     #region [Method: Constructor]
-    public NetHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
+    public GetDataHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
       Contract.Requires<ArgumentNullException>(pluginTrace != null);
 
       this.pluginTrace = pluginTrace;
@@ -315,7 +315,7 @@ namespace Terraria.Plugins.Common.Hooks {
             byte blockType = e.Msg.readBuffer[e.Index + 9];
             byte objectStyle = e.Msg.readBuffer[e.Index + 10];
 
-            if (!Terraria.Tiles.IsValidCoord(x, y) || editType > 6)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || editType > 6)
               return;
 
             e.Handled = this.OnTileEdit(
@@ -334,7 +334,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
             
-            if (!Terraria.Tiles.IsValidCoord(x, y) || Terraria.Tiles[x, y].type != (int)BlockType.Chest)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || TerrariaUtils.Tiles[x, y].type != (int)BlockType.Chest)
               break;
           
             if (this.InvokeTileEditOnChestKill)
@@ -352,7 +352,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
 
-            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
               return;
           
             e.Handled = this.OnChestGetContents(new TileLocationEventArgs(player, new DPoint(x, y)));
@@ -385,7 +385,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
             string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - e.Index - 11);
 
-            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
               return;
 
             e.Handled = this.OnSignEdit(new SignEditEventArgs(player, signIndex, new DPoint(x, y), newText));
@@ -408,7 +408,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
       
-            if (!Terraria.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
               return;
             // For some reason, TShock doesn't handle this packet so we just do our own checks.
             if (TShock.CheckIgnores(player))
@@ -459,9 +459,7 @@ namespace Terraria.Plugins.Common.Hooks {
             short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
             byte newOwnerPlayerIndex = e.Msg.readBuffer[e.Index + 2];
             TSPlayer newOwner;
-            if (newOwnerPlayerIndex == -1)
-              newOwner = TSPlayer.Server;
-            else if (newOwnerPlayerIndex < 255)
+            if (newOwnerPlayerIndex < 255)
               newOwner = TShock.Players[newOwnerPlayerIndex];
             else 
               break;
@@ -496,7 +494,7 @@ namespace Terraria.Plugins.Common.Hooks {
             byte liquidAmount = e.Msg.readBuffer[e.Index + 8];
             byte lava = e.Msg.readBuffer[e.Index + 9];
 
-            if (!Terraria.Tiles.IsValidCoord(x, y))
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
 
             e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, lava != 0));
@@ -511,7 +509,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
             int direction = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 9);
 
-            if (!Terraria.Tiles.IsValidCoord(x, y))
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
 
             Direction actualDirection;
@@ -531,7 +529,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int spawnX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
             int spawnY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
 
-            if (!Terraria.Tiles.IsValidCoord(spawnX, spawnY))
+            if (!TerrariaUtils.Tiles.IsValidCoord(spawnX, spawnY))
               break;
 
             e.Handled = this.OnPlayerSpawn(new PlayerSpawnEventArgs(player, new DPoint(spawnX, spawnY)));
@@ -546,7 +544,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int chestX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
             int chestY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
 
-            if (!Terraria.Tiles.IsValidCoord(chestX, chestY))
+            if (!TerrariaUtils.Tiles.IsValidCoord(chestX, chestY))
               break;
 
             e.Handled = this.OnChestUnlock(new TileLocationEventArgs(player, new DPoint(chestX, chestY)));
@@ -591,7 +589,7 @@ namespace Terraria.Plugins.Common.Hooks {
       GC.SuppressFinalize(this);
     }
 
-    ~NetHookHandler() {
+    ~GetDataHookHandler() {
       this.Dispose(false);
     }
     #endregion

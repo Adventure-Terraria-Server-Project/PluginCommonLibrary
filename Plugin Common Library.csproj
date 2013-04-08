@@ -142,14 +142,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\DecayingCollection.cs" />
     <Compile Include="TerrariaNpcs.cs" />
+    <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
+    <Compile Include="_Enums and Structs\HerbStyle.cs" />
+    <Compile Include="_Enums and Structs\InvasionType.cs" />
+    <Compile Include="_Enums and Structs\ObjectMeasureData.cs" />
     <Compile Include="_Threading\AsyncWorkQueue.cs" />
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />
     <Compile Include="_General Exceptions\ChestNotEmptyException.cs" />
     <Compile Include="_General Exceptions\InvalidChestStyleException.cs" />
     <Compile Include="_General Exceptions\PlayerDataCreationException.cs" />
-    <Compile Include="_Threading\WorkItem.cs" />
     <Compile Include="TerrariaItems.cs" />
     <Compile Include="_Enums and Structs\BlockType.cs" />
     <Compile Include="_Enums and Structs\BossType.cs" />
@@ -184,7 +188,7 @@
     <Compile Include="Hooks\PlayerModifySlotEventArgs.cs" />
     <Compile Include="Hooks\TileLocationEventArgs.cs" />
     <Compile Include="Hooks\NetHookEventArgs.cs" />
-    <Compile Include="Hooks\NetHookHandler.cs" />
+    <Compile Include="Hooks\GetDataHookHandler.cs" />
     <Compile Include="Hooks\SignEditEventArgs.cs" />
     <Compile Include="Hooks\TileEditEventArgs.cs" />
     <Compile Include="Test\AssertException.cs" />
@@ -197,10 +201,7 @@
     <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="_Enums and Structs\StatueStyle.cs" />
     <Compile Include="Collections\StringCollection.cs" />
-    <Compile Include="Terraria.cs" />
-    <Compile Include="Terraria.ObjectMeasureData.cs">
-      <DependentUpon>Terraria.cs</DependentUpon>
-    </Compile>
+    <Compile Include="TerrariaUtils.cs" />
     <Compile Include="_Enums and Structs\TileEditType.cs" />
     <Compile Include="_Utility Classes\TShockEx.cs" />
     <Compile Include="_Interaction\UserInteractionHandlerBase.cs" />

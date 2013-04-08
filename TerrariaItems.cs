@@ -8,7 +8,7 @@ namespace Terraria.Plugins.Common {
   public class TerrariaItems {
     #region [Methods: IsValidItemType, IsCraftableItem, IsEquipableItem, GetItemName]
     public bool IsValidItemType(int itemType) {
-      return (itemType >= Terraria.ItemType_Min && itemType <= Terraria.ItemType_Max);
+      return (itemType >= TerrariaUtils.ItemType_Min && itemType <= TerrariaUtils.ItemType_Max);
     }
 
     public bool IsCraftableItem(ItemType itemType) {
@@ -193,6 +193,127 @@ namespace Terraria.Plugins.Common {
         if (Math.Sqrt(Math.Pow(item.position.X - location.X, 2) + Math.Pow(item.position.Y - location.Y, 2)) <= radius)
           yield return item;
       }
+    }
+    #endregion
+
+    #region [Methods: IsUniversalPrefix, IsCommonPrefix]
+    public bool IsUniversalPrefix(ItemPrefix prefix) {
+      switch (prefix) {
+        case ItemPrefix.Keen:
+        case ItemPrefix.Superior:
+        case ItemPrefix.Forceful:
+        case ItemPrefix.Broken:
+        case ItemPrefix.Damaged:
+        case ItemPrefix.Shoddy:
+        case ItemPrefix.Hurtful:
+        case ItemPrefix.Strong:
+        case ItemPrefix.Unpleasant:
+        case ItemPrefix.Weak:
+        case ItemPrefix.Ruthless:
+        case ItemPrefix.Godly:
+        case ItemPrefix.Demonic:
+        case ItemPrefix.Zealous:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsCommonPrefix(ItemPrefix prefix) {
+      switch (prefix) {
+        case ItemPrefix.Quick:
+        case ItemPrefix.Quick2:
+        case ItemPrefix.Deadly:
+        case ItemPrefix.Deadly2:
+        case ItemPrefix.Agile:
+        case ItemPrefix.Nimble:
+        case ItemPrefix.Murderous:
+        case ItemPrefix.Slow:
+        case ItemPrefix.Sluggish:
+        case ItemPrefix.Lazy:
+        case ItemPrefix.Annoying:
+        case ItemPrefix.Nasty:
+          return true;
+      }
+
+      return false;
+    }
+    #endregion
+
+    #region [Methods: IsFlail, IsSpear, IsBoomerang, IsChainsaw, IsDrill, IsHook]
+    public bool IsFlail(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.BallOHurt:
+        case ItemType.BlueMoon:
+        case ItemType.Harpoon:
+        case ItemType.Sunfury:
+        case ItemType.DaoofPow:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsSpear(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.Spear:
+        case ItemType.Trident:
+        case ItemType.DarkLance:
+        case ItemType.CobaltNaginata:
+        case ItemType.MythrilHalberd:
+        case ItemType.AdamantiteGlaive:
+        case ItemType.Gungnir:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsBoomerang(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.WoodenBoomerang:
+        case ItemType.EnchantedBoomerang:
+        case ItemType.ThornChakram:
+        case ItemType.Flamarang:
+        case ItemType.LightDisc:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsChainsaw(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.CobaltChainsaw:
+        case ItemType.MythrilChainsaw:
+        case ItemType.AdamantiteChainsaw:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsDrill(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.CobaltDrill:
+        case ItemType.MythrilDrill:
+        case ItemType.AdamantiteDrill:
+        case ItemType.Hamdrax:
+          return true;
+      }
+
+      return false;
+    }
+
+     public bool IsHook(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.GrapplingHook:
+        case ItemType.IvyWhip:
+        case ItemType.DualHook:
+          return true;
+      }
+
+      return false;
     }
     #endregion
   }

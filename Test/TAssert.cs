@@ -15,15 +15,15 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void IsObjectActive(int x, int y, bool expectedState) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       if (!tile.active) {
         throw new AssertException(
           string.Format("Assert failed. There is no tile at [{0},{1}].", x, y)
         );
       }
 
-      Terraria.ObjectMeasureData measureData = Terraria.Tiles.MeasureObject(new DPoint(x, y));
-      bool isActive = Terraria.Tiles.ObjectHasActiveState(measureData);
+      ObjectMeasureData measureData = TerrariaUtils.Tiles.MeasureObject(new DPoint(x, y));
+      bool isActive = TerrariaUtils.Tiles.ObjectHasActiveState(measureData);
       if (isActive != expectedState) {
         string actualStateString;
         if (isActive)
@@ -39,7 +39,7 @@ namespace Terraria.Plugins.Common.Test {
 
         throw new AssertException(string.Format(
           "Assert failed. {0} frame for object \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
-          expectedStateString, Terraria.Tiles.GetBlockTypeName((BlockType)tile.type), x, y, actualStateString
+          expectedStateString, TerrariaUtils.Tiles.GetBlockTypeName((BlockType)tile.type), x, y, actualStateString
         ));
       }
     }
@@ -55,7 +55,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void IsTileActive(int x, int y, bool expectedState) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       if (tile.active != expectedState) {
         string actualStateString;
         if (tile.active)
@@ -79,25 +79,25 @@ namespace Terraria.Plugins.Common.Test {
 
     #region [Methods: IsBlockType, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
     public static void IsBlockType(int x, int y, BlockType expectedBlockType) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (!tile.active) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but there is no tile at all.",
-          Terraria.Tiles.GetBlockTypeName(expectedBlockType), x, y
+          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType), x, y
         ));
       }
 
       if (tile.type != (int)expectedBlockType) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but it is \"{3}\".",
-          Terraria.Tiles.GetBlockTypeName(expectedBlockType), x, y, Terraria.Tiles.GetBlockTypeName((BlockType)tile.type)
+          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType), x, y, TerrariaUtils.Tiles.GetBlockTypeName((BlockType)tile.type)
         ));
       }
     }
 
     public static void HasLiquid(int x, int y) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
         throw new AssertException(string.Format(
@@ -107,7 +107,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasNoLiquid(int x, int y) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid != 0) {
         throw new AssertException(string.Format(
@@ -117,7 +117,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasFullLiquid(int x, int y) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid < 255) {
         throw new AssertException(string.Format(
@@ -127,7 +127,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasNotFullLiquid(int x, int y) {
-      Tile tile = Terraria.Tiles[x, y];
+      Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
         throw new AssertException(string.Format(
@@ -147,10 +147,10 @@ namespace Terraria.Plugins.Common.Test {
     public static void AreItemsInBlockRect(
       int tileX, int tileY, int tileW, int tileH, ItemType expectedItemType, int expectedCount, bool allowOtherNpcs = false
     ) {
-      int x = tileX * Terraria.TileSize;
-      int y = tileY * Terraria.TileSize;
-      int r = x + (tileW * Terraria.TileSize);
-      int b = y + (tileH * Terraria.TileSize);
+      int x = tileX * TerrariaUtils.TileSize;
+      int y = tileY * TerrariaUtils.TileSize;
+      int r = x + (tileW * TerrariaUtils.TileSize);
+      int b = y + (tileH * TerrariaUtils.TileSize);
       int count = 0;
 
       bool ofExpectedId = false;
@@ -207,10 +207,10 @@ namespace Terraria.Plugins.Common.Test {
     public static void AreNPCsInBlockRect(
       int tileX, int tileY, int tileW, int tileH, int expectedNPCType, int expectedCount, bool allowOtherItems = false
     ) {
-      int x = tileX * Terraria.TileSize;
-      int y = tileY * Terraria.TileSize;
-      int r = x + (tileW * Terraria.TileSize);
-      int b = y + (tileH * Terraria.TileSize);
+      int x = tileX * TerrariaUtils.TileSize;
+      int y = tileY * TerrariaUtils.TileSize;
+      int r = x + (tileW * TerrariaUtils.TileSize);
+      int b = y + (tileH * TerrariaUtils.TileSize);
       int count = 0;
 
       bool ofExpectedId = false;

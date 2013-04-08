@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 namespace Terraria.Plugins.Common {
   public class AsyncWorkQueue: IDisposable {
     private struct WorkItem {
+      public static readonly WorkItem Invalid = default(WorkItem);
+
       #region [Property: CompletionSource]
       private readonly TaskCompletionSource<object> completionSource;
 
@@ -25,20 +28,35 @@ namespace Terraria.Plugins.Common {
       }
       #endregion
 
-      #region [Property: Action]
-      private readonly Action action;
+      #region [Property: Function]
+      private readonly Func<object,object> function;
 
-      public Action Action {
-        get { return this.action; }
+      public Func<object,object> Function {
+        get { return this.function; }
+      }
+      #endregion
+
+      #region [Property: State]
+      private readonly object state;
+
+      public object State {
+        get { return this.state; }
       }
       #endregion
 
 
       #region [Method: Constructor]
-      public WorkItem(TaskCompletionSource<object> completionSource, CancellationToken? cancellationToken, Action action) {
+      public WorkItem(
+        TaskCompletionSource<object> completionSource, CancellationToken? cancellationToken, Func<object,object> function,
+        object state = null
+      ) {
+        Contract.Requires<ArgumentNullException>(completionSource != null);
+        Contract.Requires<ArgumentNullException>(function != null);
+
         this.completionSource = completionSource;
         this.cancellationToken = cancellationToken;
-        this.action = action;
+        this.function = function;
+        this.state = state;
       }
       #endregion
     }
@@ -65,11 +83,13 @@ namespace Terraria.Plugins.Common {
     #endregion
 
     #region [Methods: EnqueueTask, AwaitAll, ProcessWorkItems]
-    public Task EnqueueTask(Action action, object state = null, CancellationToken? cancellationToken = null) {
+    public Task<object> EnqueueTask(
+      Func<object,object> function, object state = null, CancellationToken? cancellationToken = null
+    ) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
 
-      var completionSource = new TaskCompletionSource<object>(state);
-      this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, action));
+      var completionSource = new TaskCompletionSource<object>();
+      this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, function, state));
       
       return completionSource.Task;
     }
@@ -102,23 +122,32 @@ namespace Terraria.Plugins.Common {
     }
 
     private void ProcessWorkItems() {
-      WorkItem currentItem;
-      while (this.queuedItems.TryTake(out currentItem, this.workerTimeoutMs, this.workerTokenSource.Token)) {
-        if (currentItem.CancellationToken.HasValue && currentItem.CancellationToken.Value.IsCancellationRequested) {
-          currentItem.CompletionSource.SetCanceled();
-        } else {
-          try {
-            currentItem.Action();
-            currentItem.CompletionSource.SetResult(null); // Completed
-          } catch (OperationCanceledException ex) {
-            if (ex.CancellationToken == currentItem.CancellationToken)
-              currentItem.CompletionSource.SetCanceled();
-            else
+      try {
+        WorkItem currentItem;
+        while (this.queuedItems.TryTake(out currentItem, this.workerTimeoutMs, this.workerTokenSource.Token)) {
+          if (currentItem.Equals(WorkItem.Invalid))
+            throw new InvalidOperationException("Can not process an invalid work item.");
+
+          if (currentItem.CancellationToken.HasValue && currentItem.CancellationToken.Value.IsCancellationRequested) {
+            currentItem.CompletionSource.SetCanceled();
+          } else {
+            try {
+              object result = currentItem.Function(currentItem.State);
+              currentItem.CompletionSource.SetResult(result); // Signal completed
+            } catch (OperationCanceledException ex) {
+              if (ex.CancellationToken == currentItem.CancellationToken)
+                currentItem.CompletionSource.SetCanceled();
+              else
+                currentItem.CompletionSource.SetException(ex);
+            } catch (Exception ex) {
               currentItem.CompletionSource.SetException(ex);
-          } catch (Exception ex) {
-            currentItem.CompletionSource.SetException(ex);
+            }
           }
         }
+      } catch (OperationCanceledException) {
+        // Thrown when "this.workerTokenSource.Token" token is set.
+      } catch (Exception ex) {
+        Debug.WriteLine("Async Work Queue worker has thrown an unexpected exception: \n" + ex);
       }
     }
     #endregion

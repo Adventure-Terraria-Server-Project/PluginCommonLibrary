@@ -383,7 +383,7 @@ namespace Terraria.Plugins.Common.Hooks {
             short signIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
-            string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - e.Index - 11);
+            string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - 11);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
               return;

@@ -38,25 +38,24 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Property: FrameXOffsetAdd]
-    private readonly int frameXOffsetAdd;
+    #region [Property: TextureTileLocation]
+    private readonly DPoint textureFrameLocation;
 
-    public int FrameXOffsetAdd {
-      get { return this.frameXOffsetAdd; }
+    public DPoint TextureFrameLocation {
+      get { return this.textureFrameLocation; }
     }
     #endregion
 
 
     #region [Method: Constructor]
     public ObjectMeasureData(
-      BlockType blockType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, int frameXOffsetAdd
+      BlockType blockType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, DPoint textureFrameLocation
     ) {
       this.blockType = blockType;
-      this.frameXOffsetAdd = frameXOffsetAdd;
       this.originTileLocation = originTileLocation;
       this.size = size;
       this.textureTileSize = textureTileSize;
-      this.frameXOffsetAdd = frameXOffsetAdd;
+      this.textureFrameLocation = textureFrameLocation;
     }
     #endregion
 

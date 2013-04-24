@@ -33,9 +33,9 @@ namespace Terraria.Plugins.Common.Collections {
     #endregion
 
     #region [Event: PlayerLogin]
-    public event EventHandler<PlayerEventArgs> PlayerLogin;
+    public event EventHandler<TSPlayerEventArgs> PlayerLogin;
 
-    protected virtual void OnPlayerLogin(PlayerEventArgs e) {
+    protected virtual void OnPlayerLogin(TSPlayerEventArgs e) {
       Contract.Requires<ArgumentNullException>(e != null);
 
       if (this.PlayerLogin != null)
@@ -79,7 +79,7 @@ namespace Terraria.Plugins.Common.Collections {
         return;
 
       if (this.AddPlayerData(args.TPlayer))
-        this.OnPlayerLogin(new PlayerEventArgs(args.TPlayer));
+        this.OnPlayerLogin(new TSPlayerEventArgs(args.Player));
     }
 
     public virtual void HandleGreetPlayer(int playerIndex, HandledEventArgs e) {
@@ -94,7 +94,7 @@ namespace Terraria.Plugins.Common.Collections {
       this.AddPlayerData(tPlayer);
 
       if (tsPlayer.IsLoggedIn)
-        this.OnPlayerLogin(new PlayerEventArgs(tPlayer));
+        this.OnPlayerLogin(new TSPlayerEventArgs(tsPlayer));
     }
 
     public virtual void HandleLeave(int playerIndex) {

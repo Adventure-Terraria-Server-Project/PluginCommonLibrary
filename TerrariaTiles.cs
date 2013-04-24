@@ -250,7 +250,55 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: SetBlock, RemoveBlock]
+    #region [Methods: PlaceObject, PlantHerb, SetBlock, RemoveBlock, LockChest]
+    public void PlaceObject(
+      DPoint originTileDestination, BlockType objectType, DPoint frameOffset = default(DPoint), bool localOnly = false
+    ) {
+      DPoint objectSize = this.GetObjectSize(objectType);
+      DPoint textureTileSize = this.GetBlockTextureTileSize(objectType);
+
+      for (int x = 0; x < objectSize.X; x++) {
+        for (int y = 0; y < objectSize.Y; y++) {
+          Tile objectTile;
+          if (objectType == BlockType.DoorOpened && frameOffset.X >= 36) {
+            objectTile = TerrariaUtils.Tiles[originTileDestination.X + x - 1, originTileDestination.Y + y];
+          } else {
+            objectTile = TerrariaUtils.Tiles[originTileDestination.X + x, originTileDestination.Y + y];
+          }
+
+          objectTile.active = true;
+          objectTile.frameX = Convert.ToInt16(frameOffset.X + textureTileSize.X * x);
+          objectTile.frameY = Convert.ToInt16(frameOffset.Y + textureTileSize.Y * y);
+
+          WorldGen.SquareTileFrame(originTileDestination.X, originTileDestination.Y, true);
+        }
+      }
+
+      if (!localOnly)
+        TSPlayer.All.SendTileSquareEx(originTileDestination, Math.Max(objectSize.X, objectSize.Y));
+    }
+
+    public void PlantHerb(DPoint tileLocation, HerbStyle style, HerbGrowthState state = HerbGrowthState.Mature) {
+      Tile tile = TerrariaUtils.Tiles[tileLocation];
+      tile.active = true;
+      switch (state) {
+        case HerbGrowthState.Growing:
+          tile.type = (int)BlockType.HerbGrowing;
+          break;
+        case HerbGrowthState.Mature:
+          tile.type = (int)BlockType.HerbMature;
+          break;
+        case HerbGrowthState.Blooming:
+          tile.type = (int)BlockType.HerbBlooming;
+          break;
+        default:
+          throw new ArgumentException("state");
+      }
+
+      tile.frameX = Convert.ToInt16((int)style * TerrariaUtils.DefaultTextureTileSize);
+      TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 3);
+    }
+
     public void SetBlock(DPoint tileLocation, BlockType blockType, bool localOnly = false) {
       Tile tile = TerrariaUtils.Tiles[tileLocation];
 
@@ -281,12 +329,38 @@ namespace Terraria.Plugins.Common {
       if (!localOnly)
         TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 1);
     }
+
+    public void LockChest(DPoint anyChestTileLocation) {
+      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
+      if (!chestTile.active || chestTile.type != (int)BlockType.Chest)
+        throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
+
+      bool isLocked;
+      ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
+      if (isLocked || (chestStyle != ChestStyle.GoldChest && chestStyle != ChestStyle.ShadowChest))
+        throw new InvalidChestStyleException("Chest has to be a gold- or shadow chest.", chestStyle);
+
+      ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
+      foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+        tile.frameX += 36;
+      
+      TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
+    }
     #endregion
 
     #region [Method: MeasureObject]
-    // Note: A object is considered any tile type the player is not blocked from passing through plus 
-    // Active Stone, Boulders, Wood Platforms and Dart Traps.
-    // This function is currently unable to calculate the height of objects of dynamic sizes.
+    /// <remarks>
+    ///   <p>
+    ///     A object is considered any tile type the player is not blocked from passing through plus 
+    ///     Active Stone, Boulders, Wood Platforms and Dart Traps. However, this method will still measure
+    ///     any other block type too.
+    ///   </p>
+    ///   <p>
+    ///     The origin tile of most objects is their most top left tile. Exceptions are trees and glowing mushrooms where 
+    ///     the origin tile is their middle stump. Vines have their origin tile at the root on top. Doors have their origin
+    ///     tile at their top bracing.
+    ///   </p>
+    /// </remarks>
     public ObjectMeasureData MeasureObject(DPoint anyTileLocation) {
       Tile tile = TerrariaUtils.Tiles[anyTileLocation];
       if (!tile.active) {
@@ -296,132 +370,128 @@ namespace Terraria.Plugins.Common {
       }
 
       DPoint objectSize = this.GetObjectSize((BlockType)tile.type);
-      DPoint textureTileSize = new DPoint(TerrariaUtils.DefaultTextureTileSize, TerrariaUtils.DefaultTextureTileSize);
-      int frameXOffsetAdd = 0;
+      DPoint textureTileSize = this.GetBlockTextureTileSize((BlockType)tile.type);
+      DPoint textureFrameLocation = DPoint.Empty;
+
+      DPoint originTileLocation;
       switch ((BlockType)tile.type) {
-        // Dynamic objects, special handling
-        case BlockType.Tree:
-          textureTileSize = new DPoint(22, 22);
+        case BlockType.Cactus: {
+          // Removed dynamic measuring support for Cactus due to Terraria bugs...
+          originTileLocation = anyTileLocation;
+          textureFrameLocation = new DPoint(tile.frameX / textureTileSize.X, tile.frameY / textureTileSize.Y);
           break;
-
-        case BlockType.GrassPlants:
-        case BlockType.CorruptionPlants:
-        case BlockType.Candle:
-        case BlockType.WaterCandle:
-        case BlockType.JunglePlants:
-        case BlockType.GlowingMushroom:
-        case BlockType.HerbGrowing:
-        case BlockType.HerbMature:
-        case BlockType.HerbBlooming:
-        case BlockType.HallowedPlants:
-          textureTileSize = new DPoint(18, 20);
-          break;
-
-        case BlockType.Coral:
-          textureTileSize = new DPoint(26, 28);
-          break;
-
-        case BlockType.Torch:
-          frameXOffsetAdd = TerrariaUtils.DefaultTextureTileSize * 3;
-          textureTileSize = new DPoint(22, 22);
-          break;
-
-        case BlockType.PressurePlate:
-          textureTileSize = new DPoint(16, 16);
-          break;
-
-        case BlockType.XMasLight:
-          frameXOffsetAdd = TerrariaUtils.DefaultTextureTileSize * 2;
-          break;
-
-        case BlockType.TallGrassPlants:
-        case BlockType.TallJunglePlants:
-        case BlockType.TallHallowedPlants:
-          textureTileSize = new DPoint(18, 16);
-          break;
-      }
-
-      int originX, originY;
-      switch ((BlockType)tile.type) {
-        // Removed dynamic measuring support for Cactus due to Terraria bugs...
-        case BlockType.Cactus:
-          originX = anyTileLocation.X;
-          originY = anyTileLocation.Y;
-
-          break;
+        }
         case BlockType.Tree: 
         case BlockType.GiantGlowingMushroom: {
         //case Terraria.TileId_Cactus: {
-          originX = anyTileLocation.X;
-          originY = anyTileLocation.Y;
-
+          // We consider the origin tile of Trees, Giant Glowing Mushrooms and Cacti their most bottom tile (stump) instead
+          // of the most top left tile.
+          DPoint anyTrunkTileLocation = anyTileLocation;
           if (tile.type == (int)BlockType.Tree) {
             if (this.IsLeftTreeBranch(tile))
-              originX++;
+              anyTrunkTileLocation = anyTileLocation.OffsetEx(1, 0);
             else if (this.IsRightTreeBranch(tile))
-              originX--;
+              anyTrunkTileLocation = anyTileLocation.OffsetEx(-1, 0);
           } else if (tile.type == (int)BlockType.Cactus) {
             if (this.IsLeftCactusBranch(tile))
-              originX++;
+              anyTrunkTileLocation = anyTileLocation.OffsetEx(1, 0);
             else if (this.IsRightCactusBranch(tile))
-              originX--;
+              anyTrunkTileLocation = anyTileLocation.OffsetEx(-1, 0);
           }
 
+          // Go all the way down to the tree's stump.
+          DPoint currentTileLocation = anyTrunkTileLocation;
           while (true) {
-            Tile tile2 = TerrariaUtils.Tiles[originX, originY + 1];
+            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
 
-            if (tile2.type == tile.type)
-              originY++;
+            if (currentTile.active && currentTile.type == tile.type)
+              currentTileLocation.Y++;
             else 
               break;
           }
+          DPoint treeStumpLocation = currentTileLocation;
+          objectSize = new DPoint(3, (treeStumpLocation.Y - anyTrunkTileLocation.Y) + 1);
 
-          objectSize = new DPoint(3, 0);
+          // Now measure the tree's size by going it up.
+          currentTileLocation = anyTrunkTileLocation;
+          while (true) {
+            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
+
+            if (currentTile.active && currentTile.type == tile.type) {
+              currentTileLocation.Y--;
+              objectSize.Y++;
+            } else {
+              break;
+            }
+          }
+
+          originTileLocation = treeStumpLocation;
+          textureFrameLocation = new DPoint(tile.frameX / textureTileSize.X, tile.frameY / textureTileSize.Y);
           break;
         }
         case BlockType.Vine:
         case BlockType.JungleVine:
         case BlockType.HallowedVine: {
-          originX = anyTileLocation.X;
-          originY = anyTileLocation.Y;
+          DPoint currentTileLocation = anyTileLocation;
 
           while (true) {
-            Tile tile2 = TerrariaUtils.Tiles[originX, originY - 1];
+            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
 
-            if (tile2.type == tile.type)
-              originY--;
-            else 
+            if (currentTile.type == tile.type) {
+              currentTileLocation.Y--;
+              objectSize.Y++;
+            } else {
               break;
+            }
+          }
+          originTileLocation = currentTileLocation;
+          objectSize = new DPoint(1, (anyTileLocation.Y - originTileLocation.Y) + 1);
+
+          // Now measure the vines's size by going it down.
+          currentTileLocation = anyTileLocation;
+          while (true) {
+            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
+
+            if (currentTile.type == tile.type) {
+              currentTileLocation.Y++;
+              objectSize.Y++;
+            } else {
+              break;
+            }
           }
 
-          objectSize = new DPoint(1, 0);
+          textureFrameLocation = new DPoint(tile.frameX / textureTileSize.X, tile.frameY / textureTileSize.Y);
           break;
         }
         case BlockType.DoorOpened: {
-          int tileIndexX = tile.frameX / textureTileSize.X;
-          int frameIndexX = tileIndexX / objectSize.X;
+          int textureTileX = tile.frameX / textureTileSize.X;
 
-          // Is opened to the right side?
-          if (frameIndexX == 0) {
-            originX = anyTileLocation.X - tileIndexX;
-            originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
+          if (this.GetDoorDirection(anyTileLocation) == Direction.Right) {
+            originTileLocation = anyTileLocation.OffsetEx(-textureTileX, -(tile.frameY / textureTileSize.Y));
           } else {
-            originX = (anyTileLocation.X - (tileIndexX - (frameIndexX * objectSize.X))) + 1;
-            originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
+            originTileLocation = anyTileLocation.OffsetEx(
+              -(textureTileX - objectSize.X) + 1, -(tile.frameY / textureTileSize.Y)
+            );
+            textureFrameLocation = new DPoint(1, 0);
           }
 
           break;
         }
         default: {
           if (objectSize.X == 1 && objectSize.Y == 1) {
-            originX = anyTileLocation.X;
-            originY = anyTileLocation.Y;
+            originTileLocation = anyTileLocation;
+            textureFrameLocation = new DPoint(tile.frameX / textureTileSize.X, tile.frameY / textureTileSize.Y);
           } else {
-            int tileIndexX = tile.frameX / textureTileSize.X;
-            int frameIndexX = tileIndexX / objectSize.X;
+            int textureTileX = tile.frameX / textureTileSize.X;
+            int textureTileY = tile.frameY / textureTileSize.Y;
+            int textureFrameX = textureTileX / objectSize.X;
 
-            originX = anyTileLocation.X - (tileIndexX - (frameIndexX * objectSize.X));
-            originY = anyTileLocation.Y - (tile.frameY / textureTileSize.Y);
+            originTileLocation = anyTileLocation.OffsetEx(
+              -(textureTileX - (textureFrameX * objectSize.X)),
+              -(textureTileY)
+            );
+
+            textureFrameLocation = new DPoint(textureFrameX, textureTileY / objectSize.Y);
           }
 
           break;
@@ -429,7 +499,7 @@ namespace Terraria.Plugins.Common {
       }
 
       return new ObjectMeasureData(
-        (BlockType)tile.type, new DPoint(originX, originY), objectSize, textureTileSize, frameXOffsetAdd
+        (BlockType)tile.type, originTileLocation, objectSize, textureTileSize, textureFrameLocation
       );
     }
 
@@ -524,8 +594,12 @@ namespace Terraria.Plugins.Common {
           return (tile.frameY != 0);
         case BlockType.MusicBox:
           return (tile.frameX != 0);
+        case BlockType.Torch:
+          return (tile.frameX < 66);
+        case BlockType.XMasLight:
+          return (tile.frameX >= 54);
         default:
-          return (tile.frameX < measureData.FrameXOffsetAdd + 1);
+          return (tile.frameX == 0);
       }
     }
 
@@ -546,9 +620,13 @@ namespace Terraria.Plugins.Common {
       int objectHeight = measureData.Size.Y;
       short newFrameXOffset = 0;
       short newFrameYOffset = 0;
+      if (measureData.BlockType == BlockType.Torch)
+        newFrameXOffset = TerrariaUtils.DefaultTextureTileSize * 3;
+      else if (measureData.BlockType == BlockType.XMasLight)
+        newFrameXOffset = TerrariaUtils.DefaultTextureTileSize * 2;
 
       if (measureData.BlockType != BlockType.Switch && measureData.BlockType != BlockType.XSecondTimer) {
-        int frameXOffset = (objectWidth * measureData.TextureTileSize.X) + measureData.FrameXOffsetAdd;
+        int frameXOffset = (objectWidth * measureData.TextureTileSize.X) + newFrameXOffset;
         if (measureData.BlockType == BlockType.MusicBox)
           activeState = !activeState;
 
@@ -603,17 +681,25 @@ namespace Terraria.Plugins.Common {
       return this.IsObjectWired(originTileLocation, size, out dummy);
     }
 
-    public bool IsObjectWired(ObjectMeasureData measureData) {
-      DPoint dummy;
-      return this.IsObjectWired(measureData.OriginTileLocation, measureData.Size, out dummy);
+    public bool IsObjectWired(ObjectMeasureData measureData, out DPoint firstWireLocation) {
+      foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData)) {
+        if (TerrariaUtils.Tiles[tileLocation].wire) {
+          firstWireLocation = tileLocation;
+          return true;
+        }
+      }
+
+      firstWireLocation = DPoint.Empty;
+      return false;
     }
 
-    public bool IsObjectWired(ObjectMeasureData measureData, out DPoint firstWirePosition) {
-      return this.IsObjectWired(measureData.OriginTileLocation, measureData.Size, out firstWirePosition);
+    public bool IsObjectWired(ObjectMeasureData measureData) {
+      DPoint dummy;
+      return this.IsObjectWired(measureData, out dummy);
     }
     #endregion
 
-    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GuessChestStyle, GetItemTypeFromChestType, LockChest]
+    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GuessChestKind, GetItemTypeFromChestType, GetDoorDirection]
     public StatueStyle GetStatueStyle(int objectStyle) {
       return (StatueStyle)(objectStyle + 1);
     }
@@ -622,7 +708,7 @@ namespace Terraria.Plugins.Common {
       return this.GetStatueStyle(tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2));
     }
 
-    public ItemType GetItemTypeFromStatueType(StatueStyle statueStyle) {
+    public ItemType GetItemTypeFromStatueStyle(StatueStyle statueStyle) {
       switch (statueStyle) {
         case StatueStyle.Armor:
           return ItemType.Statue;
@@ -800,47 +886,23 @@ namespace Terraria.Plugins.Common {
           return ChestKind.Unknown;
       }
     }
-    
-    public void LockChest(DPoint anyChestTileLocation) {
-      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
-      if (!chestTile.active || chestTile.type != (int)BlockType.Chest)
-        throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
 
-      bool isLocked;
-      ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
-      if (isLocked || (chestStyle != ChestStyle.GoldChest && chestStyle != ChestStyle.ShadowChest))
-        throw new InvalidChestStyleException("Chest has to be a gold- or shadow chest.", chestStyle);
-
-      ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
-      foreach (Tile tile in this.EnumerateObjectTiles(measureData))
-        tile.frameX += 36;
+    public Direction GetDoorDirection(DPoint anyDoorTileLocation) {
+      Tile anyDoorTile = TerrariaUtils.Tiles[anyDoorTileLocation];
+      if (!anyDoorTile.active)
+        throw new ArgumentException("The tile is not active.");
       
-      TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
+      if (anyDoorTile.type == (int)BlockType.DoorClosed)
+        return Direction.Unknown;
+
+      if (anyDoorTile.frameX < 36)
+        return Direction.Right;
+      else
+        return Direction.Left;
     }
     #endregion
 
-    #region [Methods: PlantHerb, GetHerbStyle]
-    public void PlantHerb(DPoint tileLocation, HerbStyle style, HerbGrowthState state = HerbGrowthState.Mature) {
-      Tile tile = TerrariaUtils.Tiles[tileLocation];
-      tile.active = true;
-      switch (state) {
-        case HerbGrowthState.Growing:
-          tile.type = (int)BlockType.HerbGrowing;
-          break;
-        case HerbGrowthState.Mature:
-          tile.type = (int)BlockType.HerbMature;
-          break;
-        case HerbGrowthState.Blooming:
-          tile.type = (int)BlockType.HerbBlooming;
-          break;
-        default:
-          throw new ArgumentException("state");
-      }
-
-      tile.frameX = Convert.ToInt16((int)style * TerrariaUtils.DefaultTextureTileSize);
-      TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 3);
-    }
-
+    #region [Method: GetHerbStyle]
     public HerbStyle GetHerbStyle(int objectStyle) {
       return (HerbStyle)(objectStyle + 1);
     }
@@ -852,19 +914,23 @@ namespace Terraria.Plugins.Common {
 
     #region [Methods: EnumerateObjectTileLocations, EnumerateObjectTiles, EnumerateTilesRectangularAroundPoint]
     public IEnumerable<DPoint> EnumerateObjectTileLocations(ObjectMeasureData measureData) {
-      for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
-        for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
-          yield return new DPoint(x, y);
-        }
+      if (
+        measureData.BlockType == BlockType.DoorOpened &&
+        this.GetDoorDirection(measureData.OriginTileLocation) == Direction.Right
+      ) {
+        for (int x = measureData.OriginTileLocation.X - 1; x < measureData.OriginTileLocation.X + measureData.Size.X; x++)
+          for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++)
+            yield return new DPoint(x, y);
+      } else {
+        for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++)
+          for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++)
+            yield return new DPoint(x, y);
       }
     }
 
     public IEnumerable<Tile> EnumerateObjectTiles(ObjectMeasureData measureData) {
-      for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++) {
-        for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++) {
-          yield return TerrariaUtils.Tiles[x, y];
-        }
-      }
+      foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData))
+        yield return TerrariaUtils.Tiles[tileLocation];
     }
 
     public IEnumerable<Tile> EnumerateTilesRectangularAroundPoint(DPoint tileLocation, int rectWidth, int rectHeight) {
@@ -878,7 +944,7 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: GetObjectSize, GetObjectOrientation]
+    #region [Methods: GetObjectSize, GetBlockTextureTileSize, GetObjectOrientation]
     private static DPoint[] objectSizes;
     public DPoint GetObjectSize(BlockType objectType) {
       if (TerrariaTiles.objectSizes == null) {
@@ -1040,6 +1106,35 @@ namespace Terraria.Plugins.Common {
         throw new ArgumentException(string.Format("The object type \"{0}\" is invalid.", objectType), "objectType");
 
       return TerrariaTiles.objectSizes[(int)objectType];
+    }
+
+    public DPoint GetBlockTextureTileSize(BlockType blockType) {
+      switch (blockType) {
+        case BlockType.Tree:
+        case BlockType.Torch:
+          return new DPoint(22, 22);
+        case BlockType.GrassPlants:
+        case BlockType.CorruptionPlants:
+        case BlockType.Candle:
+        case BlockType.WaterCandle:
+        case BlockType.JunglePlants:
+        case BlockType.GlowingMushroom:
+        case BlockType.HerbGrowing:
+        case BlockType.HerbMature:
+        case BlockType.HerbBlooming:
+        case BlockType.HallowedPlants:
+          return new DPoint(18, 20);
+        case BlockType.Coral:
+          return new DPoint(26, 28);
+        case BlockType.PressurePlate:
+          return new DPoint(16, 16);
+        case BlockType.TallGrassPlants:
+        case BlockType.TallJunglePlants:
+        case BlockType.TallHallowedPlants:
+          return new DPoint(18, 16);
+        default:
+          return new DPoint(TerrariaUtils.DefaultTextureTileSize, TerrariaUtils.DefaultTextureTileSize);
+      }
     }
 
     public Direction GetObjectOrientation(Tile anyTile) {

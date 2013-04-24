@@ -9,7 +9,7 @@ using TShockAPI;
 namespace Terraria.Plugins.Common {
   public class TerrariaNpcs {
     #region [Methods: EnumerateNPCsInTileRange, CountItemsInTileRange]
-    public IEnumerable<NPC> EnumerateNPCsInRange(Vector2 location, float range) {
+    public IEnumerable<NPC> EnumerateNPCsInRange(DPoint location, float range) {
       float halfRange = range / 2;
       float areaL = location.X - halfRange;
       float areaT = location.Y - halfRange;

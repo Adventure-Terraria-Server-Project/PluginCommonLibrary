@@ -216,6 +216,7 @@
     <Compile Include="_General Exceptions\MissingPermissionException.cs" />
     <Compile Include="_General Exceptions\PlayerNotLoggedInException.cs" />
     <Compile Include="_General Exceptions\TileProtectedException.cs" />
+    <Compile Include="_Utility Classes\TSPlayerEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt" />

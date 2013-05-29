@@ -19,10 +19,10 @@ namespace Terraria.Plugins.Common.Test {
     #endregion
 
     #region [Property: Trace]
-    private readonly PluginTrace trace;
+    private readonly PluginTrace pluginTrace;
 
-    protected PluginTrace Trace {
-      get { return this.trace; }
+    protected PluginTrace PluginTrace {
+      get { return this.pluginTrace; }
     }
     #endregion
 
@@ -37,9 +37,9 @@ namespace Terraria.Plugins.Common.Test {
 
 
     #region [Method: Constructor]
-    protected TestRunnerBase(PluginTrace trace) {
+    protected TestRunnerBase(PluginTrace pluginTrace) {
       this.testRunData = new Dictionary<string,TestRunData>();
-      this.trace = trace;
+      this.pluginTrace = pluginTrace;
     }
     #endregion
 
@@ -61,8 +61,8 @@ namespace Terraria.Plugins.Common.Test {
 
       this.isRunning = true;
 
-      this.Trace.WriteLineInfo("------------------------------------------");
-      this.Trace.WriteLineInfo("Test running with {0} tests...", this.testRunData.Count);
+      this.PluginTrace.WriteLineInfo("------------------------------------------");
+      this.PluginTrace.WriteLineInfo("Test running with {0} tests...", this.testRunData.Count);
     }
 
     protected abstract void TestInit();
@@ -140,28 +140,28 @@ namespace Terraria.Plugins.Common.Test {
           return;
         }
       } else {
-        this.Trace.WriteLineInfo("{0} tests passed.", this.testRunSucceededTests.Count);
-        this.Trace.WriteLineInfo("{0} tests failed to pass.", this.testRunFailedTests.Count);
+        this.PluginTrace.WriteLineInfo("{0} tests passed.", this.testRunSucceededTests.Count);
+        this.PluginTrace.WriteLineInfo("{0} tests failed to pass.", this.testRunFailedTests.Count);
 
         if (this.testRunFailedTests.Count > 0) {
-          this.Trace.WriteLineInfo("");
-          this.Trace.WriteLineInfo("Failed tests:");
+          this.PluginTrace.WriteLineInfo("");
+          this.PluginTrace.WriteLineInfo("Failed tests:");
 
           foreach (string failedTestName in this.testRunFailedTests) {
             TestRunData testRunData = this.testRunData[failedTestName];
 
             if (!string.IsNullOrWhiteSpace(testRunData.Context.Phase))
-              this.Trace.WriteLineInfo("\"{0}\" at phase \"{1}\"", failedTestName, testRunData.Context.Phase);
+              this.PluginTrace.WriteLineInfo("\"{0}\" at phase \"{1}\"", failedTestName, testRunData.Context.Phase);
             else 
-              this.Trace.WriteLineInfo("\"{0}\"", failedTestName);
+              this.PluginTrace.WriteLineInfo("\"{0}\"", failedTestName);
 
-            this.Trace.WriteLineInfo(testRunData.FailException.Message);
+            this.PluginTrace.WriteLineInfo(testRunData.FailException.Message);
               
             testRunData.Reset();
           }
         }
 
-        this.Trace.WriteLineInfo("------------------------------------------");
+        this.PluginTrace.WriteLineInfo("------------------------------------------");
 
         this.isRunning = false;
         this.OnTestRunCompleted();

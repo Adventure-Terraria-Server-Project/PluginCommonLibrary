@@ -278,6 +278,40 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: ChatText]
+    public event EventHandler<ChatTextEventArgs> ChatText;
+
+    protected virtual bool OnChatText(ChatTextEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.ChatText != null)
+          this.ChatText(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("ChatText", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
+    #region [Event: SendTileSquare]
+    public event EventHandler<SendTileSquareEventArgs> SendTileSquare;
+
+    protected virtual bool OnSendTileSquare(SendTileSquareEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.SendTileSquare != null)
+          this.SendTileSquare(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("SendTileSquare", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     #region [Method: Constructor]
     public GetDataHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
@@ -298,7 +332,7 @@ namespace Terraria.Plugins.Common.Hooks {
       TSPlayer player = TShock.Players[e.Msg.whoAmI];
       if (player == null)
         return;
-
+      
       try {
         switch (e.MsgID) {
           // Note: As for TileKill and TileKillNoItem, blockId will be of "1" if the player attempted to destroy
@@ -501,24 +535,22 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.DoorUse: {
-            if (this.DoorUse == null || e.Msg.readBuffer.Length - e.Index < 13)
+            if (this.DoorUse == null || e.Msg.readBuffer.Length - e.Index < 10)
               break;
 
             byte isOpening = e.Msg.readBuffer[e.Index];
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
-            int direction = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 9);
+            int direction = e.Msg.readBuffer[e.Index + 9];
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
 
-            Direction actualDirection;
+            Direction actualDirection = Direction.Right;
             if (direction == 0)
               actualDirection = Direction.Left;
-            else
-              actualDirection = Direction.Right;
 
-            e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), isOpening == 1, actualDirection));
+            e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), isOpening == 0, actualDirection));
             break;
           }
           case PacketTypes.PlayerSpawn: {
@@ -548,6 +580,33 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             e.Handled = this.OnChestUnlock(new TileLocationEventArgs(player, new DPoint(chestX, chestY)));
+            break;
+          }
+          case PacketTypes.ChatText: {
+            if (this.ChatText == null || e.Msg.readBuffer.Length - e.Index < 5)
+              break;
+
+            short playerIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            if (playerIndex != e.Msg.whoAmI)
+              break;
+
+            byte colorR = e.Msg.readBuffer[e.Index + 2];
+            byte colorG = e.Msg.readBuffer[e.Index + 3];
+            byte colorB = e.Msg.readBuffer[e.Index + 4];
+            string text = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 4, e.Length - 5);
+
+            e.Handled = this.OnChatText(new ChatTextEventArgs(player, new Color(colorR, colorG, colorB), text));
+            break;
+          }
+          case PacketTypes.TileSendSquare: {
+            if (this.SendTileSquare == null || e.Msg.readBuffer.Length - e.Index < 10)
+              break;
+
+            short size = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int tileX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
+            int tileY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+
+            e.Handled = this.OnSendTileSquare(new SendTileSquareEventArgs(player, new DPoint(tileX, tileY), size));
             break;
           }
         }

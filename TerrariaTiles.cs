@@ -299,7 +299,7 @@ namespace Terraria.Plugins.Common {
       TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 3);
     }
 
-    public void SetBlock(DPoint tileLocation, BlockType blockType, bool localOnly = false) {
+    public void SetBlock(DPoint tileLocation, BlockType blockType, bool localOnly = false, bool squareFrame = true) {
       Tile tile = TerrariaUtils.Tiles[tileLocation];
 
       if (blockType != BlockType.Invalid) {
@@ -310,7 +310,8 @@ namespace Terraria.Plugins.Common {
         tile.active = false;
       }
 
-      WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
+      if (squareFrame)
+        WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
       if (!localOnly)
         TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 1);
     }
@@ -485,13 +486,14 @@ namespace Terraria.Plugins.Common {
             int textureTileX = tile.frameX / textureTileSize.X;
             int textureTileY = tile.frameY / textureTileSize.Y;
             int textureFrameX = textureTileX / objectSize.X;
+            int textureFrameY = textureTileY / objectSize.Y;
 
             originTileLocation = anyTileLocation.OffsetEx(
               -(textureTileX - (textureFrameX * objectSize.X)),
-              -(textureTileY)
+              -(textureTileY - (textureFrameY * objectSize.Y))
             );
 
-            textureFrameLocation = new DPoint(textureFrameX, textureTileY / objectSize.Y);
+            textureFrameLocation = new DPoint(textureFrameX, textureFrameY);
           }
 
           break;
@@ -579,6 +581,7 @@ namespace Terraria.Plugins.Common {
         objectType == BlockType.DiscoBall ||
         objectType == BlockType.Lever ||
         objectType == BlockType.Switch ||
+        objectType == BlockType.MusicBox ||
         objectType == BlockType.XSecondTimer ||
         objectType == BlockType.XMasLight
       );
@@ -597,7 +600,7 @@ namespace Terraria.Plugins.Common {
         case BlockType.Torch:
           return (tile.frameX < 66);
         case BlockType.XMasLight:
-          return (tile.frameX >= 54);
+          return (tile.frameX < 54);
         default:
           return (tile.frameX == 0);
       }
@@ -618,17 +621,15 @@ namespace Terraria.Plugins.Common {
       int originY = measureData.OriginTileLocation.Y;
       int objectWidth = measureData.Size.X;
       int objectHeight = measureData.Size.Y;
-      short newFrameXOffset = 0;
-      short newFrameYOffset = 0;
-      if (measureData.BlockType == BlockType.Torch)
-        newFrameXOffset = TerrariaUtils.DefaultTextureTileSize * 3;
-      else if (measureData.BlockType == BlockType.XMasLight)
-        newFrameXOffset = TerrariaUtils.DefaultTextureTileSize * 2;
+      int newFrameXOffset = 0;
+      int newFrameYOffset = 0;
+      if (measureData.BlockType == BlockType.Torch || measureData.BlockType == BlockType.XMasLight)
+        newFrameXOffset = measureData.TextureTileSize.X * 2;
 
       if (measureData.BlockType != BlockType.Switch && measureData.BlockType != BlockType.XSecondTimer) {
         int frameXOffset = (objectWidth * measureData.TextureTileSize.X) + newFrameXOffset;
         if (measureData.BlockType == BlockType.MusicBox)
-          activeState = !activeState;
+          frameXOffset = -frameXOffset;
 
         if (activeState)
           newFrameXOffset = (short)-frameXOffset;
@@ -650,8 +651,8 @@ namespace Terraria.Plugins.Common {
           int absoluteX = originX + tx;
           int absoluteY = originY + ty;
 
-          TerrariaUtils.Tiles[absoluteX, absoluteY].frameX += newFrameXOffset;
-          TerrariaUtils.Tiles[absoluteX, absoluteY].frameY += newFrameYOffset;
+          TerrariaUtils.Tiles[absoluteX, absoluteY].frameX += (short)newFrameXOffset;
+          TerrariaUtils.Tiles[absoluteX, absoluteY].frameY += (short)newFrameYOffset;
         }
       }
             
@@ -914,18 +915,18 @@ namespace Terraria.Plugins.Common {
 
     #region [Methods: EnumerateObjectTileLocations, EnumerateObjectTiles, EnumerateTilesRectangularAroundPoint]
     public IEnumerable<DPoint> EnumerateObjectTileLocations(ObjectMeasureData measureData) {
+      DPoint origin = measureData.OriginTileLocation;
+
       if (
         measureData.BlockType == BlockType.DoorOpened &&
-        this.GetDoorDirection(measureData.OriginTileLocation) == Direction.Right
+        this.GetDoorDirection(measureData.OriginTileLocation) == Direction.Left
       ) {
-        for (int x = measureData.OriginTileLocation.X - 1; x < measureData.OriginTileLocation.X + measureData.Size.X; x++)
-          for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++)
-            yield return new DPoint(x, y);
-      } else {
-        for (int x = measureData.OriginTileLocation.X; x < measureData.OriginTileLocation.X + measureData.Size.X; x++)
-          for (int y = measureData.OriginTileLocation.Y; y < measureData.OriginTileLocation.Y + measureData.Size.Y; y++)
-            yield return new DPoint(x, y);
+        origin.Offset(-1, 0);
       }
+
+      for (int x = origin.X; x < origin.X + measureData.Size.X; x++)
+        for (int y = origin.Y; y < origin.Y + measureData.Size.Y; y++)
+          yield return new DPoint(x, y);
     }
 
     public IEnumerable<Tile> EnumerateObjectTiles(ObjectMeasureData measureData) {

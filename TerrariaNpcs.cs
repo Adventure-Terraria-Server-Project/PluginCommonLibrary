@@ -8,22 +8,14 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaNpcs {
-    #region [Methods: EnumerateNPCsInTileRange, CountItemsInTileRange]
-    public IEnumerable<NPC> EnumerateNPCsInRange(DPoint location, float range) {
-      float halfRange = range / 2;
-      float areaL = location.X - halfRange;
-      float areaT = location.Y - halfRange;
-      float areaR = location.X + halfRange;
-      float areaB = location.Y + halfRange;
-
+    #region [Methods: EnumerateNPCsAroundPoint]
+    public IEnumerable<NPC> EnumerateNPCsAroundPoint(DPoint location, float radius) {
       for (int i = 0; i < 200; i++) {
         NPC npc = Main.npc[i];
 
         if (
-          npc.active &&
-            npc.position.X > areaL && npc.position.X < areaR &&
-            npc.position.Y > areaT && npc.position.Y < areaB
-          ) {
+          npc.active && Math.Sqrt(Math.Pow(npc.position.X - location.X, 2) + Math.Pow(npc.position.Y - location.Y, 2)) <= radius
+        ) {
           yield return npc;
         }
       }

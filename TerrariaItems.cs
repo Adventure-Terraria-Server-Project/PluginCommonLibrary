@@ -178,6 +178,7 @@ namespace Terraria.Plugins.Common {
         Item item = Main.item[i];
 
         if (
+          item.active &&
           item.position.X > areaL && item.position.X < areaR &&
           item.position.Y > areaT && item.position.Y < areaB
         ) {
@@ -190,7 +191,10 @@ namespace Terraria.Plugins.Common {
       for (int i = 0; i < 200; i++) {
         Item item = Main.item[i];
 
-        if (Math.Sqrt(Math.Pow(item.position.X - location.X, 2) + Math.Pow(item.position.Y - location.Y, 2)) <= radius)
+        if (
+          item.active && 
+          Math.Sqrt(Math.Pow(item.position.X - location.X, 2) + Math.Pow(item.position.Y - location.Y, 2)) <= radius
+        )
           yield return item;
       }
     }

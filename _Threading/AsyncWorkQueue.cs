@@ -73,6 +73,7 @@ namespace Terraria.Plugins.Common {
     private CancellationTokenSource workerTokenSource;
     private readonly BlockingCollection<WorkItem> queuedItems;
 
+
     #region [Method: Constructor]
     public AsyncWorkQueue() {
       this.workerTimeoutMs = -1;
@@ -169,12 +170,13 @@ namespace Terraria.Plugins.Common {
           this.workerTokenSource.Cancel();
 
           try {
-            this.worker.Wait(TimeSpan.FromSeconds(1));
+            this.worker.Wait(TimeSpan.FromSeconds(30));
           } catch (AggregateException) {}
         }
-        
+
         if (this.workerTokenSource != null)
           this.workerTokenSource.Dispose();
+
         if (this.worker != null)
           this.worker.Dispose();
       }

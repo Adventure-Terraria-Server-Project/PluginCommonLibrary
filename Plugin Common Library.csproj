@@ -143,6 +143,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\DecayingCollection.cs" />
+    <Compile Include="Hooks\ChatTextEventArgs.cs" />
+    <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
     <Compile Include="_Enums and Structs\HerbStyle.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="_Data\MetadataHandlerBase.cs" />
     <Compile Include="_Utility Classes\BoolEx.cs" />
     <Compile Include="_Utility Classes\CollectionEx.cs" />
+    <Compile Include="_Utility Classes\DateTimeEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
     <Compile Include="Collections\PlayerDataDictionary.cs" />

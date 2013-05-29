@@ -36,9 +36,13 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: InitOrReadMetdata, InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
+    #region [Methods: RequiresMetadataInitialization, InitOrReadMetdata, InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
+    public bool RequiresMetadataInitialization() {
+      return !File.Exists(this.metadataFilePath);
+    }
+
     public void InitOrReadMetdata() {
-      if (File.Exists(this.metadataFilePath)) {
+      if (!this.RequiresMetadataInitialization()) {
         try {
           this.metadata = this.ReadMetadataFromFile(this.metadataFilePath);
         } catch (Exception ex) {

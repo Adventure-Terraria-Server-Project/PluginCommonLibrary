@@ -312,6 +312,23 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: ChestOpen]
+    public event EventHandler<ChestOpenEventArgs> ChestOpen;
+
+    protected virtual bool OnChestOpen(ChestOpenEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.ChestOpen != null)
+          this.ChestOpen(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("ChestOpen", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     #region [Method: Constructor]
     public GetDataHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
@@ -377,6 +394,17 @@ namespace Terraria.Plugins.Common.Hooks {
             if (!e.Handled)
               e.Handled = this.OnChestKill(new TileLocationEventArgs(player, new DPoint(x, y)));
 
+            break;
+          }
+          case PacketTypes.ChestOpen: {
+            if (this.ChestOpen == null || e.Msg.readBuffer.Length - e.Index < 10)
+              break;
+          
+            short chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
+            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+          
+            e.Handled = this.OnChestOpen(new ChestOpenEventArgs(player, chestIndex, new DPoint(x, y)));
             break;
           }
           case PacketTypes.ChestGetContents: {

@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 1.8</AssemblyName>
+    <AssemblyName>Plugin Common Lib 1.9</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -71,7 +71,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisLogFile>bin\Release\CCPluginsCommon.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -112,21 +112,27 @@
     <CodeContractsBaseLineFile />
     <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsSQLServerOption />
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>References\Mono.Data.Sqlite.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MySql.Data">
       <HintPath>References\MySql.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MySql.Web">
       <HintPath>References\MySql.Web.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>References\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -144,6 +150,7 @@
   <ItemGroup>
     <Compile Include="Collections\DecayingCollection.cs" />
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
+    <Compile Include="Hooks\ChestOpenEventArgs.cs" />
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
@@ -175,6 +182,7 @@
     <Compile Include="_Utility Classes\CollectionEx.cs" />
     <Compile Include="_Utility Classes\DateTimeEx.cs" />
     <Compile Include="_Utility Classes\FrameTimer.cs" />
+    <Compile Include="_Utility Classes\JsonUnixTimestampConverter.cs" />
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
     <Compile Include="Collections\PlayerDataDictionary.cs" />
     <Compile Include="_Utility Classes\PlayerEventArgs.cs" />

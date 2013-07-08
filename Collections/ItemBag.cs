@@ -39,6 +39,7 @@ namespace Terraria.Plugins.Common.Collections {
     }
     #endregion
 
+
     #region [Method: Constructor]
     public ItemBag(int maxItemSlots = -1) {
       this.internalList = new List<ItemData>(maxItemSlots == -1 ? 10 : maxItemSlots);

@@ -5,22 +5,33 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 using Hooks;
+
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
   public class PlayerDataDictionary<DataType>: Dictionary<Player,DataType>, IDisposable {
-    #region [Property: ConstructDataFunction]
-    private Func<Player, DataType> constructDataFunction;
+    #region [Property: PlayerDataFactoryFunction]
+    private Func<Player,DataType> playerDataFactoryFunction;
 
-    protected Func<Player,DataType> ConstructDataFunction {
-      get { return this.constructDataFunction; }
+    protected Func<Player,DataType> PlayerDataFactoryFunction {
+      get { return this.playerDataFactoryFunction; }
     }
     #endregion
 
-    #region [Property: Indexer(TSPlayer)]
-    public DataType this[TSPlayer player] {
-      get { return base[player.TPlayer]; }
-      set { base[player.TPlayer] = value; }
+    #region [Properties: Indexers]
+    public DataType this[TSPlayer tsPlayer] {
+      get {
+        if (this.addAfterLogin && !tsPlayer.IsLoggedIn)
+          throw new ArgumentException("The player to retrieve data for is not logged in.");
+        
+        return base[tsPlayer.TPlayer];
+      }
+      set { base[tsPlayer.TPlayer] = value; }
+    }
+
+    public new DataType this[Player player] {
+      get { return this[TShockEx.GetPlayerByTPlayer(player)]; }
+      set { base[player] = value; }
     }
     #endregion
 
@@ -32,54 +43,36 @@ namespace Terraria.Plugins.Common.Collections {
     }
     #endregion
 
-    #region [Event: PlayerLogin]
-    public event EventHandler<TSPlayerEventArgs> PlayerLogin;
-
-    protected virtual void OnPlayerLogin(TSPlayerEventArgs e) {
-      Contract.Requires<ArgumentNullException>(e != null);
-
-      if (this.PlayerLogin != null)
-        this.PlayerLogin(this, e);
-    }
-    #endregion
-
     private readonly bool addAfterLogin;
-    private readonly Command loginDetectCommand;
 
 
     #region [Method: Constructor]
     public PlayerDataDictionary(
-      Func<Player,DataType> constructDataFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
+      Func<Player,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
     ): base(20) {
-      Contract.Requires<ArgumentNullException>(constructDataFunction != null);
+      Contract.Requires<ArgumentNullException>(playerDataFactoryFunction != null);
 
-      this.constructDataFunction = constructDataFunction;
+      this.playerDataFactoryFunction = playerDataFactoryFunction;
       this.addAfterLogin = addPlayersAfterLoginOnly;
       this.syncRoot = new object();
 
-      if (addPlayersAfterLoginOnly) {
-        this.loginDetectCommand = new Command(this.LoginDetectCommand_Exec, "login") {
-          AllowServer = false, DoLog = false
-        };
-        Commands.ChatCommands.Add(this.loginDetectCommand);
-      }
       if (registerHooks) {
-        NetHooks.GreetPlayer += this.HandleGreetPlayer;
+        if (addPlayersAfterLoginOnly)
+          TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += this.TShock_PlayerPostLogin;
+        else
+          NetHooks.GreetPlayer += this.HandleGreetPlayer;
+
         ServerHooks.Leave += this.HandleLeave;
       }
     }
     #endregion
 
-    #region [Methods: LoginDetectCommand_Exec, HandleGreetPlayer, HandleLeave, AddPlayerData]
-    private void LoginDetectCommand_Exec(CommandArgs args) {
+    #region [Methods: Hooks Handles, AddPlayerData]
+    public virtual void HandlePlayerPostLogin(TSPlayer player) {
       if (this.IsDisposed || !this.addAfterLogin)
         return;
-      // Did the login fail?
-      if (!args.Player.IsLoggedIn)
-        return;
 
-      if (this.AddPlayerData(args.TPlayer))
-        this.OnPlayerLogin(new TSPlayerEventArgs(args.Player));
+      this.AddPlayerData(player.TPlayer);
     }
 
     public virtual void HandleGreetPlayer(int playerIndex, HandledEventArgs e) {
@@ -92,9 +85,6 @@ namespace Terraria.Plugins.Common.Collections {
         return;
 
       this.AddPlayerData(tPlayer);
-
-      if (tsPlayer.IsLoggedIn)
-        this.OnPlayerLogin(new TSPlayerEventArgs(tsPlayer));
     }
 
     public virtual void HandleLeave(int playerIndex) {
@@ -114,9 +104,9 @@ namespace Terraria.Plugins.Common.Collections {
 
         DataType data = default(DataType);
         try {
-          data = this.ConstructDataFunction(tPlayer);
+          data = this.PlayerDataFactoryFunction(tPlayer);
         } catch (AggregateException ex) {
-          throw new PlayerDataCreationException("The construct data function delegate has thrown an exception:\n" + ex);
+          throw new PlayerDataCreationException("The player data factory function has thrown an exception:\n" + ex);
         }
 
         this.Add(tPlayer, data);
@@ -125,9 +115,13 @@ namespace Terraria.Plugins.Common.Collections {
         return true;
       }
     }
+
+    private void TShock_PlayerPostLogin(TShockAPI.Hooks.PlayerPostLoginEventArgs e) {
+      this.HandlePlayerPostLogin(e.Player);
+    }
     #endregion
 
-    #region [Methods: Dictionary Wrappers]
+    #region [Methods: TSPlayer Wrappers]
     public void Add(TSPlayer player, DataType data) {
       base.Add(player.TPlayer, data);
     }
@@ -159,11 +153,10 @@ namespace Terraria.Plugins.Common.Collections {
       if (isDisposing) {
         NetHooks.GreetPlayer -= this.HandleGreetPlayer;
         ServerHooks.Leave -= this.HandleLeave;
+        TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= this.TShock_PlayerPostLogin;
 
         if (this.addAfterLogin) {
           try {
-            if (Commands.ChatCommands.Contains(this.loginDetectCommand))
-              Commands.ChatCommands.Remove(this.loginDetectCommand);
           // May occur due to unsynchronous thread operations.
           } catch (InvalidOperationException) {}
         }

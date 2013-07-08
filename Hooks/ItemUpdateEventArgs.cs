@@ -30,9 +30,9 @@ namespace Terraria.Plugins.Common.Hooks {
     #endregion
 
     #region [Property: Item]
-    private readonly ItemMetadata item;
+    private readonly ItemData item;
 
-    public ItemMetadata Item {
+    public ItemData Item {
       get { return this.item; }
     }
     #endregion
@@ -40,7 +40,7 @@ namespace Terraria.Plugins.Common.Hooks {
 
     #region [Method: Constructor]
     public ItemUpdateEventArgs(
-      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, ItemMetadata item
+      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, ItemData item
     ): base(player) {
       this.itemIndex = itemIndex;
       this.location = location;

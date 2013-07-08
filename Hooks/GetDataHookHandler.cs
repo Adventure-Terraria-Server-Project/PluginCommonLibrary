@@ -349,7 +349,7 @@ namespace Terraria.Plugins.Common.Hooks {
       TSPlayer player = TShock.Players[e.Msg.whoAmI];
       if (player == null)
         return;
-      
+
       try {
         switch (e.MsgID) {
           // Note: As for TileKill and TileKillNoItem, blockId will be of "1" if the player attempted to destroy
@@ -434,7 +434,7 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
           
             e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(
-              player, chestIndex, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
+              player, chestIndex, slotIndex, new ItemData(itemPrefix, itemType, itemStackSize)
             ));
             break;
           }
@@ -510,7 +510,7 @@ namespace Terraria.Plugins.Common.Hooks {
 
             e.Handled = this.OnItemUpdate(new ItemUpdateEventArgs(
               player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
-              new ItemMetadata(itemPrefix, itemType, itemStackSize)
+              new ItemData(itemPrefix, itemType, itemStackSize)
             ));
             break;
           }
@@ -543,7 +543,7 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
           
             e.Handled = this.OnPlayerModifySlot(new PlayerModifySlotEventArgs(
-              player, slotIndex, new ItemMetadata(itemPrefix, itemType, itemStackSize)
+              player, slotIndex, new ItemData(itemPrefix, itemType, itemStackSize)
             ));
             break;
           }

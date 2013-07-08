@@ -22,16 +22,16 @@ namespace Terraria.Plugins.Common.Hooks {
     #endregion
 
     #region [Property: NewItem]
-    private readonly ItemMetadata newItem;
+    private readonly ItemData newItem;
 
-    public ItemMetadata NewItem {
+    public ItemData NewItem {
       get { return this.newItem; }
     }
     #endregion
 
 
     #region [Method: Constructor]
-    public ChestModifySlotEventArgs(TSPlayer player, short chestIndex, byte slotIndex, ItemMetadata newItem): base(player) {
+    public ChestModifySlotEventArgs(TSPlayer player, short chestIndex, byte slotIndex, ItemData newItem): base(player) {
       this.chestIndex = chestIndex;
       this.slotIndex = slotIndex;
       this.newItem = newItem;

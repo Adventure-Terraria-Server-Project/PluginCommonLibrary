@@ -1,166 +1,349 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaItems {
-    #region [Methods: IsValidItemType, IsCraftableItem, IsEquipableItem, GetItemName]
-    public bool IsValidItemType(int itemType) {
+    #region [Methods: IsValidType, IsCraftableType, IsEquipableType, IsFlailType, IsSpearType, IsBoomerangType, IsChainsawType, IsDrillType, IsHookType, IsCoinType, GetItemTypeFromBlockType, GetItemTypeFromWallType]
+    public bool IsValidType(int itemType) {
       return (itemType >= TerrariaUtils.ItemType_Min && itemType <= TerrariaUtils.ItemType_Max);
     }
 
-    public bool IsCraftableItem(ItemType itemType) {
-      return !(
-        itemType == ItemType.DirtBlock ||
-        itemType == ItemType.StoneBlock ||
-        itemType == ItemType.Mushroom ||
-        itemType == ItemType.Wood || 
-        (itemType >= ItemType.IronOre && itemType <= ItemType.SilverOre) ||
-        itemType == ItemType.Gel ||
-        itemType == ItemType.Acorn ||
-        itemType == ItemType.LifeCrystal ||
-        itemType == ItemType.Lens ||
-        itemType == ItemType.Shuriken || 
-        (itemType >= ItemType.BandofRegeneration && itemType <= ItemType.DemoniteOre) || 
-        (itemType >= ItemType.Heart && itemType <= ItemType.Starfury) ||
-        itemType == ItemType.RottenChunk ||
-        itemType == ItemType.WormTooth ||
-        itemType == ItemType.FallenStar ||
-        itemType == ItemType.ShadowScale ||
-        itemType == ItemType.PiggyBank ||
-        itemType == ItemType.MiningHelmet || 
-        (itemType >= ItemType.FlintlockPistol && itemType <= ItemType.Minishark) || 
-        (itemType >= ItemType.BandofStarpower && itemType <= ItemType.Meteorite) ||
-        itemType == ItemType.Hook ||
-        itemType == ItemType.RocketBoots || 
-        (itemType >= ItemType.ClayBlock && itemType <= ItemType.PinkBrickWall) || 
-        (itemType >= ItemType.Spike && itemType <= ItemType.Cobweb) || 
-        (itemType >= ItemType.Bone && itemType <= ItemType.SandBlock) || 
-        (itemType >= ItemType.AshBlock && itemType <= ItemType.Hellstone) || 
-        (itemType >= ItemType.MudBlock && itemType <= ItemType.Star) ||
-        itemType == ItemType.BreathingReed ||
-        itemType == ItemType.Flipper ||
-        itemType == ItemType.MushroomGrassSeeds ||
-        itemType == ItemType.JungleGrassSeeds || 
-        (itemType >= ItemType.JungleRose && itemType <= ItemType.Shackle) ||
-        itemType == ItemType.Hellforge ||
-        itemType == ItemType.NaturesGift ||
-        itemType == ItemType.BlackLens ||
-        itemType == ItemType.WizardHat ||
-        itemType == ItemType.TopHat || 
-        (itemType >= ItemType.SummerHat && itemType <= ItemType.PlumbersHat) ||
-        itemType == ItemType.ArchaeologistsHat ||
-        itemType == ItemType.BlackDye || 
-        (itemType >= ItemType.NinjaHood && itemType <= ItemType.NinjaPants) ||
-        itemType == ItemType.RedHat ||
-        itemType == ItemType.Goldfish ||
-        itemType == ItemType.RobotHat || 
-        (itemType >= ItemType.GuideVoodooDoll && itemType <= ItemType.DemonScythe) || 
-        (itemType >= ItemType.Coral && itemType <= ItemType.Aglet) || 
-        (itemType >= ItemType.GoldChest && itemType <= ItemType.ShadowKey) ||
-        itemType == ItemType.JungleSpores ||
-        itemType == ItemType.Safe ||
-        itemType == ItemType.TatteredCloth || 
-        (itemType >= ItemType.CobaltOre && itemType <= ItemType.Pwnhammer) ||
-        itemType == ItemType.HallowedSeeds ||
-        itemType == ItemType.EbonsandBlock ||
-        itemType == ItemType.Compass ||
-        itemType == ItemType.TinkerersWorkshop || 
-        (itemType >= ItemType.Toolbelt && itemType <= ItemType.MiningPants) ||
-        itemType == ItemType.SiltBlock ||
-        itemType == ItemType.BreakerBlade ||
-        itemType == ItemType.ClockworkAssaultRifle || 
-        (itemType >= ItemType.DualHook && itemType <= ItemType.PiranhaStatue) || 
-        (itemType >= ItemType.MoonCharm && itemType <= ItemType.RangerEmblem) || 
-        (itemType >= ItemType.PixieDust && itemType <= ItemType.ClownPants) || 
-        (itemType >= ItemType.Bell && itemType <= ItemType.WireCutter) ||
-        itemType == ItemType.Lever ||
-        itemType == ItemType.LaserRifle ||
-        itemType == ItemType.MagicDagger || 
-        (itemType >= ItemType.SoulofLight && itemType <= ItemType.CursedFlame) || 
-        (itemType >= ItemType.UnicornHorn && itemType <= ItemType.StarCloak) || 
-        (itemType >= ItemType.Shotgun && itemType <= ItemType.TitanGlove) || 
-        itemType == ItemType.Switch ||
-        itemType == ItemType.DartTrap || (
-        itemType >= ItemType.GreenPressurePlate && itemType <= ItemType.BrownPressurePlate) || 
-        (itemType >= ItemType.SoulofFright && itemType <= ItemType.SoulofSight) ||
-        itemType == ItemType.CrossNecklace || 
-        (itemType >= ItemType.MusicBox_OverworldDay && itemType <= ItemType.MusicBox) || 
-        itemType == ItemType.CandyCaneBlock || 
-        (itemType >= ItemType.SantaHat && itemType <= ItemType.GreenCandyCaneBlock) ||
-        itemType == ItemType.SnowBlock || 
-        (itemType >= ItemType.BlueLight && itemType <= ItemType.Carrot)
-      );
+    private static bool[] craftableItemTypes;
+    public bool IsCraftableType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+
+      if (TerrariaItems.craftableItemTypes == null) {
+        TerrariaItems.craftableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
+
+        for (int i = 0; i < Main.recipe.Length; i++) {
+          Recipe recipe = Main.recipe[i];
+          if (recipe == null)
+            continue;
+
+          int index = recipe.createItem.netID;
+          if (index < 0)
+            index += TerrariaUtils.ItemType_Max;
+
+          TerrariaItems.craftableItemTypes[index] = true;
+        }
+      }
+      
+      {
+        int index = (int)itemType;
+        if (index < 0)
+          index += TerrariaUtils.ItemType_Max;
+
+        return TerrariaItems.craftableItemTypes[index];
+      }
     }
 
-    public bool IsEquipableItem(ItemType itemType) {
-      return (
-        (itemType >= ItemType.CopperWatch && itemType <= ItemType.DepthMeter) ||
-        itemType == ItemType.Goggles ||
-        itemType == ItemType.BandofRegeneration ||
-        itemType == ItemType.CloudinaBottle ||
-        itemType == ItemType.HermesBoots ||
-        (itemType >= ItemType.CopperGreaves && itemType <= ItemType.GoldChainmail) ||
-        (itemType >= ItemType.MiningHelmet && itemType <= ItemType.GoldHelmet) ||
-        (itemType >= ItemType.ShadowGreaves && itemType <= ItemType.ShadowHelmet) ||
-        itemType == ItemType.BandofStarpower ||
-        (itemType >= ItemType.MeteorHelmet && itemType <= ItemType.MeteorLeggings) ||
-        itemType == ItemType.RocketBoots ||
-        (itemType >= ItemType.NecroHelmet && itemType <= ItemType.NecroGreaves) ||
-        itemType == ItemType.LuckyHorseshoe ||
-        itemType == ItemType.ShinyRedBalloon ||
-        itemType == ItemType.Flipper ||
-        itemType == ItemType.ObsidianSkull ||
-        itemType == ItemType.JungleRose ||
-        itemType == ItemType.FeralClaws ||
-        itemType == ItemType.AnkletoftheWind ||
-        itemType == ItemType.Shackle ||
-        itemType == ItemType.NaturesGift ||
-        (itemType >= ItemType.JungleHat && itemType <= ItemType.MoltenGreaves) ||
-        itemType == ItemType.Sunglasses ||
-        (itemType >= ItemType.WizardHat && itemType <= ItemType.ArchaeologistsPants) ||
-        (itemType >= ItemType.NinjaHood && itemType <= ItemType.NinjaPants) ||
-        itemType == ItemType.RedHat ||
-        (itemType >= ItemType.Robe && itemType <= ItemType.GoldCrown) ||
-        (itemType >= ItemType.GuideVoodooDoll && itemType <= ItemType.FamiliarWig) ||
-        itemType == ItemType.Aglet ||
-        itemType == ItemType.MimeMask ||
-        itemType == ItemType.TheDoctorsShirt ||
-        itemType == ItemType.TheDoctorsPants ||
-        (itemType >= ItemType.CobaltHat && itemType <= ItemType.MythrilGreaves) ||
-        (itemType >= ItemType.Compass && itemType <= ItemType.ObsidianShield) ||
-        (itemType >= ItemType.CloudinaBalloon && itemType <= ItemType.SpectreBoots) ||
-        itemType == ItemType.Toolbelt ||
-        itemType == ItemType.MiningShirt ||
-        itemType == ItemType.MiningPants ||
-        itemType == ItemType.MoonCharm ||
-        itemType == ItemType.Ruler ||
-        (itemType >= ItemType.SorcererEmblem && itemType <= ItemType.AngelWings) ||
-        itemType == ItemType.NeptunesShell ||
-        (itemType >= ItemType.ClownHat && itemType <= ItemType.ClownPants) ||
-        itemType == ItemType.StarCloak ||
-        itemType == ItemType.PhilosophersStone ||
-        itemType == ItemType.TitanGlove ||
-        (itemType >= ItemType.HallowedPlateMail && itemType <= ItemType.ManaFlower) ||
-        itemType == ItemType.HallowedHeadgear ||
-        itemType == ItemType.HallowedMask ||
-        (itemType >= ItemType.MusicBox_OverworldDay && itemType <= ItemType.MusicBox_Boss3) ||
-        itemType == ItemType.MusicBox ||
-        (itemType >= ItemType.SantaHat && itemType <= ItemType.SantaPants)
-      );
+    private static bool[] equipableItemTypes;
+    public bool IsEquipableType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.equipableItemTypes == null) {
+        TerrariaItems.equipableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (
+            dummyItem.name != null && (
+              dummyItem.headSlot != -1 || dummyItem.bodySlot != -1 || dummyItem.legSlot != -1 || dummyItem.accessory
+            )
+          ) {
+            int index = i;
+            if (index < 0)
+              index += TerrariaUtils.ItemType_Max;
+
+            TerrariaItems.equipableItemTypes[index] = true;
+          }
+        }
+      }
+
+      {
+        int index = (int)itemType;
+        if (index < 0)
+          index += TerrariaUtils.ItemType_Max;
+
+        return TerrariaItems.equipableItemTypes[index];
+      }
+    }
+
+    private static List<ItemType> ammoTypes;
+    public bool IsAmmoType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.ammoTypes == null) {
+        TerrariaItems.ammoTypes = new List<ItemType>(20);
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.ammo > 0)
+            TerrariaItems.ammoTypes.Add((ItemType)i);
+        }
+      }
+
+      return TerrariaItems.ammoTypes.Contains(itemType);
+    }
+
+    private static List<ItemType> weaponTypes;
+    public bool IsWeaponType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.weaponTypes == null) {
+        TerrariaItems.weaponTypes = new List<ItemType>(20);
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.damage > 0)
+            TerrariaItems.weaponTypes.Add((ItemType)i);
+        }
+      }
+
+      return TerrariaItems.weaponTypes.Contains(itemType);
+    }
+
+    private static List<ItemType> accessoryTypes;
+    public bool IsAccessoryType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.accessoryTypes == null) {
+        TerrariaItems.accessoryTypes = new List<ItemType>(20);
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.accessory)
+            TerrariaItems.accessoryTypes.Add((ItemType)i);
+        }
+      }
+
+      return TerrariaItems.accessoryTypes.Contains(itemType);
+    }
+
+    private static List<ItemType> vanityTypes;
+    public bool IsVanityType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.vanityTypes == null) {
+        TerrariaItems.vanityTypes = new List<ItemType>(20);
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.vanity)
+            TerrariaItems.vanityTypes.Add((ItemType)i);
+        }
+      }
+
+      return TerrariaItems.vanityTypes.Contains(itemType);
+    }
+
+    private static ItemType[][] blockTypesItemTypes;
+    public ItemType GetItemTypeFromBlockType(BlockType blockType, int objectStyle = 0) {
+      if ((int)blockType < TerrariaUtils.BlockType_Min || (int)blockType > TerrariaUtils.BlockType_Max)
+        throw new ArgumentException(string.Format("The given block type {0} is invalid.", blockType), "blockType");
+
+      if (TerrariaItems.blockTypesItemTypes == null) {
+        TerrariaItems.blockTypesItemTypes = new ItemType[TerrariaUtils.ItemType_Max + 1][];
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.createTile != -1) {
+            ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[dummyItem.createTile];
+            ItemType[] newStyleArray;
+
+            if (styleArray != null) {
+              newStyleArray = new ItemType[Math.Max(dummyItem.placeStyle + 1, styleArray.Length)];
+              styleArray.CopyTo(newStyleArray, 0);
+            } else {
+              newStyleArray = new ItemType[dummyItem.placeStyle + 1];
+            }
+
+            newStyleArray[dummyItem.placeStyle] = (ItemType)i;
+            TerrariaItems.blockTypesItemTypes[dummyItem.createTile] = newStyleArray;
+          }
+        }
+      }
+
+      {
+        if (blockType == BlockType.Mannequin)
+          return ItemType.Mannequin;
+
+        ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[(int)blockType];
+        if (objectStyle >= styleArray.Length)
+          throw new ArgumentException(string.Format("There is no item type for block \"{0}\" with object style {1}", blockType, objectStyle));
+
+        return styleArray[objectStyle];
+      }
+    }
+
+    private static ItemType[] wallTypesItemTypes;
+    public ItemType GetItemTypeFromWallType(WallType wallType) {
+      if ((int)wallType < TerrariaUtils.WallType_Min || (int)wallType > TerrariaUtils.WallType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", wallType), "wallType");
+
+      if (TerrariaItems.wallTypesItemTypes == null) {
+        TerrariaItems.wallTypesItemTypes = new ItemType[TerrariaUtils.WallType_Max + 1];
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.WallType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (dummyItem.name != null && dummyItem.createWall != -1)
+            TerrariaItems.wallTypesItemTypes[dummyItem.createWall] = (ItemType)i;
+        }
+      }
+
+      return TerrariaItems.wallTypesItemTypes[(int)wallType];
+    }
+
+    public bool IsFlailType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.BallOHurt:
+        case ItemType.BlueMoon:
+        case ItemType.Harpoon:
+        case ItemType.Sunfury:
+        case ItemType.DaoofPow:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsSpearType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.Spear:
+        case ItemType.Trident:
+        case ItemType.DarkLance:
+        case ItemType.CobaltNaginata:
+        case ItemType.MythrilHalberd:
+        case ItemType.AdamantiteGlaive:
+        case ItemType.Gungnir:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsBoomerangType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.WoodenBoomerang:
+        case ItemType.EnchantedBoomerang:
+        case ItemType.ThornChakram:
+        case ItemType.Flamarang:
+        case ItemType.LightDisc:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsChainsawType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.CobaltChainsaw:
+        case ItemType.MythrilChainsaw:
+        case ItemType.AdamantiteChainsaw:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsDrillType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.CobaltDrill:
+        case ItemType.MythrilDrill:
+        case ItemType.AdamantiteDrill:
+        case ItemType.Hamdrax:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsHookType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.GrapplingHook:
+        case ItemType.IvyWhip:
+        case ItemType.DualHook:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsArrowType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.WoodenArrow:
+        case ItemType.FlamingArrow:
+        case ItemType.UnholyArrow:
+        case ItemType.JestersArrow:
+        case ItemType.HellfireArrow:
+        case ItemType.HolyArrow:
+        case ItemType.CursedArrow:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsCoinType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.CopperCoin:
+        case ItemType.SilverCoin:
+        case ItemType.GoldCoin:
+        case ItemType.PlatinumCoin:
+          return true;
+      }
+
+      return false;
+    }
+    #endregion
+
+    #region [Methods: GetItemName, GetItemRepresentativeString]
+    public string GetItemName(ItemData itemData, bool includePrefix = false) {
+      if ((itemData.Prefix != ItemPrefix.None && includePrefix) || itemData.Type < 0) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults((int)itemData.Type);
+        dummyItem.prefix = (byte)itemData.Prefix;
+
+        return dummyItem.AffixName();
+      }
+
+      return Main.itemName[(int)itemData.Type];
     }
 
     public string GetItemName(ItemType itemType) {
-      return Main.itemName[(int)itemType];
+      return this.GetItemName(new ItemData(ItemPrefix.None, itemType, 1));
+    }
+
+    public string GetItemRepresentativeString(ItemData itemData) {
+      string format = "{0}";
+      if (itemData.StackSize > 1)
+        format = "{0} ({1})";
+
+      return string.Format(format, this.GetItemName(itemData, true), itemData.StackSize);
     }
     #endregion
 
     #region [Method: CreateNew]
-    public void CreateNew(TSPlayer forPlayer, DPoint location, ItemMetadata itemData) {
+    public void CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData) {
       int itemIndex = Item.NewItem(
-        location.X, location.Y, 16, 16, (int)itemData.Type, itemData.StackSize, true, (int)itemData.Prefix
+        location.X, location.Y, 0, 0, (int)itemData.Type, itemData.StackSize, true, (int)itemData.Prefix
       );
 
       forPlayer.SendData(PacketTypes.ItemDrop, string.Empty, itemIndex);
@@ -244,80 +427,24 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: IsFlail, IsSpear, IsBoomerang, IsChainsaw, IsDrill, IsHook]
-    public bool IsFlail(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.BallOHurt:
-        case ItemType.BlueMoon:
-        case ItemType.Harpoon:
-        case ItemType.Sunfury:
-        case ItemType.DaoofPow:
-          return true;
+    #region [Method: GetCoinItemValue]
+    public int GetCoinItemValue(ItemData coinItem) {
+      Contract.Requires<ArgumentException>(this.IsCoinType(coinItem.Type));
+
+      int baseValue = 1;
+      switch (coinItem.Type) {
+        case ItemType.SilverCoin:
+          baseValue = 100;
+          break;
+        case ItemType.GoldCoin:
+          baseValue = 100 * 100;
+          break;
+        case ItemType.PlatinumCoin:
+          baseValue = 100 * 100 * 100;
+          break;
       }
 
-      return false;
-    }
-
-    public bool IsSpear(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.Spear:
-        case ItemType.Trident:
-        case ItemType.DarkLance:
-        case ItemType.CobaltNaginata:
-        case ItemType.MythrilHalberd:
-        case ItemType.AdamantiteGlaive:
-        case ItemType.Gungnir:
-          return true;
-      }
-
-      return false;
-    }
-
-    public bool IsBoomerang(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.WoodenBoomerang:
-        case ItemType.EnchantedBoomerang:
-        case ItemType.ThornChakram:
-        case ItemType.Flamarang:
-        case ItemType.LightDisc:
-          return true;
-      }
-
-      return false;
-    }
-
-    public bool IsChainsaw(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.CobaltChainsaw:
-        case ItemType.MythrilChainsaw:
-        case ItemType.AdamantiteChainsaw:
-          return true;
-      }
-
-      return false;
-    }
-
-    public bool IsDrill(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.CobaltDrill:
-        case ItemType.MythrilDrill:
-        case ItemType.AdamantiteDrill:
-        case ItemType.Hamdrax:
-          return true;
-      }
-
-      return false;
-    }
-
-     public bool IsHook(ItemType itemType) {
-      switch (itemType) {
-        case ItemType.GrapplingHook:
-        case ItemType.IvyWhip:
-        case ItemType.DualHook:
-          return true;
-      }
-
-      return false;
+      return baseValue * coinItem.StackSize;
     }
     #endregion
   }

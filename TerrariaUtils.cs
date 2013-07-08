@@ -15,7 +15,7 @@ namespace Terraria.Plugins.Common {
     public const int WallType_Min = 0;
     public const int WallType_Max = 31;
 
-    public const int ItemType_Min = 0;
+    public const int ItemType_Min = -24;
     public const int ItemType_Max = 603;
 
     public const int NpcType_Min = -17;

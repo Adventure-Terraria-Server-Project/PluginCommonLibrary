@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("CoderCow's Plugin Common Library")]
-[assembly: AssemblyDescription("Common code used for several Terraria plugins.")]
+[assembly: AssemblyDescription("Common code for Terraria plugins.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cow Powered")]
 [assembly: AssemblyProduct("")]
@@ -12,5 +12,5 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 [assembly: Guid("0f67f6cb-d020-4a2f-8c59-035e3897fe48")]
 
-[assembly: AssemblyVersion("1.9.0.0")]
-[assembly: AssemblyFileVersion("1.9.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]

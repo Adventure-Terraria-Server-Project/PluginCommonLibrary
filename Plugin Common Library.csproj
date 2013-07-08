@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 1.9</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -143,12 +143,10 @@
     <Reference Include="TerrariaServer">
       <HintPath>References\TerrariaServer.exe</HintPath>
     </Reference>
-    <Reference Include="TShockAPI">
-      <HintPath>References\TShockAPI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\DecayingCollection.cs" />
+    <Compile Include="Collections\ItemBag.cs" />
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
     <Compile Include="Hooks\ChestOpenEventArgs.cs" />
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
@@ -169,7 +167,7 @@
     <Compile Include="_Enums and Structs\ChestKind.cs" />
     <Compile Include="_Enums and Structs\ChestStyle.cs" />
     <Compile Include="_Enums and Structs\Direction.cs" />
-    <Compile Include="_Enums and Structs\ItemMetadata.cs" />
+    <Compile Include="_Enums and Structs\ItemData.cs" />
     <Compile Include="_Enums and Structs\ItemPrefix.cs" />
     <Compile Include="_Enums and Structs\ItemType.cs" />
     <Compile Include="_Enums and Structs\LiquidKind.cs" />
@@ -231,6 +229,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TShock\TShockAPI\TShockAPI.csproj">
+      <Project>{49606449-072b-4cf5-8088-aa49da586694}</Project>
+      <Name>TShockAPI</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -64,29 +65,22 @@ namespace Terraria.Plugins.Common {
       string name, out TSPlayer matchedPlayer, TSPlayer messagesReceiver = null
     ) {
       matchedPlayer = null;
-
-      List<TSPlayer> players = TShock.Utils.FindPlayer(name);
-      if (players.Count == 0) {
+      List<TSPlayer> matchedPlayers = TShock.Utils.FindPlayer(name);
+      if (matchedPlayers.Count == 0) {
         if (messagesReceiver != null)
           messagesReceiver.SendErrorMessage(string.Format("Could not match any players for \"{0}\".", name));
 
         return false;
-      } if (players.Count > 1) {
+      } if (matchedPlayers.Count > 1) {
         if (messagesReceiver != null) {
-          StringBuilder matches = new StringBuilder();
-          foreach (TSPlayer player in players) {
-            if (matches.Length > 0)
-              matches.Append(", ");
-
-            matches.Append(player.Name);
-          }
-
-          messagesReceiver.SendErrorMessage("More than one player matched! Matches: " + matches);
+          messagesReceiver.SendErrorMessage(
+            "More than one player matched! Matches: " + string.Join(", ", matchedPlayers.Select(p => p.Name))
+          );
         }
         return false;
       }
 
-      matchedPlayer = players[0];
+      matchedPlayer = matchedPlayers[0];
       return true;
     }
 

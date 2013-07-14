@@ -883,6 +883,11 @@ namespace Terraria.Plugins.Common {
             return ChestKind.Unknown;
 
           return ChestKind.HellShadowChest;
+        case ChestStyle.WoodenChest:
+          if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+            return ChestKind.DungeonChest;
+
+          return ChestKind.Unknown;
         default:
           return ChestKind.Unknown;
       }

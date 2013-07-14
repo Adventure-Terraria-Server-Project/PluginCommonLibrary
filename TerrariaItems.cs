@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
@@ -54,7 +55,7 @@ namespace Terraria.Plugins.Common {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
           if (
-            dummyItem.name != null && (
+            !string.IsNullOrEmpty(dummyItem.name) && !dummyItem.vanity && (
               dummyItem.headSlot != -1 || dummyItem.bodySlot != -1 || dummyItem.legSlot != -1 || dummyItem.accessory
             )
           ) {
@@ -87,7 +88,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.ammo > 0)
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.ammo > 0)
             TerrariaItems.ammoTypes.Add((ItemType)i);
         }
       }
@@ -106,7 +107,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.damage > 0)
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.damage > 0 && dummyItem.ammo == 0)
             TerrariaItems.weaponTypes.Add((ItemType)i);
         }
       }
@@ -125,7 +126,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.accessory)
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.accessory)
             TerrariaItems.accessoryTypes.Add((ItemType)i);
         }
       }
@@ -144,7 +145,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.vanity)
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.vanity)
             TerrariaItems.vanityTypes.Add((ItemType)i);
         }
       }
@@ -163,7 +164,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.createTile != -1) {
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createTile != -1) {
             ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[dummyItem.createTile];
             ItemType[] newStyleArray;
 
@@ -181,14 +182,21 @@ namespace Terraria.Plugins.Common {
       }
 
       {
-        if (blockType == BlockType.Mannequin)
-          return ItemType.Mannequin;
+        switch (blockType) {
+          case BlockType.Mannequin:
+            return ItemType.Mannequin;
+          case BlockType.DartTrap:
+            return ItemType.DartTrap;
+          default: {
+            ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[(int)blockType];
+            Contract.Assert(styleArray != null, "BlockType: " + blockType.ToString());
 
-        ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[(int)blockType];
-        if (objectStyle >= styleArray.Length)
-          throw new ArgumentException(string.Format("There is no item type for block \"{0}\" with object style {1}", blockType, objectStyle));
+            if (objectStyle >= styleArray.Length)
+              throw new ArgumentException(string.Format("There is no item type for block \"{0}\" with object style {1}", blockType, objectStyle));
 
-        return styleArray[objectStyle];
+            return styleArray[objectStyle];
+          }
+        }
       }
     }
 
@@ -203,7 +211,7 @@ namespace Terraria.Plugins.Common {
         for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.WallType_Max + 1; i++) {
           Item dummyItem = new Item();
           dummyItem.netDefaults(i);
-          if (dummyItem.name != null && dummyItem.createWall != -1)
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createWall != -1)
             TerrariaItems.wallTypesItemTypes[dummyItem.createWall] = (ItemType)i;
         }
       }

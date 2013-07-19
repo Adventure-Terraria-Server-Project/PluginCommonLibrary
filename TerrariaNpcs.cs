@@ -61,7 +61,51 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: Move, MoveOrSpawnSpecificType]
+    #region [Methods: Spawn, MoveOrSpawnSpecificType, Move]
+    public bool Spawn(
+      int npcType, DPoint location, out int npcIndex, 
+      int lifeOverride = 0, int lifeRegenOverride = -1, int damageOverride = -1, bool noDrops = false
+    ) {
+      // Thread static.
+      if (Main.rand == null)
+        Main.rand = new Random();
+
+      npcIndex = NPC.NewNPC(location.X, location.Y, npcType);
+      if (npcIndex == 200) {
+        npcIndex = -1;
+        return false;
+      }
+
+      NPC npc = Main.npc[npcIndex];
+      if (npcType < 0)
+        npc.netDefaults(npcType);
+
+      if (lifeOverride > 0) {
+        npc.lifeMax = lifeOverride;
+        npc.life = lifeOverride;
+        npc.realLife = lifeOverride;
+      }
+      if (lifeRegenOverride > -1)
+        npc.lifeRegen = lifeRegenOverride;
+      if (damageOverride > -1)
+        npc.damage = damageOverride;
+
+      if (noDrops) {
+        npc.value = 0;
+        npc.npcSlots = 0f;
+      }
+
+      return true;
+    }
+
+    public bool Spawn(
+      int npcType, DPoint location, int lifeOverride = 0, int lifeRegenOverride = -1, int damageOverride = -1, 
+      bool noDrops = false
+    ) {
+      int npcIndex;
+      return this.Spawn(npcType, location, out npcIndex, lifeOverride, lifeRegenOverride, damageOverride, noDrops);
+    }
+
     public void MoveOrSpawnSpecificType(int npcType, DPoint location) {
       Contract.Requires<ArgumentOutOfRangeException>(npcType >= TerrariaUtils.NpcType_Min && npcType <= TerrariaUtils.NpcType_Max);
 
@@ -70,8 +114,7 @@ namespace Terraria.Plugins.Common {
         return;
       }
 
-      // Spawn required.
-      NPC.NewNPC(location.X, location.Y, npcType);
+      TerrariaUtils.Npcs.Spawn(npcType, location);
     }
 
     public void Move(int npcIndex, DPoint location) {

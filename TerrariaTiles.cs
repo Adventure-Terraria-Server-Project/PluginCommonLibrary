@@ -250,21 +250,24 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: PlaceObject, PlantHerb, SetBlock, RemoveBlock, LockChest]
+    #region [Methods: PlaceObject, PlantHerb, SetBlock, RemoveBlock, RemoveTile, LockChest]
     public void PlaceObject(
       DPoint originTileDestination, BlockType objectType, DPoint frameOffset = default(DPoint), bool localOnly = false
     ) {
       DPoint objectSize = this.GetObjectSize(objectType);
       DPoint textureTileSize = this.GetBlockTextureTileSize(objectType);
 
+      // WorldGen.genRand is thread static.
+      if (WorldGen.genRand == null)
+        WorldGen.genRand = new Random();
+
       for (int x = 0; x < objectSize.X; x++) {
         for (int y = 0; y < objectSize.Y; y++) {
           Tile objectTile;
-          if (objectType == BlockType.DoorOpened && frameOffset.X >= 36) {
+          if (objectType == BlockType.DoorOpened && frameOffset.X >= 36)
             objectTile = TerrariaUtils.Tiles[originTileDestination.X + x - 1, originTileDestination.Y + y];
-          } else {
+          else
             objectTile = TerrariaUtils.Tiles[originTileDestination.X + x, originTileDestination.Y + y];
-          }
 
           objectTile.active = true;
           objectTile.frameX = Convert.ToInt16(frameOffset.X + textureTileSize.X * x);
@@ -310,6 +313,10 @@ namespace Terraria.Plugins.Common {
         tile.active = false;
       }
 
+      // WorldGen.genRand is thread static.
+      if (WorldGen.genRand == null)
+        WorldGen.genRand = new Random();
+
       if (squareFrame)
         WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
       if (!localOnly)
@@ -325,10 +332,23 @@ namespace Terraria.Plugins.Common {
       tile.frameY = -1;
       tile.frameNumber = 0;
 
+      // WorldGen.genRand is thread static.
+      if (WorldGen.genRand == null)
+        WorldGen.genRand = new Random();
+
       if (squareFrames)
-        WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
+        WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y);
       if (!localOnly)
         TSPlayer.All.SendTileSquare(tileLocation.X, tileLocation.Y, 1);
+    }
+
+    public void RemoveTile(DPoint tileLocation, bool squareFrames = true, bool localOnly = false) {
+      Tile tile = TerrariaUtils.Tiles[tileLocation];
+
+      tile.wall = 0;
+      tile.liquid = 0;
+
+      this.RemoveBlock(tileLocation, squareFrames, localOnly);
     }
 
     public void LockChest(DPoint anyChestTileLocation) {
@@ -700,7 +720,7 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GuessChestKind, GetItemTypeFromChestType, GetDoorDirection]
+    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GuessChestKind, IsChestLocked, GetItemTypeFromChestType, GetDoorDirection]
     public StatueStyle GetStatueStyle(int objectStyle) {
       return (StatueStyle)(objectStyle + 1);
     }
@@ -802,10 +822,6 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
-      return this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
-    }
-
     public ChestStyle GetChestStyle(int objectStyle, out bool isLocked) {
       isLocked = false;
 
@@ -829,6 +845,16 @@ namespace Terraria.Plugins.Common {
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }
+    }
+
+    public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
+      return this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
+    }
+
+    public bool IsChestLocked(Tile tile) {
+      bool isLocked;
+      this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
+      return isLocked;
     }
 
     public ItemType GetItemTypeFromChestType(ChestStyle chestStyle) {

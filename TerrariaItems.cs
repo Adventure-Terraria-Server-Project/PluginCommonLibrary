@@ -8,7 +8,7 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaItems {
-    #region [Methods: IsValidType, IsCraftableType, IsEquipableType, IsFlailType, IsSpearType, IsBoomerangType, IsChainsawType, IsDrillType, IsHookType, IsCoinType, GetItemTypeFromBlockType, GetItemTypeFromWallType]
+    #region [Methods: IsValidType, IsCraftableType, IsEquipableType, IsFlailType, IsSpearType, IsBoomerangType, IsChainsawType, IsDrillType, IsHookType, IsArrowType, IsPotionType, IsCoinType, GetItemTypeFromBlockType, GetItemTypeFromWallType]
     public bool IsValidType(int itemType) {
       return (itemType >= TerrariaUtils.ItemType_Min && itemType <= TerrariaUtils.ItemType_Max);
     }
@@ -303,6 +303,38 @@ namespace Terraria.Plugins.Common {
         case ItemType.HellfireArrow:
         case ItemType.HolyArrow:
         case ItemType.CursedArrow:
+          return true;
+      }
+
+      return false;
+    }
+
+    public bool IsPotionType(ItemType itemType) {
+      switch (itemType) {
+        case ItemType.ArcheryPotion:
+        case ItemType.BattlePotion:
+        case ItemType.FeatherfallPotion:
+        case ItemType.GillsPotion:
+        case ItemType.GravitationPotion:
+        case ItemType.GreaterHealingPotion:
+        case ItemType.GreaterManaPotion:
+        case ItemType.HealingPotion:
+        case ItemType.ManaPotion:
+        case ItemType.InvisibilityPotion:
+        case ItemType.IronskinPotion:
+        case ItemType.LesserHealingPotion:
+        case ItemType.LesserManaPotion:
+        case ItemType.MagicPowerPotion:
+        case ItemType.ManaRegenerationPotion:
+        case ItemType.NightOwlPotion:
+        case ItemType.ObsidianSkinPotion:
+        case ItemType.RegenerationPotion:
+        case ItemType.RestorationPotion:
+        case ItemType.ShinePotion:
+        case ItemType.SpelunkerPotion:
+        case ItemType.SwiftnessPotion:
+        case ItemType.ThornsPotion:
+        case ItemType.WaterWalkingPotion:
           return true;
       }
 

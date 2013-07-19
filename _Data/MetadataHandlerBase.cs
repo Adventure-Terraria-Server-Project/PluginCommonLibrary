@@ -90,7 +90,11 @@ namespace Terraria.Plugins.Common {
         actualMetadataTime.ToString("yyyy-MM-dd_HH-mm-ss"), ".json"
       );
 
-      File.Move(this.MetadataFilePath, Path.Combine(directoryPath, snapShotFileName));
+      string snapShotPath = Path.Combine(directoryPath, snapShotFileName);
+      if (File.Exists(snapShotPath))
+        File.Delete(snapShotPath);
+
+      File.Move(this.MetadataFilePath, snapShotPath);
       this.Metadata.Write(this.MetadataFilePath);
     }
     #endregion

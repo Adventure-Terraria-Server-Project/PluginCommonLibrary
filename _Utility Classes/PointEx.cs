@@ -37,6 +37,14 @@ namespace Terraria.Plugins.Common {
       return point;
     }
 
+    public static DPoint ToTileLocation(this DPoint point) {
+      return new DPoint(point.X / TerrariaUtils.TileSize, point.Y / TerrariaUtils.TileSize);
+    }
+
+    public static DPoint ToFlatLocation(this DPoint point) {
+      return new DPoint(point.X * TerrariaUtils.TileSize, point.Y * TerrariaUtils.TileSize);
+    }
+
     public static Tile ByPoint(this TileCollection tileCollection, DPoint point) {
       return tileCollection[point.X, point.Y];
     }

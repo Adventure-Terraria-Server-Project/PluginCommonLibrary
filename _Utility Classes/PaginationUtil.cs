@@ -42,6 +42,36 @@ namespace Terraria.Plugins.Common {
       }
       #endregion
 
+      #region [Property: IncludeFooter]
+      private bool includeFooter;
+
+      public bool IncludeFooter {
+        get { return this.includeFooter; }
+        set { this.includeFooter = value; }
+      }
+      #endregion
+
+      #region [Property: FooterFormat]
+      private string footerFormat;
+
+      public string FooterFormat {
+        get { return this.footerFormat; }
+        set {
+          Contract.Requires<ArgumentNullException>(value != null);
+          this.footerFormat = value;
+        }
+      }
+      #endregion
+
+      #region [Property: FooterTextColor]
+      private Color footerTextColor;
+
+      public Color FooterTextColor {
+        get { return this.footerTextColor; }
+        set { this.footerTextColor = value; }
+      }
+      #endregion
+
       #region [Property: NothingToDisplayString]
       private string nothingToDisplayString;
 
@@ -98,6 +128,8 @@ namespace Terraria.Plugins.Common {
       public Settings() {
         this.includeHeader = true;
         this.headerFormat = "Page {0} of {1}";
+        this.includeFooter = false;
+        this.footerFormat = "Type /<command> {0} for more.";
         this.headerTextColor = Color.Yellow;
         this.nothingToDisplayString = null;
         this.lineFormatter = null;
@@ -159,7 +191,7 @@ namespace Terraria.Plugins.Common {
             lineColor = lineFormat.Item2;
           } catch (Exception ex) {
             throw new InvalidOperationException(
-              "The method represented by LineFormatter has thrown an exception. See inner exception for details.", ex
+              "The method referenced by LineFormatter has thrown an exception. See inner exception for details.", ex
             );
           }
         } else {
@@ -170,8 +202,12 @@ namespace Terraria.Plugins.Common {
           player.SendMessage(lineMessage, lineColor);
       }
 
-      if (lineCounter == 0 && settings.NothingToDisplayString != null)
-        player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+      if (lineCounter == 0) {
+        if (settings.NothingToDisplayString != null)
+          player.SendMessage(settings.NothingToDisplayString, settings.HeaderTextColor);
+      } else if (settings.IncludeFooter && pageNumber + 1 <= pageCount) {
+        player.SendMessage(string.Format(settings.FooterFormat, pageNumber + 1, pageNumber, pageCount), settings.FooterTextColor);
+      }
     }
 
     public static void SendPage(TSPlayer player, int pageNumber, IList dataToPaginate, Settings settings = null) {

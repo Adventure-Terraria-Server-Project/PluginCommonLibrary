@@ -48,7 +48,8 @@ namespace Terraria.Plugins.Common {
 
     #region [Methods: RegisterCommand, DeregisterCommand, CustomHelpCommand_Exec]
     protected Command RegisterCommand(
-      string[] names, CommandDelegate commandExec, CommandDelegate commandHelpExec = null, string requiredPermission = null
+      string[] names, CommandDelegate commandExec, CommandDelegate commandHelpExec = null, string requiredPermission = null,
+      bool allowServer = true, bool doLog = true
     ) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
       Contract.Requires<ArgumentNullException>(names != null);
@@ -75,6 +76,8 @@ namespace Terraria.Plugins.Common {
         command = new Command(actualCommandExec, names);
 
       TShockAPI.Commands.ChatCommands.Add(command);
+      command.AllowServer = allowServer;
+      command.DoLog = doLog;
 
       return command;
     }

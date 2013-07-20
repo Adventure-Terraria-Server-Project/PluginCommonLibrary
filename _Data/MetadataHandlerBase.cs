@@ -104,7 +104,7 @@ namespace Terraria.Plugins.Common {
       if (!File.Exists(this.MetadataFilePath))
         return false;
 
-      return (File.GetLastWriteTime(Main.worldPathName) < File.GetLastWriteTime(this.MetadataFilePath));
+      return (File.GetLastWriteTime(Main.worldPathName) < File.GetLastWriteTime(this.MetadataFilePath) + TimeSpan.FromSeconds(30));
     }
     #endregion
 

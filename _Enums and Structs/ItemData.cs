@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
+
 using TShockAPI;
 
 namespace Terraria.Plugins.Common {
@@ -78,6 +80,7 @@ namespace Terraria.Plugins.Common {
       return new ItemData((ItemPrefix)netItem.prefix, (ItemType)netItem.netID, netItem.stack);
     }
 
+    [Pure]
     public Item ToItem() {
       Item item = new Item();
       item.netDefaults((int)this.Type);

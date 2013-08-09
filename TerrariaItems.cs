@@ -187,6 +187,8 @@ namespace Terraria.Plugins.Common {
             return ItemType.Mannequin;
           case BlockType.DartTrap:
             return ItemType.DartTrap;
+          case BlockType.IceBlock:
+            return ItemType.None;
           default: {
             ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[(int)blockType];
             Contract.Assert(styleArray != null, "BlockType: " + blockType.ToString());

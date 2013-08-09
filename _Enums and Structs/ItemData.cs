@@ -63,9 +63,15 @@ namespace Terraria.Plugins.Common {
     #endregion
 
 
-    #region [Method: Constructor]
+    #region [Methods: Constructors]
     public ItemData(ItemPrefix prefix, ItemType type, int stackSize) {
       this.prefix = prefix;
+      this.type = type;
+      this.stackSize = stackSize;
+    }
+
+    public ItemData(ItemType type, int stackSize = 1) {
+      this.prefix = ItemPrefix.None;
       this.type = type;
       this.stackSize = stackSize;
     }

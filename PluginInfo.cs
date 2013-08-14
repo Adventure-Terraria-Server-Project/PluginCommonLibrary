@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Text;
 
 namespace Terraria.Plugins.Common {
   public struct PluginInfo {
@@ -59,9 +60,18 @@ namespace Terraria.Plugins.Common {
 
     #region [Method: ToString]
     public override string ToString() {
-      return string.Format(
-        "{0} {1} {2} by {3}", this.PluginName, this.VersionNumber.ToString(3), this.VersionAppendix, this.Author
-      );
+      StringBuilder resultBuilder = new StringBuilder(this.PluginName);
+      resultBuilder.Append(' ');
+      resultBuilder.Append(this.VersionNumber.ToString(3));
+
+      if (this.VersionAppendix != string.Empty) {
+        resultBuilder.Append(' ');
+        resultBuilder.Append(this.VersionAppendix);
+      }
+
+      resultBuilder.Append(" by ");
+      resultBuilder.Append(this.Author);
+      return resultBuilder.ToString();
     }
     #endregion
   }

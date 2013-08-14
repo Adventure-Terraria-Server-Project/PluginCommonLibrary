@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 2.0</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.1</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -171,7 +171,7 @@
     <Compile Include="_Enums and Structs\ItemPrefix.cs" />
     <Compile Include="_Enums and Structs\ItemType.cs" />
     <Compile Include="_Enums and Structs\LiquidKind.cs" />
-    <Compile Include="_Interaction\PlayerCommandInteraction.cs" />
+    <Compile Include="_Interaction\CommandInteraction.cs" />
     <Compile Include="_Interaction\CommandInteractionResult.cs" />
     <Compile Include="_Enums and Structs\WallType.cs" />
     <Compile Include="_Data\DatabaseHandlerBase.cs" />

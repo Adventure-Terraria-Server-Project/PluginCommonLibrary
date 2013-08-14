@@ -64,7 +64,7 @@ namespace Terraria.Plugins.Common {
     #region [Methods: Spawn, MoveOrSpawnSpecificType, Move]
     public bool Spawn(
       int npcType, DPoint location, out int npcIndex, 
-      int lifeOverride = 0, int lifeRegenOverride = -1, int damageOverride = -1, bool noDrops = false
+      int lifeOverride = 0, int aiStyleOverride = -1, int valueOverride = -1, bool noDrops = false
     ) {
       // Thread static.
       if (Main.rand == null)
@@ -80,30 +80,28 @@ namespace Terraria.Plugins.Common {
       if (npcType < 0)
         npc.netDefaults(npcType);
 
-      if (lifeOverride > 0) {
-        npc.lifeMax = lifeOverride;
+      if (lifeOverride > 0)
         npc.life = lifeOverride;
-        npc.realLife = lifeOverride;
-      }
-      if (lifeRegenOverride > -1)
-        npc.lifeRegen = lifeRegenOverride;
-      if (damageOverride > -1)
-        npc.damage = damageOverride;
+      if (aiStyleOverride > -1)
+        npc.aiStyle = aiStyleOverride;
+      if (valueOverride > -1)
+        npc.value = valueOverride;
 
       if (noDrops) {
         npc.value = 0;
         npc.npcSlots = 0f;
       }
 
+      TSPlayer.All.SendData(PacketTypes.NpcUpdate, string.Empty, npcIndex);
       return true;
     }
 
     public bool Spawn(
-      int npcType, DPoint location, int lifeOverride = 0, int lifeRegenOverride = -1, int damageOverride = -1, 
+      int npcType, DPoint location, int lifeOverride = 0, int aiStyleOverride = -1, int valueOverride = -1, 
       bool noDrops = false
     ) {
       int npcIndex;
-      return this.Spawn(npcType, location, out npcIndex, lifeOverride, lifeRegenOverride, damageOverride, noDrops);
+      return this.Spawn(npcType, location, out npcIndex, lifeOverride, aiStyleOverride, valueOverride, noDrops);
     }
 
     public void MoveOrSpawnSpecificType(int npcType, DPoint location) {

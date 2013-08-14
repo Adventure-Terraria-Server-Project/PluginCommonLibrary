@@ -131,6 +131,14 @@ namespace Terraria.Plugins.Common {
     public static void SendTileSquareEx(this TSPlayer player, DPoint location, int size = 10) {
       TShockEx.SendTileSquareEx(player, location.X, location.Y, size);
     }
+
+    public static DPoint ToLocation(this TSPlayer player) {
+      return new DPoint((int)player.X, (int)player.Y);
+    }
+
+    public static DPoint ToTileLocation(this TSPlayer player) {
+      return new DPoint(player.TileX, player.TileY);
+    }
     #endregion
 
     #region [CommandArgs Extensions]

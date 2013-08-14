@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Threading.Tasks;
+using System.Threading;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
 
 namespace Terraria.Plugins.Common {
-  public class PlayerCommandInteraction {
+  public class CommandInteraction {
     #region [Property: ForPlayer]
     private readonly TSPlayer forPlayer;
 
@@ -16,12 +16,30 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Property: TimeoutTask]
-    private Task timeoutTask;
+    #region [Property: IsActive]
+    private bool isActive;
 
-    internal Task TimeoutTask {
-      get { return this.timeoutTask; }
-      set { this.timeoutTask = value; }
+    public bool IsActive {
+      get { return this.isActive; }
+      internal set { this.isActive = value; }
+    }
+    #endregion
+
+    #region [Property: TimeoutMs]
+    private int timeoutMs;
+
+    public int TimeoutMs {
+      get { return this.timeoutMs; }
+      internal set { this.timeoutMs = value; }
+    }
+    #endregion
+
+    #region [Property: TimeoutTimer]
+    private System.Threading.Timer timeoutTimer;
+
+    internal System.Threading.Timer TimeoutTimer {
+      get { return this.timeoutTimer; }
+      set { this.timeoutTimer = value; }
     }
     #endregion
 
@@ -79,6 +97,15 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
+    #region [Property: AbortedCallback]
+    private Action<TSPlayer> abortedCallback;
+
+    public Action<TSPlayer> AbortedCallback {
+      get { return this.abortedCallback; }
+      set { this.abortedCallback = value; }
+    }
+    #endregion
+
     #region [Property: InteractionData]
     private object interactionData;
 
@@ -97,14 +124,20 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    internal volatile int framesLeft;
-
 
     #region [Method: Constructor]
-    public PlayerCommandInteraction(TSPlayer forPlayer) {
+    public CommandInteraction(TSPlayer forPlayer) {
       Contract.Requires<ArgumentNullException>(forPlayer != null);
 
       this.forPlayer = forPlayer;
+    }
+    #endregion
+
+    #region [Method: ResetTimer]
+    public void ResetTimer() {
+      if (this.timeoutTimer != null)
+        lock (this.timeoutTimer)
+          this.timeoutTimer.Change(this.timeoutMs, Timeout.Infinite);
     }
     #endregion
   }

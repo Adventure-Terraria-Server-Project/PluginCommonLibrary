@@ -5,7 +5,6 @@ using System.Linq;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Threading;
-using System.Threading.Tasks;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
@@ -13,8 +12,7 @@ using TShockAPI;
 namespace Terraria.Plugins.Common {
   public abstract class UserInteractionHandlerBase: IDisposable {
     #region [Constants]
-    public const int CommandInteractionTimeout = 1200; // In frames
-    private const int UpdateFrameRate = 60;
+    public const int CommandInteractionDefaultTimeoutMs = 20000;
     #endregion
 
     #region [Property: PluginTrace]
@@ -33,8 +31,8 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    private readonly Dictionary<TSPlayer,PlayerCommandInteraction> activeCommandInteractions = 
-      new Dictionary<TSPlayer,PlayerCommandInteraction>();
+    private readonly Dictionary<TSPlayer,CommandInteraction> activeCommandInteractions = 
+      new Dictionary<TSPlayer,CommandInteraction>();
     private readonly object activeCommandInteractionsLock = new object();
 
 
@@ -42,7 +40,7 @@ namespace Terraria.Plugins.Common {
     protected UserInteractionHandlerBase(PluginTrace pluginTrace) {
       this.pluginTrace = pluginTrace;
       this.registeredCommands = new Collection<Command>();
-      this.activeCommandInteractions = new Dictionary<TSPlayer,PlayerCommandInteraction>();
+      this.activeCommandInteractions = new Dictionary<TSPlayer,CommandInteraction>();
     }
     #endregion
 
@@ -90,53 +88,65 @@ namespace Terraria.Plugins.Common {
     }
     #endregion
 
-    #region [Method: StartOrResetCommandInteraction, StopInteraction]
-    protected PlayerCommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer) {
+    #region [Methods: StartOrResetCommandInteraction, StopInteraction]
+    protected CommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer, int timeoutMs = 0) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
       Contract.Requires<ArgumentNullException>(forPlayer != null);
 
-      PlayerCommandInteraction newInteraction = new PlayerCommandInteraction(forPlayer);
-      newInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+      CommandInteraction newInteraction = new CommandInteraction(forPlayer);
 
       lock (this.activeCommandInteractionsLock) {
-        if (!this.activeCommandInteractions.ContainsKey(forPlayer))
-          this.activeCommandInteractions.Add(forPlayer, newInteraction);
-        else
-          this.activeCommandInteractions[forPlayer] = newInteraction;
+        this.StopInteraction(forPlayer);
+        this.activeCommandInteractions.Add(forPlayer, newInteraction);
+
+        newInteraction.IsActive = true;
       }
 
-      newInteraction.TimeoutTask = Task.Factory.StartNew(() => {
+      if (timeoutMs > -1) {
+        if (timeoutMs == 0)
+          timeoutMs = UserInteractionHandlerBase.CommandInteractionDefaultTimeoutMs;
+
+        newInteraction.TimeoutMs = timeoutMs;
+        newInteraction.TimeoutTimer = new System.Threading.Timer(
+          this.InteractionTimeOutTimer_Callback, newInteraction, timeoutMs, Timeout.Infinite
+        );
+      }
+
+      return newInteraction;
+    }
+
+    private void InteractionTimeOutTimer_Callback(object state) {
+      CommandInteraction interaction = (state as CommandInteraction);
+      if (interaction == null)
+        return;
+
+      lock (this.activeCommandInteractionsLock) {
         if (this.IsDisposed)
           return;
 
-        while (newInteraction.framesLeft > 0) {
-          if (this.IsDisposed)
-            return;
+        if (!this.activeCommandInteractions.ContainsValue(interaction))
+          return;
 
-          newInteraction.framesLeft -= 10;
-          Thread.Sleep(100);
-        }
-
-        lock (this.activeCommandInteractionsLock) {
-          if (this.IsDisposed)
-            return;
-
-          if (!this.activeCommandInteractions.ContainsValue(newInteraction))
-            return;
-
-          if (forPlayer.ConnectionAlive && newInteraction.TimeExpiredCallback != null) {
+        if (interaction.ForPlayer.ConnectionAlive && interaction.IsActive) {
+          if (interaction.TimeExpiredCallback != null) {
             try {
-              newInteraction.TimeExpiredCallback(forPlayer);
+              interaction.TimeExpiredCallback(interaction.ForPlayer);
             } catch (Exception ex) {
               this.PluginTrace.WriteLineError("A command interaction's time expired callback has thrown an exception:\n" + ex);
             }
           }
-
-          this.activeCommandInteractions.Remove(forPlayer);
+          if (interaction.AbortedCallback != null) {
+            try {
+              interaction.AbortedCallback(interaction.ForPlayer);
+            } catch (Exception ex) {
+              this.PluginTrace.WriteLineError("A command interaction's aborted callback has thrown an exception:\n" + ex);
+            }
+          }
+          interaction.IsActive = false;
         }
-      });
 
-      return newInteraction;
+        this.activeCommandInteractions.Remove(interaction.ForPlayer);
+      }
     }
 
     protected void StopInteraction(TSPlayer forPlayer) {
@@ -144,29 +154,40 @@ namespace Terraria.Plugins.Common {
       Contract.Requires<ArgumentNullException>(forPlayer != null);
 
       lock (this.activeCommandInteractionsLock) {
-        if (this.activeCommandInteractions.ContainsKey(forPlayer))
+        CommandInteraction interaction;
+        if (this.activeCommandInteractions.TryGetValue(forPlayer, out interaction)) {
           this.activeCommandInteractions.Remove(forPlayer);
+
+          if (interaction.AbortedCallback != null) {
+            try {
+              interaction.AbortedCallback(interaction.ForPlayer);
+            } catch (Exception ex) {
+              this.PluginTrace.WriteLineError("A command interaction's aborted callback has thrown an exception:\n" + ex);
+            }
+          }
+          interaction.IsActive = false;
+        }
       }
     }
     #endregion
 
-    #region [Methods: HandleTileEdit, HandleChestGetContents, HandleSignEdit, HandleSignRead, HandleHitSwitch, HandleGameUpdate]
+    #region [Hook Handlers]
     public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, BlockType blockType, DPoint location, int objectStyle) {
       if (this.IsDisposed || this.activeCommandInteractions.Count == 0)
         return false;
 
       lock (this.activeCommandInteractionsLock) {
-        PlayerCommandInteraction commandInteraction;
+        CommandInteraction interaction;
         // Is the player currently interacting with a command?
-        if (!this.activeCommandInteractions.TryGetValue(player, out commandInteraction))
+        if (!this.activeCommandInteractions.TryGetValue(player, out interaction))
           return false;
 
-        if (commandInteraction.TileEditCallback == null)
+        if (interaction.TileEditCallback == null)
           return false;
 
-        CommandInteractionResult result = commandInteraction.TileEditCallback(player, editType, blockType, location, objectStyle);
-        if (commandInteraction.DoesNeverComplete)
-          commandInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        CommandInteractionResult result = interaction.TileEditCallback(player, editType, blockType, location, objectStyle);
+        if (interaction.DoesNeverComplete)
+          interaction.ResetTimer();
         else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player);
 
@@ -179,17 +200,17 @@ namespace Terraria.Plugins.Common {
         return false;
 
       lock (this.activeCommandInteractionsLock) {
-        PlayerCommandInteraction commandInteraction;
+        CommandInteraction interaction;
         // Is the player currently interacting with a command?
-        if (!this.activeCommandInteractions.TryGetValue(player, out commandInteraction))
+        if (!this.activeCommandInteractions.TryGetValue(player, out interaction))
           return false;
 
-        if (commandInteraction.ChestOpenCallback == null)
+        if (interaction.ChestOpenCallback == null)
           return false;
 
-        CommandInteractionResult result = commandInteraction.ChestOpenCallback(player, location);
-        if (commandInteraction.DoesNeverComplete)
-          commandInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        CommandInteractionResult result = interaction.ChestOpenCallback(player, location);
+        if (interaction.DoesNeverComplete)
+          interaction.ResetTimer();
         else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player);
 
@@ -202,17 +223,17 @@ namespace Terraria.Plugins.Common {
         return false;
 
       lock (this.activeCommandInteractionsLock) {
-        PlayerCommandInteraction commandInteraction;
+        CommandInteraction interaction;
         // Is the player currently interacting with a command?
-        if (!this.activeCommandInteractions.TryGetValue(player, out commandInteraction))
+        if (!this.activeCommandInteractions.TryGetValue(player, out interaction))
           return false;
 
-        if (commandInteraction.SignEditCallback == null)
+        if (interaction.SignEditCallback == null)
           return false;
 
-        CommandInteractionResult result = commandInteraction.SignEditCallback(player, signIndex, location, newText);
-        if (commandInteraction.DoesNeverComplete)
-          commandInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        CommandInteractionResult result = interaction.SignEditCallback(player, signIndex, location, newText);
+        if (interaction.DoesNeverComplete)
+          interaction.ResetTimer();
         else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player);
 
@@ -225,17 +246,17 @@ namespace Terraria.Plugins.Common {
         return false;
 
       lock (this.activeCommandInteractionsLock) {
-        PlayerCommandInteraction commandInteraction;
+        CommandInteraction interaction;
         // Is the player currently interacting with a command?
-        if (!this.activeCommandInteractions.TryGetValue(player, out commandInteraction))
+        if (!this.activeCommandInteractions.TryGetValue(player, out interaction))
           return false;
 
-        if (commandInteraction.SignReadCallback == null)
+        if (interaction.SignReadCallback == null)
           return false;
       
-        CommandInteractionResult result = commandInteraction.SignReadCallback(player, location);
-        if (commandInteraction.DoesNeverComplete)
-          commandInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        CommandInteractionResult result = interaction.SignReadCallback(player, location);
+        if (interaction.DoesNeverComplete)
+          interaction.ResetTimer();
         else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player);
 
@@ -247,18 +268,18 @@ namespace Terraria.Plugins.Common {
       if (this.IsDisposed || this.activeCommandInteractions.Count == 0)
         return false;
 
-      PlayerCommandInteraction commandInteraction;
+      CommandInteraction interaction;
       lock (this.activeCommandInteractionsLock) {
         // Is the player currently interacting with a command?
-        if (!this.activeCommandInteractions.TryGetValue(player, out commandInteraction))
+        if (!this.activeCommandInteractions.TryGetValue(player, out interaction))
           return false;
 
-        if (commandInteraction.HitSwitchCallback == null)
+        if (interaction.HitSwitchCallback == null)
           return false;
 
-        CommandInteractionResult result = commandInteraction.HitSwitchCallback(player, location);
-        if (commandInteraction.DoesNeverComplete)
-          commandInteraction.framesLeft = UserInteractionHandlerBase.CommandInteractionTimeout;
+        CommandInteractionResult result = interaction.HitSwitchCallback(player, location);
+        if (interaction.DoesNeverComplete)
+          interaction.ResetTimer();
         else if (result.IsInteractionCompleted)
           this.activeCommandInteractions.Remove(player);
 

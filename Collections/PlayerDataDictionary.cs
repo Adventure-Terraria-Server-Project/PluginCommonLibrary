@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,29 +10,35 @@ using Hooks;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
-  public class PlayerDataDictionary<DataType>: Dictionary<Player,DataType>, IDisposable {
+  public class PlayerDataDictionary<DataType>: IEnumerable<DataType>, IDisposable {
     #region [Property: PlayerDataFactoryFunction]
-    private Func<Player,DataType> playerDataFactoryFunction;
+    private readonly Func<int,DataType> playerDataFactoryFunction;
 
-    protected Func<Player,DataType> PlayerDataFactoryFunction {
+    protected Func<int,DataType> PlayerDataFactoryFunction {
       get { return this.playerDataFactoryFunction; }
     }
     #endregion
 
     #region [Properties: Indexers]
-    public DataType this[TSPlayer tsPlayer] {
-      get {
-        if (this.addAfterLogin && !tsPlayer.IsLoggedIn)
-          throw new ArgumentException("The player to retrieve data for is not logged in.");
-        
-        return base[tsPlayer.TPlayer];
+    public DataType this[int playerIndex] {
+      get { return this.dataList[playerIndex]; }
+      set {
+        while (playerIndex >= this.dataList.Count)
+          this.dataList.Add(default(DataType));
+
+        this.dataList[playerIndex] = value;
       }
-      set { base[tsPlayer.TPlayer] = value; }
     }
 
-    public new DataType this[Player player] {
-      get { return this[TShockEx.GetPlayerByTPlayer(player)]; }
-      set { base[player] = value; }
+    public DataType this[TSPlayer tsPlayer] {
+      get { return this.dataList[tsPlayer.Index]; }
+      set { this[tsPlayer.Index] = value; }
+    }
+    #endregion
+
+    #region [Property: Count]
+    public int Count {
+      get { return this.dataList.Count; }
     }
     #endregion
 
@@ -43,77 +50,71 @@ namespace Terraria.Plugins.Common.Collections {
     }
     #endregion
 
+    private readonly List<DataType> dataList;
     private readonly bool addAfterLogin;
 
 
     #region [Method: Constructor]
     public PlayerDataDictionary(
-      Func<Player,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
-    ): base(20) {
+      Func<int,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
+    ) {
       Contract.Requires<ArgumentNullException>(playerDataFactoryFunction != null);
 
-      this.playerDataFactoryFunction = playerDataFactoryFunction;
+      this.dataList = new List<DataType>(15);
       this.addAfterLogin = addPlayersAfterLoginOnly;
+      this.playerDataFactoryFunction = playerDataFactoryFunction;
       this.syncRoot = new object();
 
       if (registerHooks) {
         if (addPlayersAfterLoginOnly)
           TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += this.TShock_PlayerPostLogin;
         else
-          NetHooks.GreetPlayer += this.HandleGreetPlayer;
+          ServerHooks.Join += this.Server_Join;
 
         ServerHooks.Leave += this.HandleLeave;
       }
     }
     #endregion
 
-    #region [Methods: Hooks Handles, AddPlayerData]
+    #region [Methods: Hooks Handlers, AddPlayerData]
+    public virtual void HandlePlayerJoin(int playerIndex) {
+      if (this.IsDisposed || this.addAfterLogin)
+        return;
+
+      this.AddPlayerData(playerIndex);
+    }
+
     public virtual void HandlePlayerPostLogin(TSPlayer player) {
       if (this.IsDisposed || !this.addAfterLogin)
         return;
 
-      this.AddPlayerData(player.TPlayer);
-    }
-
-    public virtual void HandleGreetPlayer(int playerIndex, HandledEventArgs e) {
-      if (this.IsDisposed || (this.addAfterLogin && TShock.Config.DisableLoginBeforeJoin))
-        return;
-
-      Player tPlayer = Main.player[playerIndex];
-      TSPlayer tsPlayer = TShockEx.GetPlayerByTPlayer(tPlayer);
-      if (this.addAfterLogin && !tsPlayer.IsLoggedIn)
-        return;
-
-      this.AddPlayerData(tPlayer);
+      this.AddPlayerData(player.Index);
     }
 
     public virtual void HandleLeave(int playerIndex) {
       if (this.IsDisposed)
         return;
 
-      lock (this.SyncRoot) {
-        this.Remove(Main.player[playerIndex]);
-        Debug.WriteLine("PlayerDataDictionary: {0} players.", this.Count);
-      }
+      lock (this.SyncRoot)
+        this.dataList[playerIndex] = default(DataType);
     }
 
-    private bool AddPlayerData(Player tPlayer) {
+    private bool AddPlayerData(int playerIndex) {
       lock (this.SyncRoot) {
-        if (base.ContainsKey(tPlayer))
-          return false;
-
-        DataType data = default(DataType);
+        DataType data;
         try {
-          data = this.PlayerDataFactoryFunction(tPlayer);
+          data = this.PlayerDataFactoryFunction(playerIndex);
         } catch (AggregateException ex) {
           throw new PlayerDataCreationException("The player data factory function has thrown an exception:\n" + ex);
         }
 
-        this.Add(tPlayer, data);
-        Debug.WriteLine("PlayerDataDictionary: {0} players.", this.Count);
-
+        this[playerIndex] = data;
         return true;
       }
+    }
+
+    private void Server_Join(int playerIndex, HandledEventArgs e) {
+      this.HandlePlayerJoin(playerIndex);
     }
 
     private void TShock_PlayerPostLogin(TShockAPI.Hooks.PlayerPostLoginEventArgs e) {
@@ -121,21 +122,23 @@ namespace Terraria.Plugins.Common.Collections {
     }
     #endregion
 
-    #region [Methods: TSPlayer Wrappers]
-    public void Add(TSPlayer player, DataType data) {
-      base.Add(player.TPlayer, data);
+    #region [Methods: IndexOf, Contains]
+    public int IndexOf(DataType playerData) {
+      return this.dataList.IndexOf(playerData);
     }
 
-    public void Remove(TSPlayer player) {
-      base.Remove(player.TPlayer);
+    public bool Contains(DataType playerData) {
+      return this.dataList.Contains(playerData);
+    }
+    #endregion
+
+    #region [IEnumerable Implementation]
+    public IEnumerator<DataType> GetEnumerator() {
+      return this.dataList.GetEnumerator();
     }
 
-    public bool ContainsKey(TSPlayer player) {
-      return base.ContainsKey(player.TPlayer);
-    }
-
-    public bool TryGetValue(TSPlayer player, out DataType data) {
-      return base.TryGetValue(player.TPlayer, out data);
+    IEnumerator IEnumerable.GetEnumerator() {
+      return this.dataList.GetEnumerator();
     }
     #endregion
 
@@ -151,15 +154,9 @@ namespace Terraria.Plugins.Common.Collections {
         return;
     
       if (isDisposing) {
-        NetHooks.GreetPlayer -= this.HandleGreetPlayer;
+        ServerHooks.Join -= this.Server_Join;
         ServerHooks.Leave -= this.HandleLeave;
         TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= this.TShock_PlayerPostLogin;
-
-        if (this.addAfterLogin) {
-          try {
-          // May occur due to unsynchronous thread operations.
-          } catch (InvalidOperationException) {}
-        }
       }
     
       this.isDisposed = true;

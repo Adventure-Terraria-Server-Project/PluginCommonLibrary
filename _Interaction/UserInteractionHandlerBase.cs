@@ -27,8 +27,8 @@ namespace Terraria.Plugins.Common {
     }
 
     protected Command RegisterCommand(
-      string[] names, CommandDelegate commandExec, CommandDelegate commandHelpExec = null, string requiredPermission = null,
-      bool allowServer = true, bool doLog = true
+      string[] names, CommandDelegate commandExec, Func<CommandArgs,bool> commandHelpExec = null, 
+      string requiredPermission = null, bool allowServer = true, bool doLog = true
     ) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
       Contract.Requires<ArgumentNullException>(names != null);
@@ -37,10 +37,9 @@ namespace Terraria.Plugins.Common {
       CommandDelegate actualCommandExec;
       if (commandHelpExec != null) {
         actualCommandExec = (args) => {
-          if (args.ContainsParameter("help", StringComparison.InvariantCultureIgnoreCase)) {
-            commandHelpExec(args);
-            return;
-          }
+          if (args.ContainsParameter("help", StringComparison.InvariantCultureIgnoreCase))
+            if (commandHelpExec(args))
+              return;
 
           commandExec(args);
         };

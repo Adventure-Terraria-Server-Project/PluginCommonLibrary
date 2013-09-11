@@ -8,7 +8,7 @@ namespace Terraria.Plugins.Common {
       return (int)(dateTime - DateTimeEx.UnixTimeStamp).TotalSeconds;
     }
      
-    public static DateTime FromUnixTime(int unixTime) {
+    public static DateTime FromUnixTime(double unixTime) {
       return DateTimeEx.UnixTimeStamp + TimeSpan.FromSeconds(unixTime);
     }
   }

@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace Terraria.Plugins.Common {
   public static class TimeSpanEx {
-    #region [Method: Static TryParseShort]
     // Group identifiers: Days, Hours, Minutes, Seconds
     private static readonly Regex parseShortTimeSpanRegex = new Regex(
       @"^(\W*((?<Days>\d+)\W*d(ays)?)?\W*((?<Hours>\d+)\W*h(ours|rs)?)?\W*((?<Minutes>\d+)\W*m(inutes|ins)?)?\W*((?<Seconds>\d+)\W*s(econds|ecs)?)?)$",
@@ -72,9 +71,7 @@ namespace Terraria.Plugins.Common {
         return false;
       }
     }
-    #endregion
 
-    #region [Method: Static ToLongString]
     public static string ToLongString(this TimeSpan timeSpan) {
       StringBuilder result = new StringBuilder();
       if (timeSpan.Days == 1) {
@@ -132,6 +129,5 @@ namespace Terraria.Plugins.Common {
 
       return result.ToString();
     }
-    #endregion
   }
 }

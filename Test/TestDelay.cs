@@ -4,29 +4,13 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Test {
   public class TestDelay {
-    #region [Property: FramesLeft]
-    private int framesLeft;
-
-    public int FramesLeft {
-      get { return this.framesLeft; }
-      set { this.framesLeft = value; }
-    }
-    #endregion
-
-    #region [Property: Action]
-    private readonly Action<TestContext> action;
-
-    public Action<TestContext> Action {
-      get { return this.action; }
-    }
-    #endregion
+    public int FramesLeft { get; set; }
+    public Action<TestContext> Action { get; private set; }
 
 
-    #region [Method: Constructor]
     public TestDelay(int delayInFrames, Action<TestContext> action) {
-      this.framesLeft = delayInFrames;
-      this.action = action;
+      this.FramesLeft = delayInFrames;
+      this.Action = action;
     }
-    #endregion
   }
 }

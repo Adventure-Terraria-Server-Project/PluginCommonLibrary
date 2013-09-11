@@ -8,22 +8,8 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class GetDataHookHandler: IDisposable {
-    #region [Property: PluginTrace]
-    private readonly PluginTrace pluginTrace;
-
-    public PluginTrace PluginTrace {
-      get { return this.pluginTrace; }
-    }
-    #endregion
-
-    #region [Property: InvokeTileEditOnChestKill]
-    private bool invokeTileEditOnChestKill;
-
-    public bool InvokeTileEditOnChestKill {
-      get { return this.invokeTileEditOnChestKill; }
-      set { this.invokeTileEditOnChestKill = value; }
-    }
-    #endregion
+    public PluginTrace PluginTrace { get; private set; }
+    public bool InvokeTileEditOnChestKill { get; set; }
 
     #region [Event: TileEdit]
     public event EventHandler<TileEditEventArgs> TileEdit;
@@ -330,18 +316,15 @@ namespace Terraria.Plugins.Common.Hooks {
     #endregion
 
 
-    #region [Method: Constructor]
     public GetDataHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
       Contract.Requires<ArgumentNullException>(pluginTrace != null);
 
-      this.pluginTrace = pluginTrace;
-      this.invokeTileEditOnChestKill = invokeTileEditOnChestKill;
+      this.PluginTrace = pluginTrace;
+      this.InvokeTileEditOnChestKill = invokeTileEditOnChestKill;
 
       NetHooks.GetData += this.NetHooks_GetData;
     }
-    #endregion
 
-    #region [Method: NetHooks_GetData, GameHooks_PostInitialize]
     private void NetHooks_GetData(GetDataEventArgs e) {
       if (e == null || this.isDisposed || e.Handled)
         return;
@@ -644,15 +627,12 @@ namespace Terraria.Plugins.Common.Hooks {
         ));
       }
     }
-    #endregion
 
-    #region [Method: ReportEventHandlerException]
     private void ReportEventHandlerException(string eventName, Exception exception) {
       this.PluginTrace.WriteLineError(string.Format(
         "One {0} event handler has thrown an unexpected exception. Exception details:\n{1}", eventName, exception
       ));
     }
-    #endregion
 
     #region [IDisposable Implementation]
     private bool isDisposed;

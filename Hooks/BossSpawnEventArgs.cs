@@ -5,19 +5,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class BossSpawnEventArgs: NetHookEventArgs {
-    #region [Property: BossType]
-    private readonly BossType bossType;
-
-    public BossType BossType {
-      get { return this.bossType; }
-    }
-    #endregion
+    public BossType BossType { get; private set; }
 
 
-    #region [Method: Constructor]
     public BossSpawnEventArgs(TSPlayer player, BossType bossType): base(player) {
-      this.bossType = bossType;
+      this.BossType = bossType;
     }
-    #endregion
   }
 }

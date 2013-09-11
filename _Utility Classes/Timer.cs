@@ -2,23 +2,13 @@
 
 namespace Terraria.Plugins.Common {
   public class Timer: TimerBase {
-    #region [Property: TimeSpan]
-    private TimeSpan timeSpan;
-
-    public TimeSpan TimeSpan {
-      get { return this.timeSpan; }
-      set { this.timeSpan = value; }
-    }
-    #endregion
+    public TimeSpan TimeSpan { get; private set; }
 
 
-    #region [Method: Constructor]
     public Timer(TimeSpan timeSpan, object data, Func<TimerBase,bool> callback): base(data, callback) {
-      this.timeSpan = timeSpan;
+      this.TimeSpan = timeSpan;
     }
-    #endregion
 
-    #region [Methods: IsExpired, Update, Reset]
     public override bool IsExpired() {
       return ((this.StartTime.Ticks + this.TimeSpan.Ticks) <= DateTime.Now.Ticks);
     }
@@ -28,12 +18,9 @@ namespace Terraria.Plugins.Common {
     public override void Reset() {
       this.StartTime = DateTime.Now;
     }
-    #endregion
 
-    #region [Method: ToString]
     public override string ToString() {
       return this.TimeSpan.ToString();
     }
-    #endregion
   }
 }

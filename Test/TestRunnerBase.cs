@@ -10,21 +10,8 @@ namespace Terraria.Plugins.Common.Test {
     private List<string> testRunSucceededTests;
     private List<string> testRunFailedTests;
 
-    #region [Property: IsRunning]
-    private bool isRunning;
-
-    public bool IsRunning { 
-      get { return this.isRunning; }
-    }
-    #endregion
-
-    #region [Property: Trace]
-    private readonly PluginTrace pluginTrace;
-
-    protected PluginTrace PluginTrace {
-      get { return this.pluginTrace; }
-    }
-    #endregion
+    public bool IsRunning { get; private set; }
+    protected PluginTrace PluginTrace { get; private set; }
 
     #region [Event: TestRunCompleted]
     public event EventHandler TestRunCompleted;
@@ -36,30 +23,27 @@ namespace Terraria.Plugins.Common.Test {
     #endregion
 
 
-    #region [Method: Constructor]
     protected TestRunnerBase(PluginTrace pluginTrace) {
       this.testRunData = new Dictionary<string,TestRunData>();
-      this.pluginTrace = pluginTrace;
+      this.PluginTrace = pluginTrace;
     }
-    #endregion
 
-    #region [Methods: RegisterTest, RunAllTests, TestInit, TestCleanup]
     protected void RegisterTest(string testName, Action<TestContext> testAction) {
-      if (this.isRunning)
+      if (this.IsRunning)
         throw new InvalidOperationException("Registering new tests is not possible while a test run is in progress.");
 
       this.testRunData.Add(testName, new TestRunData(testAction));
     }
 
     public void RunAllTests() {
-      if (this.isRunning)
+      if (this.IsRunning)
         throw new InvalidOperationException("A testrun is already in progress.");
 
       this.testRunEnumerator = this.testRunData.GetEnumerator();
       this.testRunSucceededTests = new List<string>();
       this.testRunFailedTests = new List<string>();
 
-      this.isRunning = true;
+      this.IsRunning = true;
 
       this.PluginTrace.WriteLineInfo("------------------------------------------");
       this.PluginTrace.WriteLineInfo("Test running with {0} tests...", this.testRunData.Count);
@@ -67,12 +51,10 @@ namespace Terraria.Plugins.Common.Test {
 
     protected abstract void TestInit();
     protected abstract void TestCleanup();
-    #endregion
 
-    #region [Method: HandleGameUpdate]
     private int frameCounter;
     public virtual void HandleGameUpdate() {
-      if (!this.isRunning)
+      if (!this.IsRunning)
         return;
 
       if (this.frameCounter < 10) {
@@ -163,16 +145,13 @@ namespace Terraria.Plugins.Common.Test {
 
         this.PluginTrace.WriteLineInfo("------------------------------------------");
 
-        this.isRunning = false;
+        this.IsRunning = false;
         this.OnTestRunCompleted();
       }
     }
-    #endregion
 
-    #region [Method: ToString]
     public override string ToString() {
       return string.Format("{0} registered tests.", this.testRunData.Count);
     }
-    #endregion
   }
 }

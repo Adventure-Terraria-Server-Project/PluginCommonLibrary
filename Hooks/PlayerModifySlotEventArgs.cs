@@ -5,28 +5,13 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class PlayerModifySlotEventArgs: NetHookEventArgs {
-    #region [Property: SlotIndex]
-    private readonly byte slotIndex;
-
-    public byte SlotIndex {
-      get { return this.slotIndex; }
-    }
-    #endregion
-
-    #region [Property: NewItem]
-    private readonly ItemData newItem;
-
-    public ItemData NewItem {
-      get { return this.newItem; }
-    }
-    #endregion
+    public byte SlotIndex { get; private set; }
+    public ItemData NewItem { get; private set; }
 
 
-    #region [Method: Constructor]
     public PlayerModifySlotEventArgs(TSPlayer player, byte slotIndex, ItemData newItem): base(player) {
-      this.slotIndex = slotIndex;
-      this.newItem = newItem;
+      this.SlotIndex = slotIndex;
+      this.NewItem = newItem;
     }
-    #endregion
   }
 }

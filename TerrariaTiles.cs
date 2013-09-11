@@ -8,7 +8,6 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaTiles {
-    #region [Indexers]
     public Tile this[int x, int y] {
       get {
         #if DEBUG
@@ -26,10 +25,8 @@ namespace Terraria.Plugins.Common {
         return Main.tile[point.X, point.Y];
       }
     }
-    #endregion
 
 
-    #region [Methods: IsValidCoord, IsValidBlockType, IsSwitchableBlockType]
     public bool IsValidCoord(int x, int y) {
       return (
         x >= 0 && x < Main.maxTilesX - 1 &&
@@ -54,9 +51,7 @@ namespace Terraria.Plugins.Common {
         blockType == BlockType.MusicBox
       );
     }
-    #endregion
 
-    #region [Methods: GetBlockTypeName, IsSolidBlockType]
     private static string[] tileNames;
 
     public string GetBlockTypeName(BlockType blockType) {
@@ -248,9 +243,7 @@ namespace Terraria.Plugins.Common {
         (blockType == BlockType.Cobweb)
       );
     }
-    #endregion
 
-    #region [Methods: PlaceObject, PlantHerb, SetBlock, RemoveBlock, RemoveTile, LockChest]
     public void PlaceObject(
       DPoint originTileDestination, BlockType objectType, DPoint frameOffset = default(DPoint), bool localOnly = false
     ) {
@@ -367,9 +360,7 @@ namespace Terraria.Plugins.Common {
       
       TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
     }
-    #endregion
 
-    #region [Method: MeasureObject]
     /// <remarks>
     ///   <p>
     ///     A object is considered any tile type the player is not blocked from passing through plus 
@@ -583,9 +574,7 @@ namespace Terraria.Plugins.Common {
 
       return (frameX == 36 || (frameX == 108 && frameY == 16));
     }
-    #endregion
 
-    #region [Methods: IsMultistateObject, ObjectHasActiveState, SetObjectState, IsObjectWired]
     /// <remarks>
     ///   Does not include doors or active stone.
     /// </remarks>
@@ -718,9 +707,7 @@ namespace Terraria.Plugins.Common {
       DPoint dummy;
       return this.IsObjectWired(measureData, out dummy);
     }
-    #endregion
 
-    #region [Methods: GetStatueStyle, GetItemTypeFromStatueType, GuessChestKind, IsChestLocked, GetItemTypeFromChestType, GetDoorDirection]
     public StatueStyle GetStatueStyle(int objectStyle) {
       return (StatueStyle)(objectStyle + 1);
     }
@@ -932,9 +919,7 @@ namespace Terraria.Plugins.Common {
       else
         return Direction.Left;
     }
-    #endregion
 
-    #region [Method: GetHerbStyle]
     public HerbStyle GetHerbStyle(int objectStyle) {
       return (HerbStyle)(objectStyle + 1);
     }
@@ -942,9 +927,7 @@ namespace Terraria.Plugins.Common {
     public HerbStyle GetHerbStyle(Tile tile) {
       return this.GetHerbStyle(tile.frameX / TerrariaUtils.DefaultTextureTileSize);
     }
-    #endregion
 
-    #region [Methods: EnumerateObjectTileLocations, EnumerateObjectTiles, EnumerateTilesRectangularAroundPoint]
     public IEnumerable<DPoint> EnumerateObjectTileLocations(ObjectMeasureData measureData) {
       DPoint origin = measureData.OriginTileLocation;
 
@@ -974,9 +957,7 @@ namespace Terraria.Plugins.Common {
         }
       }
     }
-    #endregion
 
-    #region [Methods: GetObjectSize, GetBlockTextureTileSize, GetObjectOrientation]
     private static DPoint[] objectSizes;
     public DPoint GetObjectSize(BlockType objectType) {
       if (TerrariaTiles.objectSizes == null) {
@@ -1220,6 +1201,5 @@ namespace Terraria.Plugins.Common {
           return Direction.Unknown;
       }
     }
-    #endregion
   }
 }

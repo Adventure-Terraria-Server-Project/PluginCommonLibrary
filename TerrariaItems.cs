@@ -8,7 +8,6 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaItems {
-    #region [Methods: IsValidType, IsCraftableType, IsEquipableType, IsFlailType, IsSpearType, IsBoomerangType, IsChainsawType, IsDrillType, IsHookType, IsArrowType, IsPotionType, IsCoinType, GetItemTypeFromBlockType, GetItemTypeFromWallType]
     public bool IsValidType(int itemType) {
       return (itemType >= TerrariaUtils.ItemType_Min && itemType <= TerrariaUtils.ItemType_Max);
     }
@@ -354,9 +353,7 @@ namespace Terraria.Plugins.Common {
 
       return false;
     }
-    #endregion
 
-    #region [Methods: GetItemName, GetItemRepresentativeString]
     public string GetItemName(ItemData itemData, bool includePrefix = false) {
       if ((itemData.Prefix != ItemPrefix.None && includePrefix) || itemData.Type < 0) {
         Item dummyItem = new Item();
@@ -380,9 +377,7 @@ namespace Terraria.Plugins.Common {
 
       return string.Format(format, this.GetItemName(itemData, true), itemData.StackSize);
     }
-    #endregion
 
-    #region [Method: CreateNew]
     public void CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData) {
       int itemIndex = Item.NewItem(
         location.X, location.Y, 0, 0, (int)itemData.Type, itemData.StackSize, true, (int)itemData.Prefix
@@ -390,9 +385,7 @@ namespace Terraria.Plugins.Common {
 
       forPlayer.SendData(PacketTypes.ItemDrop, string.Empty, itemIndex);
     }
-    #endregion
 
-    #region [Methods: EnumerateItemsInRect, EnumerateItemsAroundPoint]
     public IEnumerable<Item> EnumerateItemsInRect(Rectangle rect) {
       int areaL = rect.Left - (rect.Width / 2);
       int areaT = rect.Top - (rect.Height / 2);
@@ -423,9 +416,7 @@ namespace Terraria.Plugins.Common {
           yield return item;
       }
     }
-    #endregion
 
-    #region [Methods: IsUniversalPrefix, IsCommonPrefix]
     public bool IsUniversalPrefix(ItemPrefix prefix) {
       switch (prefix) {
         case ItemPrefix.Keen:
@@ -467,9 +458,7 @@ namespace Terraria.Plugins.Common {
 
       return false;
     }
-    #endregion
 
-    #region [Method: GetCoinItemValue]
     public int GetCoinItemValue(ItemData coinItem) {
       Contract.Requires<ArgumentException>(this.IsCoinType(coinItem.Type));
 
@@ -488,6 +477,5 @@ namespace Terraria.Plugins.Common {
 
       return baseValue * coinItem.StackSize;
     }
-    #endregion
   }
 }

@@ -6,22 +6,13 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Collections {
   public class PriorityList<T>: Collection<T> {
-    #region [Property: Priorities]
-    private readonly List<int> priorities;
-
-    protected List<int> Priorities {
-      get { return this.priorities; }
-    }
-    #endregion
+    protected List<int> Priorities { get; private set; }
 
 
-    #region [Method: Constructor]
     public PriorityList() {
-      this.priorities = new List<int>();
+      this.Priorities = new List<int>();
     }
-    #endregion
 
-    #region [Methods: Add, InsertItem, GetPriority]
     public void Add(T item, int priority) {
       int index;
       for (index = 0; index < this.Count; index++) {
@@ -42,6 +33,5 @@ namespace Terraria.Plugins.Common.Collections {
     public int GetPriorityAt(int index) {
       return this.Priorities[index];
     }
-    #endregion
   }
 }

@@ -5,28 +5,13 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class ChatTextEventArgs: NetHookEventArgs {
-    #region [Property: Color]
-    private readonly Color color;
-
-    public Color Color {
-      get { return this.color; }
-    }
-    #endregion
-
-    #region [Property: Text]
-    private readonly string text;
-
-    public string Text {
-      get { return this.text; }
-    }
-    #endregion
+    public Color Color { get; private set; }
+    public string Text { get; private set; }
 
 
-    #region [Method: Constructor]
     public ChatTextEventArgs(TSPlayer player, Color color, string text): base(player) {
-      this.color = color;
-      this.text = text;
+      this.Color = color;
+      this.Text = text;
     }
-    #endregion
   }
 }

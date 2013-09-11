@@ -14,77 +14,28 @@ namespace Terraria.Plugins.Common {
     private struct WorkItem {
       public static readonly WorkItem Invalid = default(WorkItem);
 
-      #region [Property: ResultType]
-      private readonly Type resultType;
-
-      public Type ResultType {
-        get { return this.resultType; }
-      }
-      #endregion
-
-      #region [Property: CompletionSource]
-      private readonly dynamic completionSource;
-
-      public dynamic CompletionSource {
-        get { return this.completionSource; }
-      }
-      #endregion
-
-      #region [Property: CancellationToken]
-      private readonly CancellationToken? cancellationToken;
-
-      public CancellationToken? CancellationToken {
-        get { return this.cancellationToken; }
-      }
-      #endregion
-
-      #region [Property: Function]
-      private readonly dynamic function;
-
-      public dynamic Function {
-        get { return this.function; }
-      }
-      #endregion
-
-      #region [Property: State]
-      private readonly dynamic state;
-
-      public dynamic State {
-        get { return this.state; }
-      }
-      #endregion
-
-      #region [Property: ExceptionHandler]
-      private readonly QueueExceptionHandler exceptionHandler;
-
-      public QueueExceptionHandler ExceptionHandler {
-        get { return this.exceptionHandler; }
-      }
-      #endregion
+      public Type ResultType { get; private set; }
+      public dynamic CompletionSource { get; private set; }
+      public CancellationToken? CancellationToken { get; private set; }
+      public dynamic Function { get; private set; }
+      public dynamic State { get; private set; }
+      public QueueExceptionHandler ExceptionHandler { get; private set; }
 
 
-      #region [Method: Constructor]
       public WorkItem(
         dynamic completionSource, CancellationToken? cancellationToken, dynamic function, dynamic state = null,
         QueueExceptionHandler exceptionHandler = null
-      ) {
+      ): this() {
         //Contract.Requires<ArgumentNullException>(completionSource != null);
         //Contract.Requires<ArgumentNullException>(function != null);
 
-        this.completionSource = completionSource;
-        this.cancellationToken = cancellationToken;
-        this.function = function;
-        this.resultType = null;
-        this.state = state;
-        this.exceptionHandler = exceptionHandler;
+        this.CompletionSource = completionSource;
+        this.CancellationToken = cancellationToken;
+        this.Function = function;
+        this.ResultType = null;
+        this.State = state;
+        this.ExceptionHandler = exceptionHandler;
       }
-      #endregion
-    }
-    #endregion
-
-    #region [Property: WorkerThreadCount]
-    public int WorkerThreadCount {
-      get { return this.workers.Length; }
     }
     #endregion
 
@@ -93,8 +44,11 @@ namespace Terraria.Plugins.Common {
     private readonly CancellationTokenSource workerTokenSource;
     private readonly BlockingCollection<WorkItem> queuedItems;
 
+    public int WorkerThreadCount {
+      get { return this.workers.Length; }
+    }
 
-    #region [Method: Constructor]
+
     public AsyncWorkQueue(
       string threadName = "Async Work Queue Thread", ThreadPriority threadPriority = ThreadPriority.BelowNormal,
       int workerThreadCount = 1
@@ -113,9 +67,7 @@ namespace Terraria.Plugins.Common {
         worker.Start();
       }
     }
-    #endregion
 
-    #region [Methods: EnqueueTask, AwaitAll]
     public Task EnqueueTask(Action action, CancellationToken? cancellationToken = null, 
       QueueExceptionHandler exceptionHandler = null
     ) {
@@ -176,9 +128,7 @@ namespace Terraria.Plugins.Common {
 
       Task.WaitAll(itemTasks, timeoutMs);
     }
-    #endregion
 
-    #region [ProcessWorkItems]
     private void ProcessWorkItems() {
       try {
         WorkItem currentItem;
@@ -228,7 +178,6 @@ namespace Terraria.Plugins.Common {
         Debug.WriteLine("{0} has thrown an unexpected exception: \n{1}", Thread.CurrentThread.Name, ex);
       }
     }
-    #endregion
 
     #region [IDisposable Implementation]
     private bool isDisposed;

@@ -9,38 +9,16 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Collections {
   public class SerializableDictionary<TKey, TValue>: Dictionary<TKey, TValue>, IXmlSerializable {
-    #region [Property: ItemNodeName]
-    private readonly string itemNodeName;
-
-    public string ItemNodeName {
-      get { return this.itemNodeName; }
-    }
-    #endregion
-
-    #region [Property: KeyNodeName]
-    private readonly string keyNodeName;
-
-    protected string KeyNodeName {
-      get { return this.keyNodeName; }
-    }
-    #endregion
-
-    #region [Property: ValueNodeName]
-    private readonly string valueNodeName;
-
-    public string ValueNodeName {
-      get { return this.valueNodeName; }
-    }
-    #endregion
+    public string ItemNodeName { get; private set; }
+    protected string KeyNodeName { get; private set; }
+    public string ValueNodeName { get; private set; }
 
 
-    #region [Method: Constructor]
     protected SerializableDictionary(string itemNodeName, string keyNodeName, string valueNodeName = "Value") {
-      this.itemNodeName = itemNodeName;
-      this.keyNodeName = keyNodeName;
-      this.valueNodeName = valueNodeName;
+      this.ItemNodeName = itemNodeName;
+      this.KeyNodeName = keyNodeName;
+      this.ValueNodeName = valueNodeName;
     }
-    #endregion
 
     #region [IXmlSerializable Implementation]
     public XmlSchema GetSchema() {

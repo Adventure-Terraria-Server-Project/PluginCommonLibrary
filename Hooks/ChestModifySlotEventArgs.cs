@@ -5,37 +5,15 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class ChestModifySlotEventArgs: NetHookEventArgs {
-    #region [Property: ChestIndex]
-    private readonly short chestIndex;
-
-    public short ChestIndex {
-      get { return this.chestIndex; }
-    }
-    #endregion
-
-    #region [Property: SlotIndex]
-    private readonly byte slotIndex;
-
-    public byte SlotIndex {
-      get { return this.slotIndex; }
-    }
-    #endregion
-
-    #region [Property: NewItem]
-    private readonly ItemData newItem;
-
-    public ItemData NewItem {
-      get { return this.newItem; }
-    }
-    #endregion
+    public short ChestIndex { get; private set; }
+    public byte SlotIndex { get; private set; }
+    public ItemData NewItem { get; private set; }
 
 
-    #region [Method: Constructor]
     public ChestModifySlotEventArgs(TSPlayer player, short chestIndex, byte slotIndex, ItemData newItem): base(player) {
-      this.chestIndex = chestIndex;
-      this.slotIndex = slotIndex;
-      this.newItem = newItem;
+      this.ChestIndex = chestIndex;
+      this.SlotIndex = slotIndex;
+      this.NewItem = newItem;
     }
-    #endregion
   }
 }

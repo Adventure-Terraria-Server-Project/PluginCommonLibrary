@@ -5,35 +5,17 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Test {
   public class TestContext {
-    #region [Property: Phase]
-    private string phase;
-
-    public string Phase {
-      get { return this.phase; }
-      set { this.phase = value; }
-    }
-    #endregion
-
-    #region [Property: DelayedActions]
-    private readonly Collection<TestDelay> delayedActions;
-
-    public Collection<TestDelay> DelayedActions {
-      get { return this.delayedActions; }
-    }
-    #endregion
+    public string Phase { get; set; }
+    public Collection<TestDelay> DelayedActions { get; private set; }
 
 
-    #region [Method: Constructor]
     public TestContext() {
-      this.delayedActions = new Collection<TestDelay>();
+      this.DelayedActions = new Collection<TestDelay>();
     }
-    #endregion
 
-    #region [Method: Reset]
     public void Reset() {
-      this.phase = null;
-      this.delayedActions.Clear();
+      this.Phase = null;
+      this.DelayedActions.Clear();
     }
-    #endregion
   }
 }

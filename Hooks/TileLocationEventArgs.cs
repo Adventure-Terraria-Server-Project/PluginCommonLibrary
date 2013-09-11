@@ -5,19 +5,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class TileLocationEventArgs: NetHookEventArgs {
-    #region [Property: Location]
-    private readonly DPoint location;
-
-    public DPoint Location {
-      get { return this.location; }
-    }
-    #endregion
+    public DPoint Location { get; private set; }
 
 
-    #region [Method: Constructor]
     public TileLocationEventArgs(TSPlayer player, DPoint location): base(player) {
-      this.location = location;
+      this.Location = location;
     }
-    #endregion
   }
 }

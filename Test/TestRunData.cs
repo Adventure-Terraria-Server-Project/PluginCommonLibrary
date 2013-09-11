@@ -4,44 +4,19 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Test {
   public class TestRunData {
-    #region [Property: TestAction]
-    private readonly Action<TestContext> testAction;
-
-    public Action<TestContext> TestAction {
-      get { return this.testAction; }
-    }
-    #endregion
-
-    #region [Property: Context]
-    private readonly TestContext context;
-
-    public TestContext Context {
-      get { return this.context; }
-    }
-    #endregion
-
-    #region [Property: FailException]
-    private Exception failException;
-
-    public Exception FailException {
-      get { return this.failException; }
-      set { this.failException = value; }
-    }
-    #endregion
+    public Action<TestContext> TestAction { get; private set; }
+    public TestContext Context { get; private set; }
+    public Exception FailException { get; set; }
 
 
-    #region [Method: Constructor]
     public TestRunData(Action<TestContext> testAction) {
-      this.testAction = testAction;
-      this.context = new TestContext();
+      this.TestAction = testAction;
+      this.Context = new TestContext();
     }
-    #endregion
 
-    #region [Method: Reset]
     public void Reset() {
       this.Context.Reset();
-      this.failException = null;
+      this.FailException = null;
     }
-    #endregion
   }
 }

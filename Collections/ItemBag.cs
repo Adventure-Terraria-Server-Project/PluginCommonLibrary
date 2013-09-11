@@ -5,30 +5,13 @@ using System.Linq;
 
 namespace Terraria.Plugins.Common.Collections {
   public class ItemBag: IEnumerable<ItemData>, ICollection<ItemData> {
-    #region [Property: InternalList]
-    private readonly List<ItemData> internalList;
+    protected List<ItemData> InternalList { get; private set; }
+    public int MaxItemSlots { get; private set; }
 
-    protected List<ItemData> InternalList {
-      get { return this.internalList; }
-    }
-    #endregion
-
-    #region [Property: MaxItemSlots]
-    private int maxItemSlots;
-
-    public int MaxItemSlots {
-      get { return this.maxItemSlots; }
-      set { this.maxItemSlots = value; }
-    }
-    #endregion
-
-    #region [Property: Count]
     public int Count { 
       get { return this.InternalList.Count; }
     }
-    #endregion
 
-    #region [Property: LatestItem]
     public ItemData LatestItem {
       get {
         if (this.InternalList.Count == 0)
@@ -37,17 +20,13 @@ namespace Terraria.Plugins.Common.Collections {
         return this.InternalList[this.InternalList.Count - 1];
       }
     }
-    #endregion
 
 
-    #region [Method: Constructor]
     public ItemBag(int maxItemSlots = -1) {
-      this.internalList = new List<ItemData>(maxItemSlots == -1 ? 10 : maxItemSlots);
-      this.maxItemSlots = maxItemSlots;
+      this.InternalList = new List<ItemData>(maxItemSlots == -1 ? 10 : maxItemSlots);
+      this.MaxItemSlots = maxItemSlots;
     }
-    #endregion
 
-    #region [Methods: Add, Clear, GetEnumerator]
     public void Add(ItemData item) {
       Item dummyTItem = new Item();
       dummyTItem.netDefaults((int)item.Type);
@@ -92,9 +71,7 @@ namespace Terraria.Plugins.Common.Collections {
     public IEnumerator<ItemData> GetEnumerator() {
       return this.InternalList.GetEnumerator();
     }
-    #endregion
 
-    #region [Methods: Remove, RemoveExact, RemoveLastExact]
     public bool Remove(ItemData item) {
       for (int i = this.InternalList.Count - 1; i >= 0; i--) {
         ItemData bagItem = this.InternalList[i];
@@ -131,9 +108,7 @@ namespace Terraria.Plugins.Common.Collections {
 
       return false;
     }
-    #endregion
 
-    #region [Methods: Contains, ContainsExact, ContainsCoinValue, GetTotalCoinValue]
     public bool Contains(ItemData item) {
       int stackCounter = 0;
       for (int i = this.InternalList.Count - 1; i >= 0; i--) {
@@ -179,7 +154,6 @@ namespace Terraria.Plugins.Common.Collections {
 
       return totalCoinValue;
     }
-    #endregion
 
     #region [ICollection Implementation]
     bool ICollection<ItemData>.IsReadOnly {

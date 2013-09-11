@@ -4,28 +4,13 @@ using System.Threading.Tasks;
 
 namespace Terraria.Plugins.Common {
   public class TaskExceptionEventArgs: EventArgs {
-    #region [Property: Task]
-    private readonly Task task;
-
-    public Task Task {
-      get { return this.task; }
-    }
-    #endregion
-
-    #region [Property: TaskState]
-    private readonly object taskState;
-
-    public object TaskState {
-      get { return this.taskState; }
-    }
-    #endregion
+    public Task Task { get; private set; }
+    public object TaskState { get; private set; }
 
 
-    #region [Method: Constructor]
     public TaskExceptionEventArgs(Task task, object taskState = null) {
-      this.task = task;
-      this.taskState = taskState;
+      this.Task = task;
+      this.TaskState = taskState;
     }
-    #endregion
   }
 }

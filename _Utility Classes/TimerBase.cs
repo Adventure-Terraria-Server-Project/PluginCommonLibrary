@@ -2,45 +2,18 @@
 
 namespace Terraria.Plugins.Common {
   public abstract class TimerBase {
-    #region [Property: StartTime]
-    private DateTime startTime;
-
-    public DateTime StartTime {
-      get { return this.startTime; }
-      set { this.startTime = value; }
-    }
-    #endregion
-
-    #region [Property: Data]
-    private object data;
-
-    public object Data {
-      get { return this.data; }
-      set { this.data = value; }
-    }
-    #endregion
-
-    #region [Property: Callback]
-    private Func<TimerBase,bool> callback;
-
-    public Func<TimerBase,bool> Callback {
-      get { return this.callback; }
-      set { this.callback = value; }
-    }
-    #endregion
+    public DateTime StartTime { get; set; }
+    public object Data { get; set; }
+    public Func<TimerBase,bool> Callback { get; set; }
 
 
-    #region [Method: Constructor]
     protected TimerBase(object data, Func<TimerBase,bool> callback) {
-      this.data = data;
-      this.callback = callback;
+      this.Data = data;
+      this.Callback = callback;
     }
-    #endregion
 
-    #region [Methods: Update, IsExpired, Reset]
     public abstract void Update(int passedGameFrames);
     public abstract bool IsExpired();
     public abstract void Reset();
-    #endregion
   }
 }

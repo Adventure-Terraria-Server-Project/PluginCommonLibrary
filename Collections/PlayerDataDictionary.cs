@@ -11,15 +11,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
   public class PlayerDataDictionary<DataType>: IEnumerable<DataType>, IDisposable {
-    #region [Property: PlayerDataFactoryFunction]
-    private readonly Func<int,DataType> playerDataFactoryFunction;
+    private readonly List<DataType> dataList;
+    private readonly bool addAfterLogin;
+    protected Func<int,DataType> PlayerDataFactoryFunction { get; private set; }
+    public object SyncRoot { get; private set; }
 
-    protected Func<int,DataType> PlayerDataFactoryFunction {
-      get { return this.playerDataFactoryFunction; }
-    }
-    #endregion
-
-    #region [Properties: Indexers]
     public DataType this[int playerIndex] {
       get { return this.dataList[playerIndex]; }
       set {
@@ -34,27 +30,12 @@ namespace Terraria.Plugins.Common.Collections {
       get { return this.dataList[tsPlayer.Index]; }
       set { this[tsPlayer.Index] = value; }
     }
-    #endregion
 
-    #region [Property: Count]
     public int Count {
       get { return this.dataList.Count; }
     }
-    #endregion
-
-    #region [Property: SyncRoot]
-    private readonly object syncRoot;
-
-    public object SyncRoot {
-      get { return this.syncRoot; }
-    }
-    #endregion
-
-    private readonly List<DataType> dataList;
-    private readonly bool addAfterLogin;
 
 
-    #region [Method: Constructor]
     public PlayerDataDictionary(
       Func<int,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
     ) {
@@ -62,8 +43,8 @@ namespace Terraria.Plugins.Common.Collections {
 
       this.dataList = new List<DataType>(15);
       this.addAfterLogin = addPlayersAfterLoginOnly;
-      this.playerDataFactoryFunction = playerDataFactoryFunction;
-      this.syncRoot = new object();
+      this.PlayerDataFactoryFunction = playerDataFactoryFunction;
+      this.SyncRoot = new object();
 
       if (registerHooks) {
         if (addPlayersAfterLoginOnly)
@@ -74,9 +55,7 @@ namespace Terraria.Plugins.Common.Collections {
         ServerHooks.Leave += this.HandleLeave;
       }
     }
-    #endregion
 
-    #region [Methods: Hooks Handlers, AddPlayerData]
     public virtual void HandlePlayerJoin(int playerIndex) {
       if (this.IsDisposed || this.addAfterLogin)
         return;
@@ -120,9 +99,7 @@ namespace Terraria.Plugins.Common.Collections {
     private void TShock_PlayerPostLogin(TShockAPI.Hooks.PlayerPostLoginEventArgs e) {
       this.HandlePlayerPostLogin(e.Player);
     }
-    #endregion
 
-    #region [Methods: IndexOf, Contains]
     public int IndexOf(DataType playerData) {
       return this.dataList.IndexOf(playerData);
     }
@@ -130,7 +107,6 @@ namespace Terraria.Plugins.Common.Collections {
     public bool Contains(DataType playerData) {
       return this.dataList.Contains(playerData);
     }
-    #endregion
 
     #region [IEnumerable Implementation]
     public IEnumerator<DataType> GetEnumerator() {

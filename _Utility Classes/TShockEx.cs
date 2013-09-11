@@ -10,7 +10,6 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public static class TShockEx {
-    #region [Method: Static MatchUserAccountNameByPlayerName, MatchUserIdByPlayerName, MatchUserByPlayerName]
     public static bool MatchUserAccountNameByPlayerName(string playerName, out string exactName, TSPlayer messagesReceiver = null) {
       exactName = null;
       TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
@@ -58,9 +57,7 @@ namespace Terraria.Plugins.Common {
 
       return true;
     }
-    #endregion
 
-    #region [TSPlayer Extensions]
     public static bool MatchPlayerByName(
       string name, out TSPlayer matchedPlayer, TSPlayer messagesReceiver = null
     ) {
@@ -139,9 +136,7 @@ namespace Terraria.Plugins.Common {
     public static DPoint ToTileLocation(this TSPlayer player) {
       return new DPoint(player.TileX, player.TileY);
     }
-    #endregion
 
-    #region [CommandArgs Extensions]
     public static string ParamsToSingleString(this CommandArgs args, int fromIndex = 0, int paramsToTrimFromEnd = 0) {
       StringBuilder builder = new StringBuilder();
       for (int i = fromIndex; i < args.Parameters.Count - paramsToTrimFromEnd; i++) {
@@ -162,6 +157,5 @@ namespace Terraria.Plugins.Common {
 
       return false;
     }
-    #endregion
   }
 }

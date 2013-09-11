@@ -5,7 +5,6 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Test {
   public static class TAssert {
-    #region [Methods: IsObjectActive, IsObjectInactive]
     public static void IsObjectActive(int x, int y) {
       TAssert.IsObjectActive(x, y, true);
     }
@@ -43,9 +42,7 @@ namespace Terraria.Plugins.Common.Test {
         ));
       }
     }
-    #endregion
 
-    #region [Methods: IsTileActive, IsTileInactive]
     public static void IsTileActive(int x, int y) {
       TAssert.IsTileActive(x, y, true);
     }
@@ -75,9 +72,7 @@ namespace Terraria.Plugins.Common.Test {
         ));
       }
     }
-    #endregion
 
-    #region [Methods: IsBlockType, HasLiquid, HasNoLiquid, HasFullLiquid, HasNotFullLiquid]
     public static void IsBlockType(int x, int y, BlockType expectedBlockType) {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
@@ -141,9 +136,7 @@ namespace Terraria.Plugins.Common.Test {
         ));
       }
     }
-    #endregion
 
-    #region [Methods: AreItemsInBlockRect, AreNPCsInBlockRect]
     public static void AreItemsInBlockRect(
       int tileX, int tileY, int tileW, int tileH, ItemType expectedItemType, int expectedCount, bool allowOtherNpcs = false
     ) {
@@ -263,9 +256,7 @@ namespace Terraria.Plugins.Common.Test {
         }
       }
     }
-    #endregion
 
-    #region [Methods: ExpectException, Fail]
     public static bool ExpectException(Action action, Type expectedException) {
       try {
         action();
@@ -285,6 +276,5 @@ namespace Terraria.Plugins.Common.Test {
     public static void Fail(string messageFormat, params object[] args) {
       throw new AssertException(string.Format(messageFormat, args));
     }
-    #endregion
   }
 }

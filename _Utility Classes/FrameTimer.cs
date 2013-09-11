@@ -2,33 +2,15 @@
 
 namespace Terraria.Plugins.Common {
   public class FrameTimer: TimerBase {
-    #region [Property: FrameSpan]
-    private int frameSpan;
-
-    public int FrameSpan {
-      get { return this.frameSpan; }
-      set { this.frameSpan = value; }
-    }
-    #endregion
-
-    #region [Property: FramesLeft]
-    private int framesLeft;
-
-    protected int FramesLeft {
-      get { return this.framesLeft; }
-      set { this.framesLeft = value; }
-    }
-    #endregion
+    public int FrameSpan { get; set; }
+    protected int FramesLeft { get; set; }
 
 
-    #region [Method: Constructor]
     public FrameTimer(int frameSpan, object data, Func<TimerBase,bool> callback): base(data, callback) {
-      this.frameSpan = frameSpan;
+      this.FrameSpan = frameSpan;
       this.Reset();
     }
-    #endregion
 
-    #region [Methods: IsExpired, Update, Reset]
     public override bool IsExpired() {
       return (this.FramesLeft <= 0);
     }
@@ -40,13 +22,10 @@ namespace Terraria.Plugins.Common {
     public override void Reset() {
       this.FramesLeft = this.FrameSpan;
     }
-    #endregion
 
-    #region [Method: ToString]
     public override string ToString() {
       return this.FrameSpan.ToString();
     }
-    #endregion
   }
 }
 

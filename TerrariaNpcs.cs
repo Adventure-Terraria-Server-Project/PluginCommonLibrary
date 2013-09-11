@@ -8,7 +8,6 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaNpcs {
-    #region [Methods: EnumerateNPCsAroundPoint]
     public IEnumerable<NPC> EnumerateNPCsAroundPoint(DPoint location, float radius) {
       for (int i = 0; i < 200; i++) {
         NPC npc = Main.npc[i];
@@ -20,9 +19,7 @@ namespace Terraria.Plugins.Common {
         }
       }
     }
-    #endregion
 
-    #region [Methods: EnumerateSpecificNPCIndexes, EnumerateFriendlyNPCIndexes, EnumerateFriendlyFemaleNPCIndexes, EnumerateFriendlyMaleNPCIndexes]
     public IEnumerable<int> EnumerateSpecificNPCIndexes(IList<int> npcTypes) {
       int foundNpcsCount = 0;
       for (int i = 0; i < 200; i++) {
@@ -59,9 +56,7 @@ namespace Terraria.Plugins.Common {
     public IEnumerable<int> EnumerateShopNPCIndexes() {
       return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124 });
     }
-    #endregion
 
-    #region [Methods: Spawn, MoveOrSpawnSpecificType, Move]
     public bool Spawn(
       int npcType, DPoint location, out int npcIndex, 
       int lifeOverride = 0, int valueOverride = -1, bool noDrops = false, bool immortal = false
@@ -127,6 +122,5 @@ namespace Terraria.Plugins.Common {
       npc.position.Y = (location.Y - (Main.npc[npcIndex].height - 1));
       TSPlayer.All.SendData(PacketTypes.NpcUpdate, string.Empty, npcIndex);
     }
-    #endregion
   }
 }

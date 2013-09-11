@@ -6,28 +6,13 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class DoorUseEventArgs: TileLocationEventArgs {
-    #region [Property: IsOpening]
-    private readonly bool isOpening;
-
-    public bool IsOpening {
-      get { return this.isOpening; }
-    }
-    #endregion
-
-    #region [Property: Direction]
-    private readonly Direction direction;
-
-    public Direction Direction {
-      get { return this.direction; }
-    }
-    #endregion
+    public bool IsOpening { get; private set; }
+    public Direction Direction { get; private set; }
 
 
-    #region [Method: Constructor]
     public DoorUseEventArgs(TSPlayer player, DPoint location, bool isOpening, Direction direction): base(player, location) {
-      this.isOpening = isOpening;
-      this.direction = direction;
+      this.IsOpening = isOpening;
+      this.Direction = direction;
     }
-    #endregion
   }
 }

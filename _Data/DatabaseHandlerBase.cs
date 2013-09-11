@@ -9,39 +9,29 @@ using TShockAPI.DB;
 
 namespace Terraria.Plugins.Common {
   public abstract class DatabaseHandlerBase: IDisposable {
-    #region [Property: DbConnection, SqlType]
-    private IDbConnection dbConnection;
-
-    protected IDbConnection DbConnection {
-      get { return this.dbConnection; }
-    }
+    private readonly string sqliteDatabaseFilePath;
+    protected IDbConnection DbConnection { get; private set; }
 
     protected SqlType SqlType {
       get { return this.DbConnection.GetSqlType(); }
     }
-    #endregion
-
-    private readonly string sqliteDatabaseFilePath;
 
 
-    #region [Method: Constructor]
     protected DatabaseHandlerBase(string sqliteDatabaseFilePath) {
       Contract.Requires<ArgumentNullException>(sqliteDatabaseFilePath != null);
       Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(sqliteDatabaseFilePath));
 
       this.sqliteDatabaseFilePath = sqliteDatabaseFilePath;
     }
-    #endregion
 
-    #region [Methods: EnsureDataStructure, GetQueryBuilder]
     public void EstablishConnection() {
-      if (this.dbConnection != null)
+      if (this.DbConnection != null)
         throw new InvalidOperationException("Database connection already established.");
 
       switch (TShock.Config.StorageType.ToLower()) {
         case "mysql":
           string[] host = TShock.Config.MySqlHost.Split(':');
-          this.dbConnection = new MySqlConnection(string.Format(
+          this.DbConnection = new MySqlConnection(string.Format(
             "Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
             host[0],
             host.Length == 1 ? "3306" : host[1],
@@ -52,7 +42,7 @@ namespace Terraria.Plugins.Common {
 
           break;
         case "sqlite":
-          this.dbConnection = new SqliteConnection(
+          this.DbConnection = new SqliteConnection(
             string.Format("uri=file://{0},Version=3", sqliteDatabaseFilePath)
           );
 
@@ -92,9 +82,7 @@ namespace Terraria.Plugins.Common {
       else
         return new MysqlQueryCreator();
     }
-    #endregion
 
-    #region [Utility Methods]
     protected bool CheckTableExists(string tableName) {
       if (this.SqlType == SqlType.Sqlite) {
         const string QueryString = @"SELECT name FROM sqlite_master WHERE type='table' AND name=@0";
@@ -129,7 +117,6 @@ namespace Terraria.Plugins.Common {
 
       this.DbConnection.Query(QueryString, name, version);
     }
-    #endregion
 
     #region [IDisposable Implementation]
     private bool isDisposed;

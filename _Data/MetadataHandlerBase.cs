@@ -4,60 +4,36 @@ using System.IO;
 
 namespace Terraria.Plugins.Common {
   public abstract class MetadataHandlerBase {
-    #region [Property: MetadataFilePath]
-    private readonly string metadataFilePath;
+    protected PluginTrace PluginTrace { get; private set; }
+    protected string MetadataFilePath { get; private set; }
+    public IMetadataFile Metadata { get; private set; }
 
-    protected string MetadataFilePath {
-      get { return this.metadataFilePath; }
-    }
-    #endregion
-
-    #region [Property: Metadata]
-    private IMetadataFile metadata;
-
-    public IMetadataFile Metadata {
-      get { return this.metadata; }
-    }
-    #endregion
-
-    #region [Property: PluginTrace]
-    private readonly PluginTrace pluginTrace;
-
-    protected PluginTrace PluginTrace {
-      get { return this.pluginTrace; }
-    }
-    #endregion
-
-
-    #region [Method: Constructor]
     protected MetadataHandlerBase(PluginTrace pluginTrace, string metadataFilePath) {
-      this.pluginTrace = pluginTrace;
-      this.metadataFilePath = metadataFilePath;
+      this.PluginTrace = pluginTrace;
+      this.MetadataFilePath = metadataFilePath;
     }
-    #endregion
 
-    #region [Methods: RequiresMetadataInitialization, InitOrReadMetdata, InitMetadata, ReadMetadataFromFile, WriteMetadata, CreateMetadataSnapshot]
     public bool RequiresMetadataInitialization() {
-      return !File.Exists(this.metadataFilePath);
+      return !File.Exists(this.MetadataFilePath);
     }
 
     public void InitOrReadMetdata() {
       if (!this.RequiresMetadataInitialization()) {
         try {
-          this.metadata = this.ReadMetadataFromFile(this.metadataFilePath);
+          this.Metadata = this.ReadMetadataFromFile(this.MetadataFilePath);
         } catch (Exception ex) {
           this.PluginTrace.WriteLineError(
             "Reading a metadata file failed. Exception details:\n{0}", ex
           );
 
-          string backupFileName = Path.GetFileNameWithoutExtension(this.metadataFilePath) + ".bak";
-          string backupFilePath = Path.Combine(Path.GetDirectoryName(this.metadataFilePath), backupFileName);
+          string backupFileName = Path.GetFileNameWithoutExtension(this.MetadataFilePath) + ".bak";
+          string backupFilePath = Path.Combine(Path.GetDirectoryName(this.MetadataFilePath), backupFileName);
 
-          this.metadata = this.ReadMetadataFromFile(backupFilePath);
+          this.Metadata = this.ReadMetadataFromFile(backupFilePath);
           this.PluginTrace.WriteLine("Succeeded reading the metadata backup file.");
         }
       } else {
-        this.metadata = this.InitMetadata();
+        this.Metadata = this.InitMetadata();
       }
     }
 
@@ -97,21 +73,16 @@ namespace Terraria.Plugins.Common {
       File.Move(this.MetadataFilePath, snapShotPath);
       this.Metadata.Write(this.MetadataFilePath);
     }
-    #endregion
 
-    #region [Method: IsWorldOlderThanLastWrittenMetadata]
     public bool IsWorldOlderThanLastWrittenMetadata() {
       if (!File.Exists(this.MetadataFilePath))
         return false;
 
       return (File.GetLastWriteTime(Main.worldPathName) < File.GetLastWriteTime(this.MetadataFilePath) + TimeSpan.FromSeconds(30));
     }
-    #endregion
 
-    #region [Method: ToString]
     public override string ToString() {
       return Path.GetFileName(this.MetadataFilePath);
     }
-    #endregion
   }
 }

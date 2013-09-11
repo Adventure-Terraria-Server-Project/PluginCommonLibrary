@@ -4,35 +4,17 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common {
   public class TimerManager {
-    #region [Constants]
     private const int FrameUpdateFreq = 10;
-    #endregion
 
-    #region [Property: PluginTrace]
-    private readonly PluginTrace pluginTrace;
-
-    public PluginTrace PluginTrace {
-      get { return this.pluginTrace; }
-    }
-    #endregion
-
-    #region [Property: RunningTimers]
-    private readonly List<TimerBase> runningTimers;
-
-    protected List<TimerBase> RunningTimers {
-      get { return this.runningTimers; }
-    }
-    #endregion
+    public PluginTrace PluginTrace { get; private set; }
+    protected List<TimerBase> RunningTimers { get; private set; }
 
 
-    #region [Method: Constructor]
     public TimerManager(PluginTrace pluginTrace) {
-      this.pluginTrace = pluginTrace;
-      this.runningTimers = new List<TimerBase>();
+      this.PluginTrace = pluginTrace;
+      this.RunningTimers = new List<TimerBase>();
     }
-    #endregion
 
-    #region [Methods: StartTimer, StartOrResetTimer, ContinueTimer, RemoveTimer, IsTimerRunning, HandleGameUpdate]
     public void StartTimer(TimerBase timer) {
       if (!this.IsTimerRunning(timer)) {
         this.RunningTimers.Add(timer);
@@ -94,12 +76,9 @@ namespace Terraria.Plugins.Common {
         return false;
       }
     }
-    #endregion
 
-    #region [Method: ToString]
     public override string ToString() {
       return string.Format("{0} Timers running.", this.RunningTimers.Count);
     }
-    #endregion
   }
 }

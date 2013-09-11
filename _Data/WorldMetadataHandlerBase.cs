@@ -5,20 +5,11 @@ using System.IO;
 
 namespace Terraria.Plugins.Common {
   public abstract class WorldMetadataHandlerBase: MetadataHandlerBase {
-    #region [Constants]
     private const string WorldMetadataFileNameFormat = @"{0}.json";
-    #endregion
 
-    #region [Property: MetadataDirectoryPath]
-    private readonly string metadataDirectoryPath;
-
-    public string MetadataDirectoryPath {
-      get { return this.metadataDirectoryPath; }
-    }
-    #endregion
+    public string MetadataDirectoryPath { get; private set; }
 
 
-    #region [Method: Constructor]
     protected WorldMetadataHandlerBase(PluginTrace pluginTrace, string metadataDirectoryPath): base(
       pluginTrace, Path.Combine(
         metadataDirectoryPath, string.Format(WorldMetadataHandlerBase.WorldMetadataFileNameFormat, Main.worldID)
@@ -27,8 +18,7 @@ namespace Terraria.Plugins.Common {
       if (!Directory.Exists(metadataDirectoryPath))
         Directory.CreateDirectory(metadataDirectoryPath);
 
-      this.metadataDirectoryPath = metadataDirectoryPath;
+      this.MetadataDirectoryPath = metadataDirectoryPath;
     }
-    #endregion
   }
 }

@@ -6,19 +6,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class SendTileSquareEventArgs: TileLocationEventArgs {
-    #region [Property: Size]
-    private readonly short size;
-
-    public short Size {
-      get { return this.size; }
-    }
-    #endregion
+    public short Size { get; private set; }
 
 
-    #region [Method: Constructor]
     public SendTileSquareEventArgs(TSPlayer player, DPoint tileLocation, short size): base(player, tileLocation) {
-      this.size = size;
+      this.Size = size;
     }
-    #endregion
   }
 }

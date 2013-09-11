@@ -5,28 +5,13 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class ItemOwnerEventArgs: NetHookEventArgs {
-    #region [Property: ItemIndex]
-    private readonly short itemIndex;
-
-    public short ItemIndex {
-      get { return this.itemIndex; }
-    }
-    #endregion
-
-    #region [Property: NewOwner]
-    private readonly TSPlayer newOwner;
-
-    public TSPlayer NewOwner {
-      get { return this.newOwner; }
-    }
-    #endregion
+    public short ItemIndex { get; private set; }
+    public TSPlayer NewOwner { get; private set; }
 
 
-    #region [Method: Constructor]
     public ItemOwnerEventArgs(TSPlayer player, short itemIndex, TSPlayer newOwner): base(player) {
-      this.itemIndex = itemIndex;
-      this.newOwner = newOwner;
+      this.ItemIndex = itemIndex;
+      this.NewOwner = newOwner;
     }
-    #endregion
   }
 }

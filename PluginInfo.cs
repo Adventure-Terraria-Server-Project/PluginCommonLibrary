@@ -7,58 +7,23 @@ namespace Terraria.Plugins.Common {
   public struct PluginInfo {
     public static PluginInfo Empty = default(PluginInfo);
 
-    #region [Property: PluginName]
-    private readonly string pluginName;
+    public string PluginName { get; private set; }
+    public Version VersionNumber { get; private set; }
+    public string VersionAppendix { get; private set; }
+    public string Author { get; private set; }
+    public string Description { get; private set; }
 
-    public string PluginName {
-      get { return this.pluginName; }
+
+    public PluginInfo(
+      string pluginName, Version versionNumber, string versionAppendix, string author, string description
+    ): this() {
+      this.PluginName = pluginName;
+      this.VersionNumber = versionNumber;
+      this.VersionAppendix = versionAppendix;
+      this.Author = author;
+      this.Description = description;
     }
-    #endregion
 
-    #region [Property: VersionNumber]
-    private readonly Version versionNumber;
-
-    public Version VersionNumber {
-      get { return this.versionNumber; }
-    }
-    #endregion
-
-    #region [Property: VersionAppendix]
-    private readonly string versionAppendix;
-
-    public string VersionAppendix {
-      get { return this.versionAppendix; }
-    }
-    #endregion
-
-    #region [Property: Author]
-    private readonly string author;
-
-    public string Author {
-      get { return this.author; }
-    }
-    #endregion
-
-    #region [Property: Description]
-    private readonly string description;
-
-    public string Description {
-      get { return this.description; }
-    }
-    #endregion
-
-
-    #region [Method: Constructor]
-    public PluginInfo(string pluginName, Version versionNumber, string versionAppendix, string author, string description) {
-      this.pluginName = pluginName;
-      this.versionNumber = versionNumber;
-      this.versionAppendix = versionAppendix;
-      this.author = author;
-      this.description = description;
-    }
-    #endregion
-
-    #region [Method: ToString]
     public override string ToString() {
       StringBuilder resultBuilder = new StringBuilder(this.PluginName);
       resultBuilder.Append(' ');
@@ -73,6 +38,5 @@ namespace Terraria.Plugins.Common {
       resultBuilder.Append(this.Author);
       return resultBuilder.ToString();
     }
-    #endregion
   }
 }

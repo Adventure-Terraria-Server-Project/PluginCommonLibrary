@@ -6,28 +6,16 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class PluginTrace {
-    #region [Constants]
     public const ConsoleColor ConsoleErrorColor = ConsoleColor.Red;
     public const ConsoleColor ConsoleWarningColor = ConsoleColor.Yellow;
-    #endregion
 
-    #region [Property: TracePrefix]
-    private string tracePrefix;
-
-    public string TracePrefix {
-      get { return this.tracePrefix; }
-      set { this.tracePrefix = value; }
-    }
-    #endregion
+    public string TracePrefix { get; set; }
 
 
-    #region [Method: Constructor]
     public PluginTrace(string tracePrefix) {
-      this.tracePrefix = tracePrefix;
+      this.TracePrefix = tracePrefix;
     }
-    #endregion
 
-    #region [Method: WriteLine]
     public void WriteLine(string message, TraceLevel level = TraceLevel.Info) {
       message = this.TracePrefix + message;
 
@@ -120,6 +108,5 @@ namespace Terraria.Plugins.Common {
     public void WriteLineVerbose(string lineString) {
       this.WriteLine(lineString, TraceLevel.Verbose);
     }
-    #endregion
   }
 }

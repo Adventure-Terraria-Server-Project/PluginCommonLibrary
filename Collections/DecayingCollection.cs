@@ -5,53 +5,35 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Collections {
   public class DecayingCollection<T>: ICollection<T>, ICollection {
-    #region [Nested: DecayingItem struct]
+    #region [Nested: DecayingItem]
     private struct DecayingItem {
-      #region [Property: Value]
-      private readonly T itemValue;
-
-      public T ItemValue {
-        get { return this.itemValue; }
-      }
-      #endregion
-
-      #region [Property: TimeOfDeath]
-      private DateTime timeOfDeath;
-
-      public DateTime TimeOfDeath {
-        get { return this.timeOfDeath; }
-      }
-      #endregion
+      public T ItemValue { get; private set; }
+      public DateTime TimeOfDeath { get; private set; }
 
 
-      #region [Method: Constructor]
-      public DecayingItem(T itemValue, TimeSpan lifeTime = default(TimeSpan)) {
-        this.itemValue = itemValue;
+      public DecayingItem(T itemValue, TimeSpan lifeTime = default(TimeSpan)): this() {
+        this.ItemValue = itemValue;
 
         if (lifeTime == TimeSpan.Zero)
-          this.timeOfDeath = DateTime.MaxValue;
+          this.TimeOfDeath = DateTime.MaxValue;
         else
-          this.timeOfDeath = DateTime.UtcNow + lifeTime;
+          this.TimeOfDeath = DateTime.UtcNow + lifeTime;
       }
-      #endregion
 
-      #region [Methods: IsDeath, SetLifeTime]
       public bool IsDeath() {
-        return (DateTime.UtcNow > this.timeOfDeath);
+        return (DateTime.UtcNow > this.TimeOfDeath);
       }
 
       public void SetLifeTime(TimeSpan lifeTime) {
-        this.timeOfDeath = DateTime.UtcNow + lifeTime;
+        this.TimeOfDeath = DateTime.UtcNow + lifeTime;
       }
-      #endregion
 
-      #region [Methods: GetHashCode, Equals, ==, !=]
       public override int GetHashCode() {
-        return this.itemValue.GetHashCode();
+        return this.ItemValue.GetHashCode();
       }
 
       public bool Equals(DecayingItem other) {
-        return this.itemValue.Equals(other.itemValue);
+        return this.ItemValue.Equals(other.ItemValue);
       }
 
       public override bool Equals(object obj) {
@@ -68,16 +50,14 @@ namespace Terraria.Plugins.Common.Collections {
       public static bool operator !=(DecayingItem a, DecayingItem b) {
         return !a.Equals(b);
       }
-      #endregion
     }
     #endregion
 
-    #region [Nested: Enumerator class]
+    #region [Nested: Enumerator]
     public class Enumerator: IEnumerator<T> {
       private readonly DecayingCollection<T> collection; 
       private readonly int originVersion;
 
-      #region [Property: Current]
       private LinkedListNode<DecayingItem> currentNode;
 
       public T Current {
@@ -92,9 +72,9 @@ namespace Terraria.Plugins.Common.Collections {
       object IEnumerator.Current {
         get { return this.Current; }
       }
-      #endregion
 
-      #region [Method: Constructor]
+
+
       internal Enumerator(DecayingCollection<T> collection) {
         Contract.Requires<ArgumentNullException>(collection != null);
 
@@ -102,9 +82,7 @@ namespace Terraria.Plugins.Common.Collections {
         this.originVersion = collection.version;
         (this as IEnumerator).Reset();
       }
-      #endregion
 
-      #region [Methods: MoveNext, Reset]
       public bool MoveNext() {
         if (this.originVersion != this.collection.version)
           throw new InvalidOperationException("Collection was changed during the enumeration.");
@@ -136,7 +114,6 @@ namespace Terraria.Plugins.Common.Collections {
 
         this.currentNode = null;
       }
-      #endregion
 
       public void Dispose() {}
     }
@@ -144,61 +121,14 @@ namespace Terraria.Plugins.Common.Collections {
 
     private readonly LinkedList<DecayingItem> internalList;
     private int version;
-
-    #region [Property: DefaultItemLifeTime]
-    private TimeSpan defaultItemLifeTime;
-
-    public TimeSpan DefaultItemLifeTime {
-      get { return this.defaultItemLifeTime; }
-      set { this.defaultItemLifeTime = value; }
-    }
-    #endregion
-
-    #region [Properties: Count, IsReadOnly]
-    public void CopyTo(Array array, int index) {
-      throw new NotImplementedException();
-    }
-
-    public int Count {
-      get {
-        int count = 0;
-
-        LinkedListNode<DecayingItem> currentNode = this.internalList.First;
-        while (currentNode != null) {
-          if (!currentNode.Value.IsDeath())
-            count++;
-
-          currentNode = currentNode.Next;
-        }
-
-        return count;
-      }
-    }
-
-    public bool IsReadOnly {
-      get { return false; }
-    }
-    #endregion
-
-    #region [Properties: SyncRoot, IsSynchronized]
-    public object SyncRoot {
-      get { return (this.internalList as ICollection).SyncRoot; }
-    }
-
-    public bool IsSynchronized {
-      get { return (this.internalList as ICollection).IsSynchronized; }
-    }
-    #endregion
+    public TimeSpan DefaultItemLifeTime { get; private set; }
 
 
-    #region [Method: Constructor]
     public DecayingCollection(TimeSpan defaultItemLifeTime = default(TimeSpan)) {
       this.internalList = new LinkedList<DecayingItem>();
-      this.defaultItemLifeTime = defaultItemLifeTime;
+      this.DefaultItemLifeTime = defaultItemLifeTime;
     }
-    #endregion
 
-    #region [Methods: Add, Remove, Contains, Clear]
     public void Add(T item, TimeSpan lifeTime) {
       this.internalList.AddLast(new LinkedListNode<DecayingItem>(new DecayingItem(item, lifeTime)));
       this.version++;
@@ -231,9 +161,7 @@ namespace Terraria.Plugins.Common.Collections {
       this.internalList.Clear();
       this.version++;
     }
-    #endregion
 
-    #region [Methods: ResetLifetime, ResetLifeTimeOrAddItem]
     private bool ResetLifetimeInternal(T item, TimeSpan lifeTime) {
       LinkedListNode<DecayingItem> currentNode = this.internalList.First;
       while (currentNode != null) {
@@ -267,9 +195,7 @@ namespace Terraria.Plugins.Common.Collections {
     public void ResetLifeTimeOrAddItem(T item) {
       this.ResetLifeTimeOrAddItem(item, this.DefaultItemLifeTime);
     }
-    #endregion
 
-    #region [Methods: EnumerateAndDeleteDeathItems, Cleanup]
     public IEnumerable<T> EnumerateAndDeleteDeathItems() {
       LinkedListNode<DecayingItem> currentNode = this.internalList.First;
       while (currentNode != null) {
@@ -288,9 +214,7 @@ namespace Terraria.Plugins.Common.Collections {
 
       foreach (T item in this.EnumerateAndDeleteDeathItems()) {}
     }
-    #endregion
 
-    #region [Methods: GetEnumerator, CopyTo]
     public IEnumerator<T> GetEnumerator() {
       return new Enumerator(this);
     }
@@ -302,12 +226,41 @@ namespace Terraria.Plugins.Common.Collections {
     public void CopyTo(T[] array, int arrayIndex) {
       throw new NotImplementedException();
     }
-    #endregion
 
-    #region [Method: ToString]
+    public void CopyTo(Array array, int index) {
+      throw new NotImplementedException();
+    }
+
+    public int Count {
+      get {
+        int count = 0;
+
+        LinkedListNode<DecayingItem> currentNode = this.internalList.First;
+        while (currentNode != null) {
+          if (!currentNode.Value.IsDeath())
+            count++;
+
+          currentNode = currentNode.Next;
+        }
+
+        return count;
+      }
+    }
+
+    public bool IsReadOnly {
+      get { return false; }
+    }
+
+    public object SyncRoot {
+      get { return (this.internalList as ICollection).SyncRoot; }
+    }
+
+    public bool IsSynchronized {
+      get { return (this.internalList as ICollection).IsSynchronized; }
+    }
+
     public override string ToString() {
       return this.internalList.ToString();
     }
-    #endregion
   }
 }

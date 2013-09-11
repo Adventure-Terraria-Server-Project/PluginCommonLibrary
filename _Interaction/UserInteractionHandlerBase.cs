@@ -11,40 +11,21 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public abstract class UserInteractionHandlerBase: IDisposable {
-    #region [Constants]
     public const int CommandInteractionDefaultTimeoutMs = 20000;
-    #endregion
-
-    #region [Property: PluginTrace]
-    private readonly PluginTrace pluginTrace;
-
-    protected PluginTrace PluginTrace {
-      get { return this.pluginTrace; }
-    }
-    #endregion
-
-    #region [Property: RegisteredCommands]
-    private readonly Collection<Command> registeredCommands;
-
-    protected Collection<Command> RegisteredCommands {
-      get { return this.registeredCommands; }
-    }
-    #endregion
 
     private readonly Dictionary<TSPlayer,CommandInteraction> activeCommandInteractions = 
       new Dictionary<TSPlayer,CommandInteraction>();
     private readonly object activeCommandInteractionsLock = new object();
+    protected PluginTrace PluginTrace { get; private set; }
+    protected Collection<Command> RegisteredCommands { get; private set; }
 
 
-    #region [Method: Constructor]
     protected UserInteractionHandlerBase(PluginTrace pluginTrace) {
-      this.pluginTrace = pluginTrace;
-      this.registeredCommands = new Collection<Command>();
+      this.PluginTrace = pluginTrace;
+      this.RegisteredCommands = new Collection<Command>();
       this.activeCommandInteractions = new Dictionary<TSPlayer,CommandInteraction>();
     }
-    #endregion
 
-    #region [Methods: RegisterCommand, DeregisterCommand, CustomHelpCommand_Exec]
     protected Command RegisterCommand(
       string[] names, CommandDelegate commandExec, CommandDelegate commandHelpExec = null, string requiredPermission = null,
       bool allowServer = true, bool doLog = true
@@ -86,9 +67,7 @@ namespace Terraria.Plugins.Common {
       if (!TShockAPI.Commands.ChatCommands.Contains(tshockCommand))
         throw new InvalidOperationException("Command is not registered.");
     }
-    #endregion
 
-    #region [Methods: StartOrResetCommandInteraction, StopInteraction]
     protected CommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer, int timeoutMs = 0) {
       Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
       Contract.Requires<ArgumentNullException>(forPlayer != null);
@@ -169,7 +148,6 @@ namespace Terraria.Plugins.Common {
         }
       }
     }
-    #endregion
 
     #region [Hook Handlers]
     public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, BlockType blockType, DPoint location, int objectStyle) {

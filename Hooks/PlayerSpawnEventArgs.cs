@@ -6,19 +6,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks{
   public class PlayerSpawnEventArgs: NetHookEventArgs {
-    #region [Property: SpawnTileLocation]
-    private readonly DPoint spawnTileLocation;
-
-    public DPoint SpawnTileLocation {
-      get { return this.spawnTileLocation; }
-    }
-    #endregion
+    public DPoint SpawnTileLocation { get; private set; }
 
     
-    #region [Method: Constructor]
     public PlayerSpawnEventArgs(TSPlayer player, DPoint spawnTileLocation): base(player) {
-      this.spawnTileLocation = spawnTileLocation;
+      this.SpawnTileLocation = spawnTileLocation;
     }
-    #endregion
   }
 }

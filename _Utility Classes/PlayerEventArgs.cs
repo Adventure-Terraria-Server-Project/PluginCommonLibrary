@@ -4,21 +4,13 @@ using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common {
   public class PlayerEventArgs: EventArgs {
-    #region [Property: TPlayer]
-    private readonly Player tPlayer;
-
-    public Player TPlayer {
-      get { return this.tPlayer; }
-    }
-    #endregion
+    public Player TPlayer { get; private set; }
 
 
-    #region [Method: Constructor]
     public PlayerEventArgs(Player tPlayer) {
       Contract.Requires<ArgumentNullException>(tPlayer != null);
 
-      this.tPlayer = tPlayer;
+      this.TPlayer = tPlayer;
     }
-    #endregion
   }
 }

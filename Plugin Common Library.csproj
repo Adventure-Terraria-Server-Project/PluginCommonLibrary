@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 2.1</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.2</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisLogFile>bin\Debug\CCPluginsCommon.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
@@ -176,6 +176,7 @@
     <Compile Include="_Enums and Structs\WallType.cs" />
     <Compile Include="_Data\DatabaseHandlerBase.cs" />
     <Compile Include="_Data\MetadataHandlerBase.cs" />
+    <Compile Include="_General Exceptions\TaskExceptionEventArgs.cs" />
     <Compile Include="_Utility Classes\BoolEx.cs" />
     <Compile Include="_Utility Classes\CollectionEx.cs" />
     <Compile Include="_Utility Classes\DateTimeEx.cs" />

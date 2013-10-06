@@ -15,7 +15,7 @@ namespace Terraria.Plugins.Common.Test {
 
     public static void IsObjectActive(int x, int y, bool expectedState) {
       Tile tile = TerrariaUtils.Tiles[x, y];
-      if (!tile.active) {
+      if (!tile.active()) {
         throw new AssertException(
           string.Format("Assert failed. There is no tile at [{0},{1}].", x, y)
         );
@@ -53,9 +53,9 @@ namespace Terraria.Plugins.Common.Test {
 
     public static void IsTileActive(int x, int y, bool expectedState) {
       Tile tile = TerrariaUtils.Tiles[x, y];
-      if (tile.active != expectedState) {
+      if (tile.active() != expectedState) {
         string actualStateString;
-        if (tile.active)
+        if (tile.active())
           actualStateString = "active";
         else 
           actualStateString = "inactive";
@@ -76,7 +76,7 @@ namespace Terraria.Plugins.Common.Test {
     public static void IsBlockType(int x, int y, BlockType expectedBlockType) {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
-      if (!tile.active) {
+      if (!tile.active()) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but there is no tile at all.",
           TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType), x, y

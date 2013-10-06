@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-using Hooks;
+using TerrariaApi.Server;
 
 using TShockAPI;
 
@@ -13,6 +13,7 @@ namespace Terraria.Plugins.Common.Collections {
   public class PlayerDataDictionary<DataType>: IEnumerable<DataType>, IDisposable {
     private readonly List<DataType> dataList;
     private readonly bool addAfterLogin;
+    protected TerrariaPlugin Plugin { get; private set; }
     protected Func<int,DataType> PlayerDataFactoryFunction { get; private set; }
     public object SyncRoot { get; private set; }
 
@@ -37,8 +38,9 @@ namespace Terraria.Plugins.Common.Collections {
 
 
     public PlayerDataDictionary(
-      Func<int,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
+      TerrariaPlugin plugin, Func<int,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
     ) {
+      Contract.Requires<ArgumentNullException>(plugin != null);
       Contract.Requires<ArgumentNullException>(playerDataFactoryFunction != null);
 
       this.dataList = new List<DataType>(15);
@@ -50,9 +52,9 @@ namespace Terraria.Plugins.Common.Collections {
         if (addPlayersAfterLoginOnly)
           TShockAPI.Hooks.PlayerHooks.PlayerPostLogin += this.TShock_PlayerPostLogin;
         else
-          ServerHooks.Join += this.Server_Join;
+          ServerApi.Hooks.ServerJoin.Register(plugin, this.Server_Join);
 
-        ServerHooks.Leave += this.HandleLeave;
+        ServerApi.Hooks.ServerLeave.Register(plugin, this.HandleLeave);
       }
     }
 
@@ -70,12 +72,12 @@ namespace Terraria.Plugins.Common.Collections {
       this.AddPlayerData(player.Index);
     }
 
-    public virtual void HandleLeave(int playerIndex) {
+    public virtual void HandleLeave(LeaveEventArgs e) {
       if (this.IsDisposed)
         return;
 
       lock (this.SyncRoot)
-        this.dataList[playerIndex] = default(DataType);
+        this.dataList[e.Who] = default(DataType);
     }
 
     private bool AddPlayerData(int playerIndex) {
@@ -92,8 +94,8 @@ namespace Terraria.Plugins.Common.Collections {
       }
     }
 
-    private void Server_Join(int playerIndex, HandledEventArgs e) {
-      this.HandlePlayerJoin(playerIndex);
+    private void Server_Join(JoinEventArgs e) {
+      this.HandlePlayerJoin(e.Who);
     }
 
     private void TShock_PlayerPostLogin(TShockAPI.Hooks.PlayerPostLoginEventArgs e) {
@@ -130,8 +132,8 @@ namespace Terraria.Plugins.Common.Collections {
         return;
     
       if (isDisposing) {
-        ServerHooks.Join -= this.Server_Join;
-        ServerHooks.Leave -= this.HandleLeave;
+        ServerApi.Hooks.ServerJoin.Deregister(this.Plugin, this.Server_Join);
+        ServerApi.Hooks.ServerLeave.Deregister(this.Plugin, this.HandleLeave);
         TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= this.TShock_PlayerPostLogin;
       }
     

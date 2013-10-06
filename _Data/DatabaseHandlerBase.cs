@@ -130,8 +130,8 @@ namespace Terraria.Plugins.Common {
         return;
     
       if (isDisposing) {
-        if (this.dbConnection != null)
-          this.dbConnection.Dispose();
+        if (this.DbConnection != null)
+          this.DbConnection.Dispose();
       }
 
       this.isDisposed = true;

@@ -2,7 +2,7 @@
 
 namespace Terraria.Plugins.Common {
   public class Timer: TimerBase {
-    public TimeSpan TimeSpan { get; private set; }
+    public TimeSpan TimeSpan { get; set; }
 
 
     public Timer(TimeSpan timeSpan, object data, Func<TimerBase,bool> callback): base(data, callback) {

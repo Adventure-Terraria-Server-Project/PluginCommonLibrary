@@ -282,7 +282,7 @@ namespace Terraria.Plugins.Common {
         }
 
         try {
-          foreach (Command command in this.registeredCommands)
+          foreach (Command command in this.RegisteredCommands)
             if (TShockAPI.Commands.ChatCommands.Contains(command))
               TShockAPI.Commands.ChatCommands.Remove(command);
         // May occur due to unsynchronous thread operations.

@@ -207,6 +207,107 @@ namespace Terraria.Plugins.Common {
           "Snow Block",
           "Snow Brick",
           "X-Mas Light",
+          "Adamantite Beam",
+          "Sandstone Brick",
+          "Ebonstone Brick",
+          "Red Stucco",
+          "Yellow Stucco",
+          "Green Stucco",
+          "Gray Stucco",
+          "Ebonwood",
+          "Rich Mahogany",
+          "Pearlwood",
+          "Rainbow Brick",
+          "Ice Block",
+          "???",
+          "Purple Ice Block",
+          "Pink Ice Block",
+          "???",
+          "Tin",
+          "Lead",
+          "Tungsten",
+          "Platinum",
+          "Tin Chandelier",
+          "Tungsten Chandelier",
+          "Platinum Chandelier",
+          "Candelabra",
+          "Platinum Candle",
+          "Tin Brick",
+          "Tungsten Brick",
+          "Platinum Brick",
+          "Amber",
+          "???",
+          "???",
+          "???",
+          "???",
+          "???",
+          "???",
+          "???",
+          "???",
+          "???",
+          "Cactus",
+          "Cloud",
+          "Glowing Mushroom",
+          "Living Wood Wand",
+          "Leaf",
+          "Slime Block",
+          "Bone Wand",
+          "Flesh Block",
+          "Rain Cloud",
+          "Frozen Slime Block",
+          "Asphalt Block",
+          "???",
+          "Red Ice Block",
+          "???",
+          "Sunplate Block",
+          "Crimstone Block",
+          "Crimtane",
+          "???",
+          "Ice Brick",
+          "Water Fountain",
+          "Shadewood",
+          "Cannon",
+          "Land Mine",
+          "Chlorophyte",
+          "Turret",
+          "Rope",
+          "Chain",
+          "Campfire",
+          "Rocket",
+          "Blend-O-Matic",
+          "Meat Grinder",
+          "Silt Extractinator",
+          "Solidifier",
+          "Palladium",
+          "Orichalcum",
+          "Titanium",
+          "Slush Block",
+          "Hive",
+          "Lihzahrd Brick",
+          "Orange Bloodroot",
+          "Dye Vat",
+          "Honey Block",
+          "Crispy Honey Block",
+          "Larva",
+          "Wooden Spike",
+          "???",
+          "Crimsand Block",
+          "Teleporter",
+          "Life Fruit",
+          "Lihzahrd Altar",
+          "Plantera's Bulb",
+          "Metal Bar",
+          "Picture",
+          "Picture",
+          "Picture",
+          "Imbuing Station",
+          "Bubble Machine",
+          "Picture",
+          "Picture",
+          "Autohammer",
+          "Palladium Cloumn",
+          "Bubblegum Block",
+          "Titanstone Block"
         };
       }
 
@@ -217,31 +318,21 @@ namespace Terraria.Plugins.Common {
     }
 
     // Note: A block is considered any non-object, so any block type which blocks the player from passing through 
-    // (cobwebs inclusive).
+    // (cobwebs included).
     public bool IsSolidBlockType(
-      BlockType blockType, bool takeWireableStoneAsSolid = false, bool takeWoodPlatformAsSolid = false, 
-      bool takeBouldersAsSolid = false, bool takeDartTrapsAsSolid = false
+      BlockType blockType, bool considerWireableStoneAsSolid = false, bool considerWoodPlatformAsSolid = false, 
+      bool considerBoulderAsSolid = false, bool considerDartTrapsAsSolid = false
     ) {
-      return (
-        (blockType >= BlockType.DirtBlock && blockType <= BlockType.Grass) ||
-        (blockType >= BlockType.SandBlock && blockType <= BlockType.JungleGrass && blockType != BlockType.Sign) ||
-        (blockType >= BlockType.IronOre && blockType <= BlockType.SilverOre) ||
-        (blockType >= BlockType.PearlsandBlock && blockType <= BlockType.SiltBlock) ||
-        (takeWoodPlatformAsSolid && blockType == BlockType.WoodPlatform) ||
-        (blockType >= BlockType.Meteorite && blockType <= BlockType.Spike && blockType != BlockType.ChainLantern) ||
-        (blockType >= BlockType.ObsidianBrick && blockType <= BlockType.HellstoneBrick) ||
-        (blockType >= BlockType.RedCandyCaneBlock && blockType <= BlockType.SnowBrick) ||
-        (blockType >= BlockType.DemoniteOre && blockType <= BlockType.CorruptGrass) ||
-        (blockType == BlockType.Wood) ||
-        (blockType >= BlockType.SapphireBlock && blockType <= BlockType.DiamondBlock) ||
-        (blockType >= BlockType.CobaltOre && blockType <= BlockType.EbonsandBlock && blockType != BlockType.HallowedPlants) ||
-        (takeWireableStoneAsSolid && blockType >= BlockType.ActiveStone && blockType <= BlockType.InactiveStone) ||
-        (blockType == BlockType.EbonstoneBlock) ||
-        (takeBouldersAsSolid && blockType == BlockType.Boulder) ||
-        (blockType == BlockType.MushroomGrass) ||
-        (blockType == BlockType.IceBlock) ||
-        (blockType == BlockType.Cobweb)
-      );
+      if (blockType == BlockType.ActiveStone || blockType == BlockType.InactiveStone)
+        return considerWireableStoneAsSolid;
+      if (blockType == BlockType.WoodPlatform)
+        return considerWoodPlatformAsSolid;
+      if (blockType == BlockType.Boulder)
+        return considerBoulderAsSolid;
+      if (blockType == BlockType.DartTrap)
+        return considerDartTrapsAsSolid;
+
+      return Main.tileSolid[(int)blockType];
     }
 
     public void PlaceObject(
@@ -262,7 +353,7 @@ namespace Terraria.Plugins.Common {
           else
             objectTile = TerrariaUtils.Tiles[originTileDestination.X + x, originTileDestination.Y + y];
 
-          objectTile.active = true;
+          objectTile.active(true);
           objectTile.frameX = Convert.ToInt16(frameOffset.X + textureTileSize.X * x);
           objectTile.frameY = Convert.ToInt16(frameOffset.Y + textureTileSize.Y * y);
 
@@ -276,7 +367,7 @@ namespace Terraria.Plugins.Common {
 
     public void PlantHerb(DPoint tileLocation, HerbStyle style, HerbGrowthState state = HerbGrowthState.Mature) {
       Tile tile = TerrariaUtils.Tiles[tileLocation];
-      tile.active = true;
+      tile.active(true);
       switch (state) {
         case HerbGrowthState.Growing:
           tile.type = (int)BlockType.HerbGrowing;
@@ -300,10 +391,10 @@ namespace Terraria.Plugins.Common {
 
       if (blockType != BlockType.Invalid) {
         tile.type = (byte)blockType;
-        tile.active = true;
+        tile.active(true);
       } else {
         tile.type = 0;
-        tile.active = false;
+        tile.active(false);
       }
 
       // WorldGen.genRand is thread static.
@@ -320,10 +411,10 @@ namespace Terraria.Plugins.Common {
       Tile tile = TerrariaUtils.Tiles[tileLocation];
 
       tile.type = 0;
-      tile.active = false;
+      tile.active(false);
       tile.frameX = -1;
       tile.frameY = -1;
-      tile.frameNumber = 0;
+      tile.frameNumber(0);
 
       // WorldGen.genRand is thread static.
       if (WorldGen.genRand == null)
@@ -344,23 +435,6 @@ namespace Terraria.Plugins.Common {
       this.RemoveBlock(tileLocation, squareFrames, localOnly);
     }
 
-    public void LockChest(DPoint anyChestTileLocation) {
-      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
-      if (!chestTile.active || chestTile.type != (int)BlockType.Chest)
-        throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
-
-      bool isLocked;
-      ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
-      if (isLocked || (chestStyle != ChestStyle.GoldChest && chestStyle != ChestStyle.ShadowChest))
-        throw new InvalidChestStyleException("Chest has to be a gold- or shadow chest.", chestStyle);
-
-      ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
-      foreach (Tile tile in this.EnumerateObjectTiles(measureData))
-        tile.frameX += 36;
-      
-      TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
-    }
-
     /// <remarks>
     ///   <p>
     ///     A object is considered any tile type the player is not blocked from passing through plus 
@@ -375,7 +449,7 @@ namespace Terraria.Plugins.Common {
     /// </remarks>
     public ObjectMeasureData MeasureObject(DPoint anyTileLocation) {
       Tile tile = TerrariaUtils.Tiles[anyTileLocation];
-      if (!tile.active) {
+      if (!tile.active()) {
         throw new ArgumentException(string.Format(
           "The tile at location {0} can not be measured because its not active", anyTileLocation
         ));
@@ -384,6 +458,20 @@ namespace Terraria.Plugins.Common {
       DPoint objectSize = this.GetObjectSize((BlockType)tile.type);
       DPoint textureTileSize = this.GetBlockTextureTileSize((BlockType)tile.type);
       DPoint textureFrameLocation = DPoint.Empty;
+
+      switch ((BlockType)tile.type) {
+        case BlockType.Undefined2:
+          if (tile.frameY <= 72)
+            objectSize = new DPoint(1, 2);
+
+          break;
+        case BlockType.Undefined15: {
+          if (tile.frameY >= 36)
+            objectSize = new DPoint(2, 2);
+
+          break;
+        }
+      }
 
       DPoint originTileLocation;
       switch ((BlockType)tile.type) {
@@ -416,7 +504,7 @@ namespace Terraria.Plugins.Common {
           while (true) {
             Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
 
-            if (currentTile.active && currentTile.type == tile.type)
+            if (currentTile.active() && currentTile.type == tile.type)
               currentTileLocation.Y++;
             else 
               break;
@@ -429,7 +517,7 @@ namespace Terraria.Plugins.Common {
           while (true) {
             Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
 
-            if (currentTile.active && currentTile.type == tile.type) {
+            if (currentTile.active() && currentTile.type == tile.type) {
               currentTileLocation.Y--;
               objectSize.Y++;
             } else {
@@ -443,7 +531,8 @@ namespace Terraria.Plugins.Common {
         }
         case BlockType.Vine:
         case BlockType.JungleVine:
-        case BlockType.HallowedVine: {
+        case BlockType.HallowedVine:
+        case BlockType.Undefined14: {
           DPoint currentTileLocation = anyTileLocation;
 
           while (true) {
@@ -675,7 +764,8 @@ namespace Terraria.Plugins.Common {
           int ax = originTileLocation.X + tx;
           int ay = originTileLocation.Y + ty;
 
-          if (TerrariaUtils.Tiles[ax, ay].wire) {
+          Tile tile = TerrariaUtils.Tiles[ax, ay];
+          if (tile.wire() || tile.wire2() || tile.wire3()) {
             firstWirePosition = new DPoint(ax, ay);
             return true;
           }
@@ -693,7 +783,8 @@ namespace Terraria.Plugins.Common {
 
     public bool IsObjectWired(ObjectMeasureData measureData, out DPoint firstWireLocation) {
       foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData)) {
-        if (TerrariaUtils.Tiles[tileLocation].wire) {
+        Tile tile = TerrariaUtils.Tiles[tileLocation];
+        if (tile.wire() || tile.wire2() || tile.wire3()) {
           firstWireLocation = tileLocation;
           return true;
         }
@@ -829,6 +920,53 @@ namespace Terraria.Plugins.Common {
           return ChestStyle.Barrel;
         case 6:
           return ChestStyle.TrashCan;
+        case 7:
+          return ChestStyle.EbonwoodChest;
+        case 8:
+          return ChestStyle.RichMahoganyChest;
+        case 9:
+          return ChestStyle.PearlwoodChest;
+        case 10:
+          return ChestStyle.IvyChest;
+        case 11:
+          return ChestStyle.IceChest;
+        case 12:
+          return ChestStyle.LivingWoodChest;
+        case 13:
+          return ChestStyle.SkywareChest;
+        case 14:
+          return ChestStyle.ShadewoodChest;
+        case 15:
+          return ChestStyle.WebCoveredChest;
+        case 16:
+          return ChestStyle.LihzahrdChest;
+        case 17:
+          return ChestStyle.WaterChest;
+        case 18:
+          return ChestStyle.JungleChest;
+        case 19:
+          return ChestStyle.CorruptionChest;
+        case 20:
+          return ChestStyle.CrimsonChest;
+        case 21:
+          return ChestStyle.HallowedChest;
+        case 22:
+          return ChestStyle.FrozenChest;
+        case 23:
+          isLocked = true;
+          return ChestStyle.JungleChest;
+        case 24:
+          isLocked = true;
+          return ChestStyle.CorruptionChest;
+        case 25:
+          isLocked = true;
+          return ChestStyle.CrimsonChest;
+        case 26:
+          isLocked = true;
+          return ChestStyle.HallowedChest;
+        case 27:
+          isLocked = true;
+          return ChestStyle.FrozenChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }
@@ -854,16 +992,74 @@ namespace Terraria.Plugins.Common {
           return ItemType.ShadowChest;
         case ChestStyle.Barrel:
           return ItemType.Barrel;
-        case ChestStyle.TrashCan:
-          return ItemType.TrashCan;
+        case ChestStyle.EbonwoodChest:
+          return ItemType.EbonwoodChest;
+        case ChestStyle.RichMahoganyChest:
+          return ItemType.RichMahoganyChest;
+        case ChestStyle.PearlwoodChest:
+          return ItemType.PearlwoodChest;
+        case ChestStyle.IvyChest:
+          return ItemType.IvyChest;
+        case ChestStyle.IceChest:
+          return ItemType.IceChest;
+        case ChestStyle.LivingWoodChest:
+          return ItemType.LivingWoodChest;
+        case ChestStyle.SkywareChest:
+          return ItemType.SkywareChest;
+        case ChestStyle.ShadewoodChest:
+          return ItemType.ShadewoodChest;
+        case ChestStyle.WebCoveredChest:
+          return ItemType.WebCoveredChest;
+        case ChestStyle.LihzahrdChest:
+          return ItemType.LihzahrdChest;
+        case ChestStyle.WaterChest:
+          return ItemType.WaterChest;
+        case ChestStyle.JungleChest:
+          return ItemType.JungleChest;
+        case ChestStyle.CorruptionChest:
+          return ItemType.CorruptionChest;
+        case ChestStyle.CrimsonChest:
+          return ItemType.CrimsonChest;
+        case ChestStyle.HallowedChest:
+          return ItemType.HallowedChest;
+        case ChestStyle.FrozenChest:
+          return ItemType.FrozenChest;
         default:
           throw new ArgumentException("ChestStyle");
       }
     }
+
+    public void LockChest(DPoint anyChestTileLocation) {
+      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
+      if (!chestTile.active() || chestTile.type != (int)BlockType.Chest)
+        throw new ArgumentException("Tile is not a chest.", "anyChestTileLocation");
+
+      bool isLocked;
+      ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
+      if (isLocked)
+        throw new InvalidChestStyleException("Chest is already locked.", chestStyle);
+
+      if (
+        chestStyle != ChestStyle.GoldChest &&
+        chestStyle != ChestStyle.ShadowChest &&
+        chestStyle != ChestStyle.JungleChest &&
+        chestStyle != ChestStyle.CorruptionChest &&
+        chestStyle != ChestStyle.CrimsonChest &&
+        chestStyle != ChestStyle.HallowedChest &&
+        chestStyle != ChestStyle.FrozenChest
+      )
+        throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
+
+      ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
+      foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+        tile.frameX += 36;
+      
+      TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
+    }
  
     public ChestKind GuessChestKind(DPoint anyChestTileLocation) {
       Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
-      if (!chestTile.active)
+      if (!chestTile.active())
         throw new ArgumentException("The tile on the given location is not active.");
 
       bool isLocked;
@@ -874,13 +1070,10 @@ namespace Terraria.Plugins.Common {
             if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
               return ChestKind.DungeonChest;
 
-            if (anyChestTileLocation.Y < Main.worldSurface)
-              return ChestKind.SkyIslandChest;
-
             return ChestKind.Unknown;
           }
 
-          if (chestTile.liquid < 255 || chestTile.lava)
+          if (chestTile.liquid < 255 || chestTile.lava())
             return ChestKind.Unknown;
           if (anyChestTileLocation.X > 250 && anyChestTileLocation.X < Main.maxTilesX - 250)
             return ChestKind.Unknown;
@@ -901,6 +1094,11 @@ namespace Terraria.Plugins.Common {
             return ChestKind.DungeonChest;
 
           return ChestKind.Unknown;
+        case ChestStyle.SkywareChest:
+          if (anyChestTileLocation.Y < Main.worldSurface)
+            return ChestKind.SkyIslandChest;
+
+          return ChestKind.Unknown;
         default:
           return ChestKind.Unknown;
       }
@@ -908,7 +1106,7 @@ namespace Terraria.Plugins.Common {
 
     public Direction GetDoorDirection(DPoint anyDoorTileLocation) {
       Tile anyDoorTile = TerrariaUtils.Tiles[anyDoorTileLocation];
-      if (!anyDoorTile.active)
+      if (!anyDoorTile.active())
         throw new ArgumentException("The tile is not active.");
       
       if (anyDoorTile.type == (int)BlockType.DoorClosed)
@@ -1112,6 +1310,107 @@ namespace Terraria.Plugins.Common {
           new DPoint(1, 1), // Snow
           new DPoint(1, 1), // Snow Brick
           new DPoint(1, 1), // X-Mas Light
+          new DPoint(1, 1), // Adamantite Beam
+          new DPoint(1, 1), // Sandstone Brick
+          new DPoint(1, 1), // Ebonstone Brick
+          new DPoint(1, 1), // Red Stucco
+          new DPoint(1, 1), // Yellow Stucco
+          new DPoint(1, 1), // Green Stucco
+          new DPoint(1, 1), // Gray Stucco
+          new DPoint(1, 1), // Ebonwood
+          new DPoint(1, 1), // Rich Mahogany
+          new DPoint(1, 1), // Pearlwood
+          new DPoint(1, 1), // Rainbow Brick
+          new DPoint(1, 1), // Ice Block
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // Purple Ice Block
+          new DPoint(1, 1), // Pink Ice Block
+          new DPoint(1, 1), // !Different sizes
+          new DPoint(1, 1), // Tin
+          new DPoint(1, 1), // Lead
+          new DPoint(1, 1), // Tungsten
+          new DPoint(1, 1), // Platinum
+          new DPoint(3, 3), // Tin Chandelier
+          new DPoint(3, 3), // Tungsten Chandelier
+          new DPoint(3, 3), // Platinum Chandelier
+          new DPoint(2, 2), // Candelabra
+          new DPoint(1, 1), // Platinum Candle
+          new DPoint(1, 1), // Tin Brick
+          new DPoint(1, 1), // Tungsten Brick
+          new DPoint(1, 1), // Platinum Brick
+          new DPoint(1, 1), // Amber
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // 180
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // 
+          new DPoint(3, 2), // 
+          new DPoint(3, 2), // 187
+          new DPoint(1, 1), // Cactus
+          new DPoint(1, 1), // Cloud
+          new DPoint(1, 1), // Glowing Mushroom
+          new DPoint(1, 1), // Living Wood Wand
+          new DPoint(1, 1), // Leaf
+          new DPoint(1, 1), // Slime Block
+          new DPoint(1, 1), // Bone Wand
+          new DPoint(1, 1), // Flesh Block
+          new DPoint(1, 1), // Rain Cloud
+          new DPoint(1, 1), // Frozen Slime Block
+          new DPoint(1, 1), // Asphalt Block
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // Red Ice Block
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // Sunplate Block
+          new DPoint(1, 1), // Crimstone Block
+          new DPoint(1, 1), // Crimtane Ore
+          new DPoint(1, 1), // 
+          new DPoint(1, 1), // Ice Brick
+          new DPoint(2, 4), // Water Fountain
+          new DPoint(1, 1), // Shadewood
+          new DPoint(4, 3), // Cannon
+          new DPoint(1, 1), // Land Mine
+          new DPoint(1, 1), // Chlorophyte
+          new DPoint(3, 3), // Turret
+          new DPoint(1, 1), // Rope
+          new DPoint(1, 1), // Chain
+          new DPoint(3, 2), // Campfire
+          new DPoint(1, 2), // Rocket
+          new DPoint(3, 2), // Blend-O-Matic
+          new DPoint(3, 2), // Meat Grinder
+          new DPoint(3, 3), // Silt Extractinator
+          new DPoint(3, 3), // Solidifier
+          new DPoint(1, 1), // Palladium
+          new DPoint(1, 1), // Orichalcum
+          new DPoint(1, 1), // Titanium
+          new DPoint(1, 1), // Slush Block
+          new DPoint(1, 1), // Hive
+          new DPoint(1, 1), // Lihzahrd Brick
+          new DPoint(1, 1), // Orange Bloodroot
+          new DPoint(3, 3), // Dye Vat
+          new DPoint(1, 1), // Honey Block
+          new DPoint(1, 1), // Crispy Honey Block
+          new DPoint(3, 3), // Larva
+          new DPoint(1, 1), // Wooden Spike
+          new DPoint(3, 3), // !Different sizes!
+          new DPoint(1, 1), // Crimsand Block
+          new DPoint(3, 1), // Teleporter
+          new DPoint(2, 2), // Life Fruit
+          new DPoint(3, 2), // Lihzahrd Altar
+          new DPoint(2, 2), // Plantera's Bulb
+          new DPoint(1, 1), // Metal Bar
+          new DPoint(3, 3), // Picture
+          new DPoint(4, 3), // Picture
+          new DPoint(6, 4), // Picture
+          new DPoint(3, 3), // Imbuing Station
+          new DPoint(3, 3), // Bubble Machine
+          new DPoint(2, 3), // Picture
+          new DPoint(3, 2), // Picture
+          new DPoint(3, 3), // Autohammer
+          new DPoint(1, 1), // Palladium Cloumn
+          new DPoint(1, 1), // Bubblegum Block
+          new DPoint(1, 1), // Titanstone Block
         };
       }
 
@@ -1136,6 +1435,7 @@ namespace Terraria.Plugins.Common {
         case BlockType.HerbMature:
         case BlockType.HerbBlooming:
         case BlockType.HallowedPlants:
+        case BlockType.Undefined13:
           return new DPoint(18, 20);
         case BlockType.Coral:
           return new DPoint(26, 28);
@@ -1145,13 +1445,17 @@ namespace Terraria.Plugins.Common {
         case BlockType.TallJunglePlants:
         case BlockType.TallHallowedPlants:
           return new DPoint(18, 16);
+        case BlockType.Rocket:
+          return new DPoint(19, 18);
+        case BlockType.Undefined8:
+          return new DPoint(22, 18);
         default:
           return new DPoint(TerrariaUtils.DefaultTextureTileSize, TerrariaUtils.DefaultTextureTileSize);
       }
     }
 
     public Direction GetObjectOrientation(Tile anyTile) {
-      if (!anyTile.active)
+      if (!anyTile.active())
         return Direction.Unknown;
 
       switch ((BlockType)anyTile.type) {
@@ -1163,7 +1467,6 @@ namespace Terraria.Plugins.Common {
             return Direction.Right;
 
           return Direction.Up;
-
         case BlockType.Sign:
           if (anyTile.frameX < 36)
             return Direction.Up;
@@ -1175,7 +1478,6 @@ namespace Terraria.Plugins.Common {
             return Direction.Right;
 
           return Direction.Left;
-
         case BlockType.CrystalShard:
           if (anyTile.frameY == 0)
             return Direction.Up;
@@ -1187,7 +1489,6 @@ namespace Terraria.Plugins.Common {
             return Direction.Left;
 
           return Direction.Right;
-
         case BlockType.Switch:
           if (anyTile.frameX == 0)
             return Direction.Up;
@@ -1196,7 +1497,29 @@ namespace Terraria.Plugins.Common {
             return Direction.Right;
 
           return Direction.Left;
+        case BlockType.Undefined2:
+          if (
+            (anyTile.frameX >= 54 && anyTile.frameX <= 90) &&
+            (anyTile.frameY == 36 || anyTile.frameY == 54 || anyTile.frameY == 90)
+          ) {
+            return Direction.Up;
+          }
+          if (anyTile.frameX >= 162 && anyTile.frameX <= 198 && anyTile.frameY == 90)
+            return Direction.Up;
 
+          return Direction.Down;
+        case BlockType.Amber:
+        case BlockType.Undefined8:
+          if (anyTile.frameY >= 162)
+            return Direction.Left;
+
+          if (anyTile.frameY >= 108)
+            return Direction.Right;
+
+          if (anyTile.frameY >= 54)
+            return Direction.Down;
+
+          return Direction.Up;
         default:
           return Direction.Unknown;
       }

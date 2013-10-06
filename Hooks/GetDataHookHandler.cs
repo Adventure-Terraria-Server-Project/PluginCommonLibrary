@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
-
-using Hooks;
+using TerrariaApi.Server;
 using TShockAPI;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class GetDataHookHandler: IDisposable {
-    public PluginTrace PluginTrace { get; private set; }
+    public TerrariaPlugin Plugin { get; private set; }
     public bool InvokeTileEditOnChestKill { get; set; }
 
     #region [Event: TileEdit]
@@ -316,13 +316,13 @@ namespace Terraria.Plugins.Common.Hooks {
     #endregion
 
 
-    public GetDataHookHandler(PluginTrace pluginTrace, bool invokeTileEditOnChestKill = false) {
-      Contract.Requires<ArgumentNullException>(pluginTrace != null);
+    public GetDataHookHandler(TerrariaPlugin plugin, bool invokeTileEditOnChestKill = false) {
+      Contract.Requires<ArgumentNullException>(plugin != null);
 
-      this.PluginTrace = pluginTrace;
+      this.Plugin = plugin;
       this.InvokeTileEditOnChestKill = invokeTileEditOnChestKill;
 
-      NetHooks.GetData += this.NetHooks_GetData;
+      ServerApi.Hooks.NetGetData.Register(plugin, this.NetHooks_GetData);
     }
 
     private void NetHooks_GetData(GetDataEventArgs e) {
@@ -397,7 +397,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
 
-            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
           
             e.Handled = this.OnChestGetContents(new TileLocationEventArgs(player, new DPoint(x, y)));
@@ -430,7 +430,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
             string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - 11);
 
-            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
 
             e.Handled = this.OnSignEdit(new SignEditEventArgs(player, signIndex, new DPoint(x, y), newText));
@@ -453,7 +453,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
       
-            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
             // For some reason, TShock doesn't handle this packet so we just do our own checks.
             if (TShock.CheckIgnores(player))
@@ -622,16 +622,16 @@ namespace Terraria.Plugins.Common.Hooks {
           }
         }
       } catch (Exception ex) {
-        this.PluginTrace.WriteLineError(string.Format(
-          "Internal error on handling data packet {0}. Exception details: \n{1}", e.MsgID, ex
-        ));
+        ServerApi.LogWriter.PluginWriteLine(
+          this.Plugin, string.Format("Internal error on handling data packet {0}. Exception details: \n{1}", e.MsgID, ex), TraceLevel.Error
+        );
       }
     }
 
     private void ReportEventHandlerException(string eventName, Exception exception) {
-      this.PluginTrace.WriteLineError(string.Format(
-        "One {0} event handler has thrown an unexpected exception. Exception details:\n{1}", eventName, exception
-      ));
+      ServerApi.LogWriter.PluginWriteLine(
+        this.Plugin, string.Format("One {0} event handler has thrown an unexpected exception. Exception details:\n{1}", eventName, exception), TraceLevel.Error
+      );
     }
 
     #region [IDisposable Implementation]
@@ -646,7 +646,7 @@ namespace Terraria.Plugins.Common.Hooks {
         return;
     
       if (isDisposing)
-        NetHooks.GetData -= this.NetHooks_GetData;
+        ServerApi.Hooks.NetGetData.Deregister(this.Plugin, this.NetHooks_GetData);
     
       this.isDisposed = true;
     }

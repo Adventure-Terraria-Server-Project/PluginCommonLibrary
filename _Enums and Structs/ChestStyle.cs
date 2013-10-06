@@ -9,6 +9,22 @@ namespace Terraria.Plugins.Common {
     GoldChest,
     ShadowChest,
     Barrel,
-    TrashCan
+    TrashCan,
+    EbonwoodChest,
+    RichMahoganyChest,
+    PearlwoodChest,
+    IvyChest,
+    IceChest,
+    LivingWoodChest,
+    SkywareChest,
+    ShadewoodChest,
+    WebCoveredChest,
+    LihzahrdChest,
+    WaterChest,
+    JungleChest,
+    CorruptionChest,
+    CrimsonChest,
+    HallowedChest,
+    FrozenChest
   }
 }

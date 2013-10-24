@@ -11,7 +11,7 @@ namespace Terraria.Plugins.Common {
     public const int WallType_Max = 111;
     public const int ItemType_Min = -48;
     public const int ItemType_Max = 1613;
-    public const int NpcType_Min = -17;
+    public const int NpcType_Min = -65;
     public const int NpcType_Max = 296;
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;

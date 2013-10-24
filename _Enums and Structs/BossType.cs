@@ -9,6 +9,10 @@ namespace Terraria.Plugins.Common {
     KingSlime = 50,
     TheTwins = 125,
     SkeletronPrime = 127,
-    TheDestroyer = 134
+    TheDestroyer = 134,
+    QueenBee = 222,
+    Golem = 245,
+    Plantera = 262,
+    BrainOfCthulu = 266,
   }
 }

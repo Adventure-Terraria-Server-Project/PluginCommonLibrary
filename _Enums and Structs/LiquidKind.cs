@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 namespace Terraria.Plugins.Common {
   public enum LiquidKind {
     Water,
-    Lava
+    Lava,
+    Honey
   }
 }

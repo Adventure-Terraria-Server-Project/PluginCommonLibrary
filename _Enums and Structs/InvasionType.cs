@@ -4,6 +4,7 @@ namespace Terraria.Plugins.Common {
   public enum InvasionType {
     None,
     Goblins,
-    FrostLegion
+    FrostLegion,
+    Pirate
   }
 }

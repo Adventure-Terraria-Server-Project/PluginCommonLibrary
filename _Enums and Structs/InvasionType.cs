@@ -5,6 +5,7 @@ namespace Terraria.Plugins.Common {
     None,
     Goblins,
     FrostLegion,
-    Pirate
+    Pirate,
+    Pumpkin
   }
 }

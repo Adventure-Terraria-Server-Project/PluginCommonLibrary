@@ -9,5 +9,6 @@ namespace Terraria.Plugins.Common {
     TileKillNoItem,
     PlaceWire,
     DestroyWire,
+    PoundTile,
   }
 }

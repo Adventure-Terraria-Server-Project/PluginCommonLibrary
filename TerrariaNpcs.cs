@@ -9,7 +9,7 @@ using TShockAPI;
 namespace Terraria.Plugins.Common {
   public class TerrariaNpcs {
     public IEnumerable<NPC> EnumerateNPCsAroundPoint(DPoint location, float radius) {
-      for (int i = 0; i < 362; i++) {
+      for (int i = 0; i < Main.npc.Length; i++) {
         NPC npc = Main.npc[i];
 
         if (
@@ -22,7 +22,7 @@ namespace Terraria.Plugins.Common {
 
     public IEnumerable<int> EnumerateSpecificNPCIndexes(IList<int> npcTypes) {
       int foundNpcsCount = 0;
-      for (int i = 0; i < 362; i++) {
+      for (int i = 0; i < Main.npc.Length; i++) {
         NPC npc = Main.npc[i];
 
         if (!npc.active || !npc.friendly)
@@ -66,7 +66,7 @@ namespace Terraria.Plugins.Common {
         Main.rand = new Random();
 
       npcIndex = NPC.NewNPC(location.X, location.Y, npcType);
-      if (npcIndex == 362) {
+      if (npcIndex == Main.npc.Length) {
         npcIndex = -1;
         return false;
       }

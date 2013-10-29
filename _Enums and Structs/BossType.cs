@@ -4,11 +4,20 @@ namespace Terraria.Plugins.Common {
   public enum BossType {
     GoblinArmy = -1,
     FrostLegion = -2,
+    ThePirates = -3,
+    PumpkinInvasion = -4,
     EyeOfCthulhu = 4,
     EaterOfWorlds = 13,
+    Skeletron = 35,
     KingSlime = 50,
-    TheTwins = 125,
+    WallOfFlesh = 113,
+    Retinazer = 125,
+    Spazmatism = 126,
     SkeletronPrime = 127,
-    TheDestroyer = 134
+    TheDestroyer = 134,
+    QueenBee = 222,
+    Golem = 245,
+    Plantera = 262,
+    BrainOfCthulu = 266,
   }
 }

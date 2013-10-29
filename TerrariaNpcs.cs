@@ -9,7 +9,7 @@ using TShockAPI;
 namespace Terraria.Plugins.Common {
   public class TerrariaNpcs {
     public IEnumerable<NPC> EnumerateNPCsAroundPoint(DPoint location, float radius) {
-      for (int i = 0; i < 200; i++) {
+      for (int i = 0; i < Main.npc.Length; i++) {
         NPC npc = Main.npc[i];
 
         if (
@@ -22,7 +22,7 @@ namespace Terraria.Plugins.Common {
 
     public IEnumerable<int> EnumerateSpecificNPCIndexes(IList<int> npcTypes) {
       int foundNpcsCount = 0;
-      for (int i = 0; i < 200; i++) {
+      for (int i = 0; i < Main.npc.Length; i++) {
         NPC npc = Main.npc[i];
 
         if (!npc.active || !npc.friendly)
@@ -31,7 +31,7 @@ namespace Terraria.Plugins.Common {
         if (npcTypes.Contains(npc.type)) {
           yield return i;
           foundNpcsCount++;
-          if (foundNpcsCount == 10 || npcTypes.Count == 1)
+          if (foundNpcsCount == 18 || npcTypes.Count == 1)
             yield break;
         }
       }
@@ -42,19 +42,19 @@ namespace Terraria.Plugins.Common {
     }
 
     public IEnumerable<int> EnumerateFriendlyNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 22, 38, 54, 107, 108, 124 });
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 22, 38, 54, 107, 108, 124, 160 ,178, 207, 208, 209, 227, 228, 229});
     }
 
     public IEnumerable<int> EnumerateFriendlyFemaleNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 18, 20, 124 });
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 18, 20, 124, 178, 208});
     }
 
     public IEnumerable<int> EnumerateFriendlyMaleNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 19, 22, 38, 54, 107, 108 });
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 19, 22, 38, 54, 107, 108, 160, 207, 209, 227, 228, 229});
     }
 
     public IEnumerable<int> EnumerateShopNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124 });
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124, 160, 178, 207, 208, 209, 227, 228, 229});
     }
 
     public bool Spawn(
@@ -66,7 +66,7 @@ namespace Terraria.Plugins.Common {
         Main.rand = new Random();
 
       npcIndex = NPC.NewNPC(location.X, location.Y, npcType);
-      if (npcIndex == 200) {
+      if (npcIndex == Main.npc.Length) {
         npcIndex = -1;
         return false;
       }

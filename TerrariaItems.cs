@@ -227,6 +227,11 @@ namespace Terraria.Plugins.Common {
         case ItemType.Harpoon:
         case ItemType.Sunfury:
         case ItemType.DaoofPow:
+        case ItemType.ChainKnife:
+        case ItemType.FlowerPow:
+        case ItemType.GolemFist:
+        case ItemType.KOCannon:
+        case ItemType.TheMeatball:
           return true;
       }
 
@@ -242,6 +247,13 @@ namespace Terraria.Plugins.Common {
         case ItemType.MythrilHalberd:
         case ItemType.AdamantiteGlaive:
         case ItemType.Gungnir:
+        case ItemType.ChlorophytePartisan:
+        case ItemType.MushroomSpear:
+        case ItemType.OrichalcumHalberd:
+        case ItemType.PalladiumPike:
+        case ItemType.TheRottedFork:
+        case ItemType.TitaniumTrident:
+        case ItemType.ScourgeoftheCorruptor:
           return true;
       }
 
@@ -266,6 +278,10 @@ namespace Terraria.Plugins.Common {
         case ItemType.CobaltChainsaw:
         case ItemType.MythrilChainsaw:
         case ItemType.AdamantiteChainsaw:
+        case ItemType.ChlorophyteChainsaw:
+        case ItemType.OrichalcumChainsaw:
+        case ItemType.PalladiumChainsaw:
+        case ItemType.TitaniumChainsaw:
           return true;
       }
 
@@ -278,6 +294,10 @@ namespace Terraria.Plugins.Common {
         case ItemType.MythrilDrill:
         case ItemType.AdamantiteDrill:
         case ItemType.Hamdrax:
+        case ItemType.ChlorophyteDrill:
+        case ItemType.OrichalcumDrill:
+        case ItemType.PalladiumDrill:
+        case ItemType.TitaniumDrill:
           return true;
       }
 
@@ -289,6 +309,14 @@ namespace Terraria.Plugins.Common {
         case ItemType.GrapplingHook:
         case ItemType.IvyWhip:
         case ItemType.DualHook:
+        case ItemType.AmethystHook:
+        case ItemType.TopazHook:
+        case ItemType.SapphireHook:
+        case ItemType.EmeraldHook:
+        case ItemType.RubyHook:
+        case ItemType.DiamondHook:
+        case ItemType.WebSlinger:
+        case ItemType.SkeletronHand:
           return true;
       }
 
@@ -304,6 +332,10 @@ namespace Terraria.Plugins.Common {
         case ItemType.HellfireArrow:
         case ItemType.HolyArrow:
         case ItemType.CursedArrow:
+        case ItemType.FrostburnArrow:
+        case ItemType.VenomArrow:
+        case ItemType.ChlorophyteArrow:
+        case ItemType.IchorArrow:
           return true;
       }
 
@@ -336,6 +368,15 @@ namespace Terraria.Plugins.Common {
         case ItemType.SwiftnessPotion:
         case ItemType.ThornsPotion:
         case ItemType.WaterWalkingPotion:
+        case ItemType.FlaskofCursedFlames:
+        case ItemType.FlaskofFire:
+        case ItemType.FlaskofGold:
+        case ItemType.FlaskofIchor:
+        case ItemType.FlaskofNanites:
+        case ItemType.FlaskofParty:
+        case ItemType.FlaskofPoison:
+        case ItemType.FlaskofVenom:
+        case ItemType.BottledHoney:
           return true;
       }
 

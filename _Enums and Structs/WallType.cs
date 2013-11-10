@@ -114,7 +114,7 @@ namespace Terraria.Plugins.Common {
     PalladiumColumnWall = 109,
     BubblegumBlockWall = 110,
     TitanstoneBlockWall = 111,
-    LihzahrdBrickWall = 112,
+    LihzahrdBrickWall2 = 112,
     PumpkinWall = 113,
     HayWall = 114,
     SpookyWoodWall = 115,

@@ -1823,7 +1823,7 @@ namespace Terraria.Plugins.Common {
     PixieShirt = 1770,
     PixiePants = 1771,
     PrincessHat = 1772,
-    PrincessDress = 1773,
+    PrincessDress2 = 1773,
     GoodieBag = 1774,
     WitchDress = 1775,
     WitchBoots = 1776,

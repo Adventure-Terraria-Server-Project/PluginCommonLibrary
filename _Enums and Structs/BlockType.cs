@@ -254,5 +254,9 @@ namespace Terraria.Plugins.Common {
     PalladiumColumn = 248,
     BubblegumBlock = 249,
     TitanstoneBlock = 250,
+    Pumpkin = 251,
+    Hay = 252,
+    SpookyWood = 253,
+    PumpkinSeed = 254
   }
 }

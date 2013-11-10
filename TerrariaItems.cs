@@ -351,7 +351,6 @@ namespace Terraria.Plugins.Common {
 
     public bool IsPotionType(ItemType itemType) {
       switch (itemType) {
-        
         case ItemType.ArcheryPotion:
         case ItemType.BattlePotion:
         case ItemType.FeatherfallPotion:

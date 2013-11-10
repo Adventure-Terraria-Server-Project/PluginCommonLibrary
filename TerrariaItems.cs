@@ -253,7 +253,6 @@ namespace Terraria.Plugins.Common {
         case ItemType.PalladiumPike:
         case ItemType.TheRottedFork:
         case ItemType.TitaniumTrident:
-        case ItemType.ScourgeoftheCorruptor:
           return true;
       }
 
@@ -267,6 +266,11 @@ namespace Terraria.Plugins.Common {
         case ItemType.ThornChakram:
         case ItemType.Flamarang:
         case ItemType.LightDisc:
+        case ItemType.IceBoomerang:
+        case ItemType.BloodyMachete:
+        case ItemType.Bananarang:
+        case ItemType.PaladinsHammer:
+        case ItemType.PossessedHatchet:
           return true;
       }
 
@@ -282,6 +286,7 @@ namespace Terraria.Plugins.Common {
         case ItemType.OrichalcumChainsaw:
         case ItemType.PalladiumChainsaw:
         case ItemType.TitaniumChainsaw:
+        case ItemType.Drax:
           return true;
       }
 
@@ -293,7 +298,7 @@ namespace Terraria.Plugins.Common {
         case ItemType.CobaltDrill:
         case ItemType.MythrilDrill:
         case ItemType.AdamantiteDrill:
-        case ItemType.Hamdrax:
+        case ItemType.Drax:
         case ItemType.ChlorophyteDrill:
         case ItemType.OrichalcumDrill:
         case ItemType.PalladiumDrill:
@@ -317,6 +322,8 @@ namespace Terraria.Plugins.Common {
         case ItemType.DiamondHook:
         case ItemType.WebSlinger:
         case ItemType.SkeletronHand:
+        case ItemType.BatHook:
+        case ItemType.SpookyHook:
           return true;
       }
 
@@ -377,6 +384,9 @@ namespace Terraria.Plugins.Common {
         case ItemType.FlaskofPoison:
         case ItemType.FlaskofVenom:
         case ItemType.BottledHoney:
+        case ItemType.BowlofSoup:
+        case ItemType.CookedMarshmellow:
+        case ItemType.PumpkinPie:
           return true;
       }
 

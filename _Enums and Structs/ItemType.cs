@@ -629,7 +629,7 @@ namespace Terraria.Plugins.Common {
     MusicBox = 576,
     DemoniteBrick = 577,
     HallowedRepeater = 578,
-    Hamdrax = 579,
+    Drax = 579,
     Explosives = 580,
     InletPump = 581,
     OutletPump = 582,

@@ -413,7 +413,7 @@ namespace Terraria.Plugins.Common.Hooks {
             ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
             ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
-            if (chestIndex >= Main.chest.Length || slotIndex > 19)
+            if (chestIndex >= Main.chest.Length || slotIndex > 39)
               break;
           
             e.Handled = this.OnChestModifySlot(new ChestModifySlotEventArgs(

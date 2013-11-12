@@ -409,9 +409,9 @@ namespace Terraria.Plugins.Common.Hooks {
 
             short chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
             byte slotIndex = e.Msg.readBuffer[e.Index + 2];
-            byte itemStackSize = e.Msg.readBuffer[e.Index + 3];
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
+            short itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index+3);
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 5];
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 6);
 
             if (chestIndex >= Main.chest.Length || slotIndex > 39)
               break;

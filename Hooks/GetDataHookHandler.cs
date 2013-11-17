@@ -475,7 +475,7 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.ItemDrop: {
-            if (this.ItemUpdate == null || e.Msg.readBuffer.Length - e.Index < 22)
+            if (this.ItemUpdate == null || e.Msg.readBuffer.Length - e.Index < 24)
               break;
 
             short itemIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
@@ -483,9 +483,10 @@ namespace Terraria.Plugins.Common.Hooks {
             float y = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 6);
             float velocityX = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 10);
             float velocityY = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 14);
-            byte itemStackSize = e.Msg.readBuffer[e.Index + 18];
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 19];
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 20);
+            short itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 18);
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 20];
+            bool noDelay = (e.Msg.readBuffer[e.Index + 21] != 0);
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 22);
 
             // If it is actually an item pick up, then ensure a valid item index.
             if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
@@ -493,7 +494,7 @@ namespace Terraria.Plugins.Common.Hooks {
 
             e.Handled = this.OnItemUpdate(new ItemUpdateEventArgs(
               player, itemIndex, new Vector2(x, y), new Vector2(velocityX, velocityY), 
-              new ItemData(itemPrefix, itemType, itemStackSize)
+              noDelay, new ItemData(itemPrefix, itemType, itemStackSize)
             ));
             break;
           }
@@ -513,14 +514,14 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.PlayerSlot: {
-            if (this.PlayerModifySlot == null || e.Msg.readBuffer.Length - e.Index < 6)
+            if (this.PlayerModifySlot == null || e.Msg.readBuffer.Length - e.Index < 7)
               break;
 
             //byte playerIndex = e.Msg.readBuffer[e.Index];
             byte slotIndex = e.Msg.readBuffer[e.Index + 1];
-            byte itemStackSize = e.Msg.readBuffer[e.Index + 2];
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 3];
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
+            short itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
+            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
             if (slotIndex > 59)
               break;
@@ -537,12 +538,12 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
             int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
             byte liquidAmount = e.Msg.readBuffer[e.Index + 8];
-            byte lava = e.Msg.readBuffer[e.Index + 9];
-
+            LiquidKind liquidKind = (LiquidKind)e.Msg.readBuffer[e.Index + 9];
+            
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
 
-            e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, lava != 0));
+            e.Handled = this.OnLiquidSet(new LiquidSetEventArgs(player, new DPoint(x, y), liquidAmount, liquidKind));
             break;
           }
           case PacketTypes.DoorUse: {
@@ -567,7 +568,7 @@ namespace Terraria.Plugins.Common.Hooks {
           case PacketTypes.PlayerSpawn: {
             if (this.PlayerSpawn == null || e.Msg.readBuffer.Length - e.Index < 9)
               break;
-
+            
             byte playerIndex = e.Msg.readBuffer[e.Index];
             int spawnX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
             int spawnY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
@@ -578,19 +579,20 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnPlayerSpawn(new PlayerSpawnEventArgs(player, new DPoint(spawnX, spawnY)));
             break;
           }
+          // Note: Also door unlock
           case PacketTypes.ChestUnlock: {
             if (this.ChestUnlock == null || e.Msg.readBuffer.Length - e.Index < 10)
               break;
 
-            byte dummy1 = e.Msg.readBuffer[e.Index];
-            byte dummy2 = e.Msg.readBuffer[e.Index + 1];
+            byte dummy = e.Msg.readBuffer[e.Index];
+            UnlockType unlockType = (UnlockType)e.Msg.readBuffer[e.Index + 1];
             int chestX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
             int chestY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(chestX, chestY))
               break;
 
-            e.Handled = this.OnChestUnlock(new TileLocationEventArgs(player, new DPoint(chestX, chestY)));
+            e.Handled = this.OnChestUnlock(new UnlockEventArgs(player, new DPoint(chestX, chestY), unlockType));
             break;
           }
           case PacketTypes.ChatText: {

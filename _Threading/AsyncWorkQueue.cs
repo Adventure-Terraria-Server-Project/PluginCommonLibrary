@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Terraria.Plugins.Common {
-  public delegate void QueueExceptionHandler(Task task, object taskState, AggregateException exception);
+  public delegate void QueueExceptionHandler(Task task, object taskState, Exception exception);
 
   public class AsyncWorkQueue: IDisposable {
     #region [Nested: WorkItem]
@@ -43,6 +43,7 @@ namespace Terraria.Plugins.Common {
     private readonly int workerTimeoutMs;
     private readonly CancellationTokenSource workerTokenSource;
     private readonly BlockingCollection<WorkItem> queuedItems;
+    private readonly QueueExceptionHandler defaultExceptionHandler;
 
     public int WorkerThreadCount {
       get { return this.workers.Length; }
@@ -51,12 +52,13 @@ namespace Terraria.Plugins.Common {
 
     public AsyncWorkQueue(
       string threadName = "Async Work Queue Thread", ThreadPriority threadPriority = ThreadPriority.BelowNormal,
-      int workerThreadCount = 1
+      int workerThreadCount = 1, QueueExceptionHandler defaultExceptionHandler = null
     ) {
       this.workerTimeoutMs = -1;
       this.workerTokenSource = new CancellationTokenSource();
       this.queuedItems = new BlockingCollection<WorkItem>();
       this.workers = new Thread[workerThreadCount];
+      this.defaultExceptionHandler = defaultExceptionHandler;
 
       for (int i = 0; i < workerThreadCount; i++) {
         Thread worker = new Thread(this.ProcessWorkItems) { IsBackground = false };
@@ -157,8 +159,9 @@ namespace Terraria.Plugins.Common {
                 currentItem.CompletionSource.SetCanceled();
               else
                 currentItem.CompletionSource.SetException(ex);
-            } catch (AggregateException ex) {
+            } catch (Exception ex) {
               currentItem.CompletionSource.SetException(ex);
+
               if (currentItem.ExceptionHandler != null) {
                 try {
                   currentItem.ExceptionHandler(currentItem.CompletionSource.Task, currentItem.State, ex);

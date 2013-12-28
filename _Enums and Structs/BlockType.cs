@@ -202,7 +202,7 @@ namespace Terraria.Plugins.Common {
     RainCloud = 196,
     FrozenSlimeBlock = 197,
     AsphaltBlock = 198,
-    Undefined12 = 199,
+    CrimsonGrass = 199,
     RedIceBlock = 200,
     Undefined13 = 201,
     SunplateBlock = 202,

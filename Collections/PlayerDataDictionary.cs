@@ -12,8 +12,8 @@ using TShockAPI;
 namespace Terraria.Plugins.Common.Collections {
   public class PlayerDataDictionary<DataType>: IEnumerable<DataType>, IDisposable {
     private readonly List<DataType> dataList;
+    private readonly TerrariaPlugin owningPlugin;
     private readonly bool addAfterLogin;
-    protected TerrariaPlugin Plugin { get; private set; }
     protected Func<int,DataType> PlayerDataFactoryFunction { get; private set; }
     public object SyncRoot { get; private set; }
 
@@ -28,7 +28,7 @@ namespace Terraria.Plugins.Common.Collections {
     }
 
     public DataType this[TSPlayer tsPlayer] {
-      get { return this.dataList[tsPlayer.Index]; }
+      get { return this[tsPlayer.Index]; }
       set { this[tsPlayer.Index] = value; }
     }
 
@@ -43,7 +43,8 @@ namespace Terraria.Plugins.Common.Collections {
       Contract.Requires<ArgumentNullException>(plugin != null);
       Contract.Requires<ArgumentNullException>(playerDataFactoryFunction != null);
 
-      this.dataList = new List<DataType>(15);
+      this.dataList = new List<DataType>(new DataType[100]);
+      this.owningPlugin = plugin;
       this.addAfterLogin = addPlayersAfterLoginOnly;
       this.PlayerDataFactoryFunction = playerDataFactoryFunction;
       this.SyncRoot = new object();
@@ -77,7 +78,7 @@ namespace Terraria.Plugins.Common.Collections {
         return;
 
       lock (this.SyncRoot)
-        this.dataList[playerIndex] = default(DataType);
+        this[playerIndex] = default(DataType);
     }
 
     private bool AddPlayerData(int playerIndex) {
@@ -136,8 +137,8 @@ namespace Terraria.Plugins.Common.Collections {
         return;
     
       if (isDisposing) {
-        ServerApi.Hooks.ServerJoin.Deregister(this.Plugin, this.Server_Join);
-        ServerApi.Hooks.ServerLeave.Deregister(this.Plugin, this.Server_Leave);
+        ServerApi.Hooks.ServerJoin.Deregister(this.owningPlugin, this.Server_Join);
+        ServerApi.Hooks.ServerLeave.Deregister(this.owningPlugin, this.Server_Leave);
         TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= this.TShock_PlayerPostLogin;
       }
     

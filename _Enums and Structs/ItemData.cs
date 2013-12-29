@@ -79,7 +79,7 @@ namespace Terraria.Plugins.Common {
 
     #region [Method: Static FromItem, FromNetItem, ToItem]
     public static ItemData FromItem(Item item) {
-      return new ItemData((ItemPrefix)item.prefix, (ItemType)item.netID, (byte)item.stack);
+      return new ItemData((ItemPrefix)item.prefix, (ItemType)item.netID, item.stack);
     }
 
     public static ItemData FromNetItem(NetItem netItem) {

@@ -7,9 +7,9 @@ namespace Terraria.Plugins.Common {
         return tile.wire() || tile.wire2() || tile.wire3();
       if (color == WireColor.Red)
         return tile.wire();
-      if (color == WireColor.Green)
-        return tile.wire2();
       if (color == WireColor.Blue)
+        return tile.wire2();
+      if (color == WireColor.Green)
         return tile.wire3();
 
       return false;

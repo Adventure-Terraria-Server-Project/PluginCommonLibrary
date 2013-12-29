@@ -154,6 +154,7 @@
     <Compile Include="_Enums and Structs\InvasionType.cs" />
     <Compile Include="_Enums and Structs\ObjectMeasureData.cs" />
     <Compile Include="_Enums and Structs\UnlockType.cs" />
+    <Compile Include="_Enums and Structs\WireColor.cs" />
     <Compile Include="_Threading\AsyncWorkQueue.cs" />
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="_Utility Classes\PaginationUtil.cs" />
     <Compile Include="Collections\PlayerDataDictionary.cs" />
     <Compile Include="_Utility Classes\PlayerEventArgs.cs" />
+    <Compile Include="_Utility Classes\TileEx.cs" />
     <Compile Include="_Utility Classes\Timer.cs" />
     <Compile Include="_Utility Classes\TimerBase.cs" />
     <Compile Include="_Utility Classes\TimerManager.cs" />

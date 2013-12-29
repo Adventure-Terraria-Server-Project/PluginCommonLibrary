@@ -518,15 +518,10 @@ namespace Terraria.Plugins.Common {
       return false;
     }
 
-    public bool IsObjectWired(DPoint originTileLocation, DPoint size) {
-      DPoint dummy;
-      return this.IsObjectWired(originTileLocation, size, out dummy);
-    }
-
-    public bool IsObjectWired(ObjectMeasureData measureData, out DPoint firstWireLocation) {
+    public bool IsObjectWired(ObjectMeasureData measureData, WireColor wireColor, out DPoint firstWireLocation) {
       foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData)) {
         Tile tile = TerrariaUtils.Tiles[tileLocation];
-        if (tile.wire() || tile.wire2() || tile.wire3()) {
+        if (tile.HasWire(wireColor)) {
           firstWireLocation = tileLocation;
           return true;
         }
@@ -536,9 +531,14 @@ namespace Terraria.Plugins.Common {
       return false;
     }
 
-    public bool IsObjectWired(ObjectMeasureData measureData) {
+    public bool IsObjectWired(DPoint originTileLocation, DPoint size, WireColor wireColor = WireColor.None) {
       DPoint dummy;
-      return this.IsObjectWired(measureData, out dummy);
+      return this.IsObjectWired(originTileLocation, size, out dummy);
+    }
+
+    public bool IsObjectWired(ObjectMeasureData measureData, WireColor wireColor = WireColor.None) {
+      DPoint dummy;
+      return this.IsObjectWired(measureData, wireColor, out dummy);
     }
 
     public StatueStyle GetStatueStyle(int objectStyle) {
@@ -1056,7 +1056,7 @@ namespace Terraria.Plugins.Common {
           new DPoint(1, 1), // Sandstone Brick
           new DPoint(1, 1), // Ebonstone Brick
           new DPoint(1, 1), // Red Stucco
-          new DPoint(1, 1), // Yellow Stucco
+          new DPoint(1, 1), // Blue Stucco
           new DPoint(1, 1), // Green Stucco
           new DPoint(1, 1), // Gray Stucco
           new DPoint(1, 1), // Ebonwood

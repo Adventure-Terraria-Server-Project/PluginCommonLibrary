@@ -90,7 +90,7 @@ namespace Terraria.Plugins.Common {
     public Item ToItem() {
       Item item = new Item();
       item.netDefaults((int)this.Type);
-      item.Prefix((byte)this.Prefix);
+      item.Prefix((int)this.Prefix);
       item.stack = this.StackSize;
 
       return item;

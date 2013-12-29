@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Terraria.Plugins.Common {
-  public enum ItemPrefix: byte {
+  public enum ItemPrefix {
     None = 0,
     Large = 1,
     Massive = 2,

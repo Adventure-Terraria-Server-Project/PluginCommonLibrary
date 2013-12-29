@@ -349,7 +349,7 @@ namespace Terraria.Plugins.Common.Hooks {
             byte blockType = e.Msg.readBuffer[e.Index + 9];
             byte objectStyle = e.Msg.readBuffer[e.Index + 10];
 
-            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || editType > 6)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || editType > 14)
               return;
 
             e.Handled = this.OnTileEdit(

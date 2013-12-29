@@ -10,5 +10,12 @@ namespace Terraria.Plugins.Common {
     PlaceWire,
     DestroyWire,
     PoundTile,
+    PlaceActuator,
+    DestroyActuator,
+    PlaceWireBlue,
+    DestroyWireBlue,
+    PlaceWireGreen,
+    DestroyWireGreen,
+    SlopeTile
   }
 }

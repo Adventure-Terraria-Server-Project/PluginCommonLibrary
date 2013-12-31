@@ -45,6 +45,13 @@ namespace Terraria.Plugins.Common {
     Sunflower,
     King,
     Queen,
-    Piranha
+    Piranha,
+    Lihzahrd,
+    LihzahrdGuardian,
+    LihzahrdWatcher,
+    BlueDungeonVase,
+    GreenDungeonVase,
+    PinkDungeonVase,
+    ObsidianVase
   }
 }

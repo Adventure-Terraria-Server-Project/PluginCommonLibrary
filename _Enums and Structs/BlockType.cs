@@ -176,7 +176,7 @@ namespace Terraria.Plugins.Common {
     TinChandelier = 170,
     TungstenChandelier = 171,
     PlatinumChandelier = 172,
-    Candelabra2 = 173,
+    PlatinumCandelabra = 173,
     PlatinumCandle = 174,
     TinBrick = 175,
     TungstenBrick = 176,

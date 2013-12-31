@@ -147,6 +147,7 @@
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
     <Compile Include="Hooks\ChestOpenEventArgs.cs" />
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
+    <Compile Include="Hooks\TilePaintEventArgs.cs" />
     <Compile Include="Hooks\UnlockEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
@@ -154,6 +155,8 @@
     <Compile Include="_Enums and Structs\InvasionType.cs" />
     <Compile Include="_Enums and Structs\ObjectMeasureData.cs" />
     <Compile Include="_Enums and Structs\PaintColor.cs" />
+    <Compile Include="_Enums and Structs\PressurePlateKind.cs" />
+    <Compile Include="_Enums and Structs\TrapStyle.cs" />
     <Compile Include="_Enums and Structs\UnlockType.cs" />
     <Compile Include="_Enums and Structs\WireColor.cs" />
     <Compile Include="_Threading\AsyncWorkQueue.cs" />

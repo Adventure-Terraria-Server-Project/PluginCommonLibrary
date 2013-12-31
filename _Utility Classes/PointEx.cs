@@ -44,5 +44,13 @@ namespace Terraria.Plugins.Common {
     public static DPoint ToFlatLocation(this DPoint point) {
       return new DPoint(point.X * TerrariaUtils.TileSize, point.Y * TerrariaUtils.TileSize);
     }
+
+    public static Point ToXnaPoint(this DPoint point) {
+      return new Point(point.X, point.Y);
+    }
+
+    public static Vector2 ToXnaVector2(this DPoint point) {
+      return new Vector2(point.X, point.Y);
+    }
   }
 }

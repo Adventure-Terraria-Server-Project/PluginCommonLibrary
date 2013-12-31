@@ -434,6 +434,7 @@ namespace Terraria.Plugins.Common {
         case BlockType.Switch:
           return (tile.frameY == 0);
         case BlockType.XSecondTimer:
+        case BlockType.WaterFountain:
           return (tile.frameY != 0);
         case BlockType.MusicBox:
           return (tile.frameX != 0);
@@ -466,7 +467,11 @@ namespace Terraria.Plugins.Common {
       if (measureData.BlockType == BlockType.Torch || measureData.BlockType == BlockType.XMasLight)
         newFrameXOffset = measureData.TextureTileSize.X * 2;
 
-      if (measureData.BlockType != BlockType.Switch && measureData.BlockType != BlockType.XSecondTimer) {
+      if (
+        measureData.BlockType != BlockType.Switch && 
+        measureData.BlockType != BlockType.XSecondTimer &&
+        measureData.BlockType != BlockType.WaterFountain
+      ) {
         int frameXOffset = (objectWidth * measureData.TextureTileSize.X) + newFrameXOffset;
         if (measureData.BlockType == BlockType.MusicBox)
           frameXOffset = -frameXOffset;
@@ -475,15 +480,25 @@ namespace Terraria.Plugins.Common {
           newFrameXOffset = (short)-frameXOffset;
         else
           newFrameXOffset = (short)frameXOffset;
+
+        if (measureData.BlockType == BlockType.BubbleMachine && !activeState)
+          newFrameYOffset = -TerrariaUtils.Tiles[measureData.OriginTileLocation].frameY;
       } else {
         int frameYOffset = (objectHeight * measureData.TextureTileSize.Y);
-        if (measureData.BlockType == BlockType.XSecondTimer)
-          activeState = !activeState;
+        if (measureData.BlockType == BlockType.WaterFountain && !activeState) {
+          newFrameYOffset = -TerrariaUtils.Tiles[measureData.OriginTileLocation].frameY;
+        } else {
+          if (
+            measureData.BlockType == BlockType.XSecondTimer ||
+            measureData.BlockType == BlockType.WaterFountain
+          )
+            activeState = !activeState;
 
-        if (activeState)
-          newFrameYOffset = (short)-frameYOffset;
-        else
-          newFrameYOffset = (short)frameYOffset;
+          if (activeState)
+            newFrameYOffset = (short)-frameYOffset;
+          else
+            newFrameYOffset = (short)frameYOffset;
+        }
       }
         
       for (int tx = 0; tx < objectWidth; tx++) {
@@ -539,6 +554,27 @@ namespace Terraria.Plugins.Common {
     public bool IsObjectWired(ObjectMeasureData measureData, WireColor wireColor = WireColor.None) {
       DPoint dummy;
       return this.IsObjectWired(measureData, wireColor, out dummy);
+    }
+
+    public TrapStyle GetTrapStyle(int objectStyle) {
+      return (TrapStyle)objectStyle;
+    }
+
+    public ItemType GetItemTypeFromTrapStyle(TrapStyle trapStyle) {
+      switch (trapStyle) {
+        case TrapStyle.DartTrap:
+          return ItemType.DartTrap;
+        case TrapStyle.SuperDartTrap:
+          return ItemType.SuperDartTrap;
+        case TrapStyle.FlameTrap:
+          return ItemType.FlameTrap;
+        case TrapStyle.SpikyBallTrap:
+          return ItemType.SpikyBallTrap;
+        case TrapStyle.SpearTrap:
+          return ItemType.SpearTrap;
+        default:
+          return ItemType.None;
+      }
     }
 
     public StatueStyle GetStatueStyle(int objectStyle) {
@@ -637,8 +673,39 @@ namespace Terraria.Plugins.Common {
           return ItemType.QueenStatue;
         case StatueStyle.Piranha:
           return ItemType.PiranhaStatue;
+        case StatueStyle.Lihzahrd:
+          return ItemType.LihzahrdStatue;
+        case StatueStyle.LihzahrdGuardian:
+          return ItemType.LihzahrdGuardianStatue;
+        case StatueStyle.LihzahrdWatcher:
+          return ItemType.LihzahrdWatcherStatue;
+        case StatueStyle.BlueDungeonVase:
+          return ItemType.BlueDungeonVase;
+        case StatueStyle.GreenDungeonVase:
+          return ItemType.GreenDungeonVase;
+        case StatueStyle.PinkDungeonVase:
+          return ItemType.PinkDungeonVase;
+        case StatueStyle.ObsidianVase:
+          return ItemType.ObsidianVase;
         default:
           throw new ArgumentException("StatueStyle");
+      }
+    }
+
+    public PressurePlateKind GetPressurePlateKind(int objectStyle) {
+      switch (objectStyle) {
+        case 2:
+        case 3:
+        case 4:
+        case 6:
+          return PressurePlateKind.TriggeredByPlayers;
+        case 0:
+        case 1:
+          return PressurePlateKind.TriggeredByPlayersNpcsEnemies;
+        case 5:
+          return PressurePlateKind.TriggeredByNpcsEnemies;
+        default:
+          return PressurePlateKind.Unknown;
       }
     }
 

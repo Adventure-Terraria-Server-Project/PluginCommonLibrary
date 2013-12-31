@@ -315,6 +315,23 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: TilePaint]
+    public event EventHandler<TilePaintEventArgs> TilePaint;
+
+    protected virtual bool OnTilePaint(TilePaintEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.TilePaint != null)
+          this.TilePaint(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("TilePaint", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     public GetDataHookHandler(TerrariaPlugin plugin, bool invokeTileEditOnChestKill = false) {
       Contract.Requires<ArgumentNullException>(plugin != null);
@@ -620,6 +637,17 @@ namespace Terraria.Plugins.Common.Hooks {
             int tileY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
 
             e.Handled = this.OnSendTileSquare(new SendTileSquareEventArgs(player, new DPoint(tileX, tileY), size));
+            break;
+          }
+          case PacketTypes.PaintTile: {
+            if (this.TilePaint == null || e.Msg.readBuffer.Length - e.Index < 9)
+              break;
+
+            int tileX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
+            int tileY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            byte color = e.Msg.readBuffer[e.Index + 8];
+
+            e.Handled = this.OnTilePaint(new TilePaintEventArgs(player, new DPoint(tileX, tileY), (PaintColor)color));
             break;
           }
         }

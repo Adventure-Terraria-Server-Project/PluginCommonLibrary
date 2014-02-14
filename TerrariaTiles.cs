@@ -53,10 +53,10 @@ namespace Terraria.Plugins.Common {
     }
 
     public string GetBlockTypeName(BlockType blockType) {
-      if (blockType < 0 || (int)blockType >= Main.tileName.Length)
+      if (blockType < 0 || (int)blockType >= TerrariaUtils.BlockType_Max)
         throw new ArgumentException(string.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
 
-      return Main.tileName[(int)blockType] ?? "???";
+      return blockType.ToString();
     }
 
     // Note: A block is considered any non-object, so any block type which blocks the player from passing through 
@@ -1220,6 +1220,69 @@ namespace Terraria.Plugins.Common {
           new DPoint(1, 1), // Palladium Cloumn
           new DPoint(1, 1), // Bubblegum Block
           new DPoint(1, 1), // Titanstone Block
+          new DPoint(1, 1), // PumpkinBlock
+          new DPoint(1, 1), // Hay
+          new DPoint(1, 1), // Spooky Wood
+          new DPoint(2, 2), // Pumpkin
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // AmethystGemsparkBlock
+          new DPoint(1, 1), // TopazGemsparkBlock
+          new DPoint(1, 1), // SapphireGemsparkBlock
+          new DPoint(1, 1), // EmeraldGemsparkBlock
+          new DPoint(1, 1), // RubyGemsparkBlock
+          new DPoint(1, 1), // DiamondGemsparkBlock
+          new DPoint(1, 1), // AmberGemsparkBlock
+          new DPoint(2, 3), // Womannequin
+          new DPoint(1, 2), // FireflyinaBottle
+          new DPoint(1, 2), // ?
+          new DPoint(1, 1), // ?
+          new DPoint(1, 1), // StoneSlab
+          new DPoint(1, 1), // SandstoneSlab
+          new DPoint(6, 3), // BunnyCage
+          new DPoint(6, 3), // SquirrelCage
+          new DPoint(6, 3), // MallardDuckCage
+          new DPoint(6, 3), // DuckCage
+          new DPoint(6, 3), // BirdCage
+          new DPoint(6, 3), // BlueJayCage
+          new DPoint(6, 3), // CardinalCage
+          new DPoint(2, 2), // ?
+          new DPoint(3, 3), // HeavyWorkBench
+          new DPoint(1, 1), // CopperPlating
+          new DPoint(3, 2), // SnailCage
+          new DPoint(3, 2), // GlowingSnailCage
+          new DPoint(2, 2), // AmmoBox
+          new DPoint(2, 2), // MonarchButterflyJar
+          new DPoint(2, 2), // PurpleEmperorButterflyJar
+          new DPoint(2, 2), // RedAdmiralButterflyJar
+          new DPoint(2, 2), // UlyssesButterflyJar
+          new DPoint(2, 2), // SulphurButterflyJar
+          new DPoint(2, 2), // TreeNymphButterflyJar
+          new DPoint(2, 2), // ZebraSwallowtailButterflyJar
+          new DPoint(2, 2), // JuliaButterflyJar
+          new DPoint(6, 3), // ScorpionCage
+          new DPoint(6, 3), // BlackScorpionCage
+          new DPoint(3, 2), // FrogCage
+          new DPoint(3, 2), // MouseCage
+          new DPoint(3, 3), // BoneWelder
+          new DPoint(3, 3), // FleshCloningVaat
+          new DPoint(3, 3), // GlassKiln
+          new DPoint(3, 3), // LihzahrdFurnace
+          new DPoint(3, 3), // LivingLoom
+          new DPoint(3, 3), // SkyMill
+          new DPoint(3, 3), // IceMachine
+          new DPoint(3, 3), // SteampunkBoiler
+          new DPoint(3, 3), // HoneyDispenser
+          new DPoint(6, 3), // PenguinCage
+          new DPoint(3, 2), // WormCage
+          new DPoint(1, 1), // DynastyWood
+          new DPoint(1, 1), // RedDynastyShingles
+          new DPoint(1, 1), // BlueDynastyShingles
         };
       }
 
@@ -1331,6 +1394,42 @@ namespace Terraria.Plugins.Common {
           return Direction.Up;
         default:
           return Direction.Unknown;
+      }
+    }
+
+    [Conditional("DEBUG")]
+    public void DebugPrintCreatedTileIdList() {
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+
+        if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createTile != -1) { 
+          string itemName = dummyItem.name;
+          itemName = itemName.Replace(" ", "");
+          itemName = itemName.Replace("'", "");
+          itemName = itemName.Replace("´", "");
+          itemName = itemName.Replace("`", "");
+
+          Debug.Print(itemName + " = " + dummyItem.createTile + ',');
+        }
+      }
+    }
+
+    [Conditional("DEBUG")]
+    public void DebugPrintCreatedWallIdList() {
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+
+        if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createWall != -1) { 
+          string itemName = dummyItem.name;
+          itemName = itemName.Replace(" ", "");
+          itemName = itemName.Replace("'", "");
+          itemName = itemName.Replace("´", "");
+          itemName = itemName.Replace("`", "");
+
+          Debug.Print(itemName + " = " + dummyItem.createWall + ',');
+        }
       }
     }
   }

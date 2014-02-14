@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 2.5</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.7</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -146,6 +146,8 @@
     <Compile Include="Collections\ItemBag.cs" />
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
     <Compile Include="Hooks\ChestOpenEventArgs.cs" />
+    <Compile Include="Hooks\ChestPlaceEventArgs.cs" />
+    <Compile Include="Hooks\ChestRenameEventArgs.cs" />
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
     <Compile Include="Hooks\TilePaintEventArgs.cs" />
     <Compile Include="Hooks\UnlockEventArgs.cs" />
@@ -240,6 +242,7 @@
     <ProjectReference Include="..\TShock\TerrariaServerAPI\TerrariaAPI-Server.csproj">
       <Project>{549a7941-d9c9-4544-bac8-d9eeeab4d777}</Project>
       <Name>TerrariaAPI-Server</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\TShock\TShockAPI\TShockAPI.csproj">
       <Project>{49606449-072b-4cf5-8088-aa49da586694}</Project>

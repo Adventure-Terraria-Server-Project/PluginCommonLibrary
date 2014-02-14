@@ -5,7 +5,7 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class ItemUpdateEventArgs: NetHookEventArgs {
-    public short ItemIndex { get; private set; }
+    public int ItemIndex { get; private set; }
     public Vector2 Location { get; private set; }
     public Vector2 Velocity { get; private set; }
     public bool NoDelay { get; private set; }
@@ -13,7 +13,7 @@ namespace Terraria.Plugins.Common.Hooks {
 
 
     public ItemUpdateEventArgs(
-      TSPlayer player, short itemIndex, Vector2 location, Vector2 velocity, bool noDelay, ItemData item
+      TSPlayer player, int itemIndex, Vector2 location, Vector2 velocity, bool noDelay, ItemData item
     ): base(player) {
       this.ItemIndex = itemIndex;
       this.Location = location;

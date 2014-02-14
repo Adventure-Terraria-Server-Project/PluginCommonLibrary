@@ -5,14 +5,14 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common {
   public static partial class TerrariaUtils {
-    public const int BlockType_Min = 0;
-    public const int BlockType_Max = 254;
-    public const int WallType_Min = 0;
-    public const int WallType_Max = 115;
-    public const int ItemType_Min = -48;
-    public const int ItemType_Max = 1857;
-    public const int NpcType_Min = -65;
-    public const int NpcType_Max = 330;
+    public static int BlockType_Min = 0;
+    public static int BlockType_Max = Main.maxTileSets - 1;
+    public static int WallType_Min = 0;
+    public static int WallType_Max = Main.maxWallTypes - 1;
+    public static int ItemType_Min = -48;
+    public static int ItemType_Max = Main.maxItemTypes - 1;
+    public static int NpcType_Min = -65;
+    public static int NpcType_Max = Main.maxNPCTypes - 1;
     public const int DefaultTextureTileSize = 18;
     public const int TileSize = 16;
 

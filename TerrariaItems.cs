@@ -418,7 +418,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public string GetItemName(ItemType itemType) {
-      return this.GetItemName(new ItemData(ItemPrefix.None, itemType, 1));
+      return Main.itemName[(int)itemType];
     }
 
     public string GetItemRepresentativeString(ItemData itemData) {
@@ -527,6 +527,27 @@ namespace Terraria.Plugins.Common {
       }
 
       return baseValue * coinItem.StackSize;
+    }
+
+    [Conditional("DEBUG")]
+    public void DebugPrintItemIdList() {
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+
+        string itemName;
+        if (string.IsNullOrEmpty(dummyItem.name)) {
+          itemName = "NullOrEmpty";
+        } else {
+          itemName = dummyItem.name;
+          itemName = itemName.Replace(" ", "");
+          itemName = itemName.Replace("'", "");
+          itemName = itemName.Replace("´", "");
+          itemName = itemName.Replace("`", "");
+        }
+
+        Debug.Print(itemName + " = " + i + ',');
+      }
     }
   }
 }

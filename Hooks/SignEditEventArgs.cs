@@ -5,11 +5,11 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class SignEditEventArgs: TileLocationEventArgs {
-    public short SignIndex { get; private set; }
+    public int SignIndex { get; private set; }
     public string NewText { get; private set; }
 
 
-    public SignEditEventArgs(TSPlayer player, short signIndex, DPoint location, string newText): base(player, location) {
+    public SignEditEventArgs(TSPlayer player, int signIndex, DPoint location, string newText): base(player, location) {
       this.SignIndex = signIndex;
       this.NewText = newText;
     }

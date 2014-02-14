@@ -195,7 +195,7 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    public virtual bool HandleSignEdit(TSPlayer player, short signIndex, DPoint location, string newText) {
+    public virtual bool HandleSignEdit(TSPlayer player, int signIndex, DPoint location, string newText) {
       if (this.IsDisposed || this.activeCommandInteractions.Count == 0)
         return false;
 

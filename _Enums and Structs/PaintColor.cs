@@ -29,6 +29,10 @@ namespace Terraria.Plugins.Common {
     DeepPink = 24,
     Black = 25,
     White = 26,
-    Grey = 27
+    Grey = 27,
+    Brown = 28,
+    Shadow = 29,
+    Negative = 30,
   }
 }
+// Note: Get names of new paints from the respective paint items.

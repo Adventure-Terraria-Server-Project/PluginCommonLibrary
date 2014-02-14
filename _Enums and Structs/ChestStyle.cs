@@ -25,6 +25,9 @@ namespace Terraria.Plugins.Common {
     CorruptionChest,
     CrimsonChest,
     HallowedChest,
-    FrozenChest
+    FrozenChest,
+    DynastyChest,
+    HoneyChest,
+    SteampunkChest
   }
 }

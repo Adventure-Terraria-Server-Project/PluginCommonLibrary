@@ -860,8 +860,21 @@ namespace Terraria.Plugins.Common {
         throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
 
       ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
-      foreach (Tile tile in this.EnumerateObjectTiles(measureData))
-        tile.frameX += 36;
+      if (
+        chestStyle == ChestStyle.JungleChest ||
+        chestStyle == ChestStyle.CorruptionChest ||
+        chestStyle == ChestStyle.CrimsonChest ||
+        chestStyle == ChestStyle.HallowedChest ||
+        chestStyle == ChestStyle.FrozenChest)
+      {
+        foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+          tile.frameX += 180;
+      }
+      else
+      {
+        foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+          tile.frameX += 36;
+      }
       
       TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
     }

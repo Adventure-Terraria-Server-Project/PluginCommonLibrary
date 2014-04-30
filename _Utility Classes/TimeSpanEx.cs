@@ -72,7 +72,7 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    public static string ToLongString(this TimeSpan timeSpan) {
+    public static string ToLongString(this TimeSpan timeSpan, bool trimSeconds = true) {
       StringBuilder result = new StringBuilder();
       if (timeSpan.Days == 1) {
         result.Append("1 day");
@@ -107,24 +107,26 @@ namespace Terraria.Plugins.Common {
         result.Append(" minutes");
       }
 
-      if (timeSpan.Seconds == 1) {
-        if (result.Length > 0)
-          result.Append(' ');
+      if (!trimSeconds || timeSpan.Hours == 0) { 
+        if (timeSpan.Seconds == 1) {
+          if (result.Length > 0)
+            result.Append(' ');
 
-        result.Append("1 second");
-      } else if (timeSpan.Seconds > 0) {
-        if (result.Length > 0)
-          result.Append(' ');
+          result.Append("1 second");
+        } else if (timeSpan.Seconds > 0) {
+          if (result.Length > 0)
+            result.Append(' ');
 
-        result.Append(timeSpan.Seconds);
-        result.Append(" seconds");
-      }
+          result.Append(timeSpan.Seconds);
+          result.Append(" seconds");
+        }
 
-      if (result.Length == 0) {
-        if (timeSpan.Milliseconds > 0)
-          result.Append("Less than a second.");
-        else
-          result.Append("Zero");
+        if (result.Length == 0) {
+          if (timeSpan.Milliseconds > 0)
+            result.Append("Less than a second.");
+          else
+            result.Append("Zero");
+        }
       }
 
       return result.ToString();

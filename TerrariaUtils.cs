@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
@@ -19,6 +21,7 @@ namespace Terraria.Plugins.Common {
     public static TerrariaTiles Tiles { get; private set; }
     public static TerrariaItems Items { get; private set; }
     public static TerrariaNpcs Npcs { get; private set; }
+    public static TerrariaProjectiles Projectiles { get; private set; }
 
     public static InvasionType InvasionType {
       get { return (Common.InvasionType)Main.invasionType; }
@@ -29,6 +32,18 @@ namespace Terraria.Plugins.Common {
       TerrariaUtils.Tiles = new TerrariaTiles();
       TerrariaUtils.Items = new TerrariaItems();
       TerrariaUtils.Npcs = new TerrariaNpcs();
+      TerrariaUtils.Projectiles = new TerrariaProjectiles();
+    }
+
+    public static IEnumerable<int> EnumeratePlayerIndexesAroundPoint(DPoint location, float radius) {
+      for (int i = 0; i < Main.player.Length; i++) {
+        Player player = Main.player[i];
+        if (player == null || !player.active)
+          continue;
+
+        if (Math.Sqrt(Math.Pow(player.position.X - location.X, 2) + Math.Pow(player.position.Y - location.Y, 2)) <= radius)
+          yield return i;
+      }
     }
   }
 }

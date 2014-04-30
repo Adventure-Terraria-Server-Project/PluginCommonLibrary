@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 2.7</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.9</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -152,6 +152,7 @@
     <Compile Include="Hooks\TilePaintEventArgs.cs" />
     <Compile Include="Hooks\UnlockEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
+    <Compile Include="TerrariaProjectiles.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
     <Compile Include="_Enums and Structs\HerbStyle.cs" />
     <Compile Include="_Enums and Structs\InvasionType.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="_General Exceptions\PlayerNotLoggedInException.cs" />
     <Compile Include="_General Exceptions\TileProtectedException.cs" />
     <Compile Include="_Utility Classes\TSPlayerEventArgs.cs" />
+    <Compile Include="_Utility Classes\Vector2Ex.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt" />
@@ -252,8 +254,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)packages\Mono.pdb2mdb.0.1.0.20130128\tools\pdb2mdb.exe" "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
@@ -57,10 +58,7 @@ namespace Terraria.Plugins.Common {
       return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124, 160, 178, 207, 208, 209, 227, 228, 229});
     }
 
-    public bool Spawn(
-      int npcType, DPoint location, out int npcIndex, 
-      int lifeOverride = 0, int valueOverride = -1, bool noDrops = false, bool immortal = false
-    ) {
+    public bool Spawn(int npcType, DPoint location, out int npcIndex, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false) {
       // Thread static.
       if (Main.rand == null)
         Main.rand = new Random();
@@ -75,8 +73,10 @@ namespace Terraria.Plugins.Common {
       if (npcType < 0)
         npc.netDefaults(npcType);
 
-      if (lifeOverride > 0)
+      if (lifeOverride > 0) { 
         npc.life = lifeOverride;
+        npc.lifeMax = lifeOverride;
+      }
 
       if (noDrops) {
         npc.value = 0;
@@ -86,18 +86,13 @@ namespace Terraria.Plugins.Common {
       if (valueOverride > -1)
         npc.value = valueOverride;
 
-      if (immortal)
-        npc.lifeRegen = 10;
-
       TSPlayer.All.SendData(PacketTypes.NpcUpdate, string.Empty, npcIndex);
       return true;
     }
 
-    public bool Spawn(
-      int npcType, DPoint location, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false, bool immortal = false
-    ) {
+    public bool Spawn(int npcType, DPoint location, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false) {
       int npcIndex;
-      return this.Spawn(npcType, location, out npcIndex, lifeOverride, valueOverride, noDrops, immortal);
+      return this.Spawn(npcType, location, out npcIndex, lifeOverride, valueOverride, noDrops);
     }
 
     public void MoveOrSpawnSpecificType(int npcType, DPoint location) {

@@ -5,6 +5,17 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common {
   public static class PointEx {
+    public const double Rad2Deg = 180.0 / Math.PI;
+    public const double Deg2Rad = Math.PI / 180.0;
+
+    public static DPoint FromVector2(Vector2 v2) {
+      return new DPoint((int)v2.X, (int)v2.Y);
+    }
+
+    public static DPoint FromXnaPoint(Point point) {
+      return new DPoint(point.X, point.Y);
+    }
+
     public static string ToSimpleString(this DPoint point) {
       return string.Concat(point.X, ',', point.Y);
     }
@@ -35,6 +46,18 @@ namespace Terraria.Plugins.Common {
     public static DPoint OffsetEx(this DPoint point, int xOffset, int yOffset) {
       point.Offset(xOffset, yOffset);
       return point;
+    }
+
+    public static DPoint OffsetPolar(this DPoint point, float angle, float steps) {
+      return point.OffsetEx((int)(Math.Cos(angle) * steps), (int)(Math.Sin(angle) * steps));
+    }
+
+    public static float DistanceBetween(this DPoint point1, DPoint point2) {
+      return (float)Math.Sqrt(Math.Pow(point1.X - point2.X, 2) + Math.Pow(point1.Y - point2.Y, 2));
+    }
+
+    public static float AngleBetween(this DPoint fromPoint, DPoint toPoint) {
+      return (float)(Math.Atan2(toPoint.Y - fromPoint.Y, toPoint.X - fromPoint.X));
     }
 
     public static DPoint ToTileLocation(this DPoint point) {

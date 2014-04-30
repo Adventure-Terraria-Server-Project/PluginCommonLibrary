@@ -429,12 +429,15 @@ namespace Terraria.Plugins.Common {
       return string.Format(format, this.GetItemName(itemData, true), itemData.StackSize);
     }
 
-    public void CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData) {
+    public int CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData, bool sendPacket = true) {
       int itemIndex = Item.NewItem(
         location.X, location.Y, 0, 0, (int)itemData.Type, itemData.StackSize, true, (int)itemData.Prefix
       );
 
-      forPlayer.SendData(PacketTypes.ItemDrop, string.Empty, itemIndex);
+      if (sendPacket)
+        forPlayer.SendData(PacketTypes.ItemDrop, string.Empty, itemIndex);
+
+      return itemIndex;
     }
 
     public IEnumerable<Item> EnumerateItemsInRect(Rectangle rect) {

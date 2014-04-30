@@ -776,6 +776,12 @@ namespace Terraria.Plugins.Common {
         case 27:
           isLocked = true;
           return ChestStyle.FrozenChest;
+        case 28:
+          return ChestStyle.DynastyChest;
+        case 29:
+          return ChestStyle.HoneyChest;
+        case 30:
+          return ChestStyle.SteampunkChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }
@@ -833,6 +839,12 @@ namespace Terraria.Plugins.Common {
           return ItemType.HallowedChest;
         case ChestStyle.FrozenChest:
           return ItemType.FrozenChest;
+        case ChestStyle.DynastyChest:
+          return ItemType.DynastyChest;
+        case ChestStyle.HoneyChest:
+          return ItemType.HoneyChest;
+        case ChestStyle.SteampunkChest:
+          return ItemType.SteampunkChest;
         default:
           throw new ArgumentException("ChestStyle");
       }

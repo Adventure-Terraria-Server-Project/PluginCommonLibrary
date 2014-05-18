@@ -318,7 +318,7 @@ namespace Terraria.Plugins.Common {
     RedDynastyShingles = 312,
     BlueDynastyShingles = 313,
     MinecartTrack = 314,
-    Unknown315 = 315,
+    CoralstoneBlock = 315,
     BlueJellyfishBowl = 316,
     GreenJellyfishBowl = 317,
     PinkJellyfishBowl = 318,

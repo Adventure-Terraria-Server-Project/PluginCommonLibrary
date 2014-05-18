@@ -1330,6 +1330,32 @@ namespace Terraria.Plugins.Common {
           new DPoint(1, 1), // DynastyWood
           new DPoint(1, 1), // RedDynastyShingles
           new DPoint(1, 1), // BlueDynastyShingles
+          new DPoint(1, 1), //MinecartTrack
+          new DPoint(1, 1), //CoralstoneBlock
+          new DPoint(2,2), //BlueJellyfishBowl
+          new DPoint(2,2), //GreenJellyfishBowl
+          new DPoint(2,2), //PinkJellyfishBowl
+          new DPoint(2,2), //ShipInABottle
+          new DPoint(2,3), //SeaweedPlanter
+          new DPoint(1,1), //BorealWood
+          new DPoint(1,1), //PalmWood
+          new DPoint(1,1), //PalmTree
+          new DPoint(1,1), //BeachPiles
+          new DPoint(1,1), //TinPlating
+          new DPoint(1,1), //Waterfall
+          new DPoint(1,1), //Lavafall
+          new DPoint(1,1), //Confetti
+          new DPoint(1,1), //ConfettiBlack
+          new DPoint(1,1), //CopperCoinPile
+          new DPoint(1,1), //SilverCoinPile
+          new DPoint(1,1), //GoldCoinPile
+          new DPoint(1,1), //PlatinumCoinPile
+          new DPoint(3,3), //WeaponsRack
+          new DPoint(2,2), //FireworksBox
+          new DPoint(1,1), //LivingFire
+          new DPoint(2,3), //AlphabetStatues
+          new DPoint(1,2), //FireworkFountain
+          new DPoint(3,2), //GrasshopperCage
         };
       }
 

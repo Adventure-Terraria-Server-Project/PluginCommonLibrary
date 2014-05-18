@@ -8,6 +8,7 @@ namespace Terraria.Plugins.Common {
     Blinkroot,
     Deathweed,
     Waterleaf,
-    Fireblossom
+    Fireblossom,
+    Shiverthorn
   }
 }

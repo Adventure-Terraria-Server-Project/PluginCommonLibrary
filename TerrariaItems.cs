@@ -232,6 +232,8 @@ namespace Terraria.Plugins.Common {
         case ItemType.GolemFist:
         case ItemType.KOCannon:
         case ItemType.TheMeatball:
+        case ItemType.Anchor:
+        case ItemType.Flairon:
           return true;
       }
 
@@ -253,6 +255,8 @@ namespace Terraria.Plugins.Common {
         case ItemType.PalladiumPike:
         case ItemType.TheRottedFork:
         case ItemType.TitaniumTrident:
+        case ItemType.Swordfish:
+        case ItemType.ObsidianSwordfish:
           return true;
       }
 
@@ -271,6 +275,7 @@ namespace Terraria.Plugins.Common {
         case ItemType.Bananarang:
         case ItemType.PaladinsHammer:
         case ItemType.PossessedHatchet:
+        case ItemType.FruitcakeChakram:
           return true;
       }
 
@@ -324,6 +329,9 @@ namespace Terraria.Plugins.Common {
         case ItemType.SkeletronHand:
         case ItemType.BatHook:
         case ItemType.SpookyHook:
+        case ItemType.CandyCaneHook:
+        case ItemType.FishHook:
+        case ItemType.SlimeHook:
           return true;
       }
 
@@ -387,6 +395,36 @@ namespace Terraria.Plugins.Common {
         case ItemType.BowlofSoup:
         case ItemType.CookedMarshmellow:
         case ItemType.PumpkinPie:
+        case ItemType.Eggnog:
+        case ItemType.ChristmasPudding:
+        case ItemType.GingerbreadMan:
+        case ItemType.SugarCookie:
+        case ItemType.SuperManaPotion:
+        case ItemType.Pho:
+        case ItemType.PadThai:
+        case ItemType.Sake:
+        case ItemType.CookedFish:
+        case ItemType.CookedShrimp:
+        case ItemType.Sashimi:
+        case ItemType.RecallPotion:
+        case ItemType.TeleportationPotion:
+        case ItemType.AmmoReservationPotion:
+        case ItemType.BuilderPotion:
+        case ItemType.CalmingPotion:
+        case ItemType.CratePotion:
+        case ItemType.EndurancePotion:
+        case ItemType.FishingPotion:
+        case ItemType.FlipperPotion:
+        case ItemType.HeartreachPotion:
+        case ItemType.InfernoPotion:
+        case ItemType.LifeforcePotion:
+        case ItemType.MiningPotion:
+        case ItemType.RagePotion:
+        case ItemType.SonarPotion:
+        case ItemType.StinkPotion:
+        case ItemType.SummoningPotion:
+        case ItemType.TitanPotion:
+        case ItemType.WrathPotion:
           return true;
       }
 

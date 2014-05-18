@@ -776,6 +776,40 @@ namespace Terraria.Plugins.Common {
         case 27:
           isLocked = true;
           return ChestStyle.FrozenChest;
+        case 28:
+          return ChestStyle.DynastyChest;
+        case 29:
+          return ChestStyle.HoneyChest;
+        case 30:
+          return ChestStyle.SteampunkChest;
+        case 31:
+          return ChestStyle.PalmWoodChest;
+        case 32:
+          return ChestStyle.MushroomChest;
+        case 33:
+          return ChestStyle.BorealWoodChest;
+        case 34:
+          return ChestStyle.SlimeChest;
+        case 35:
+          return ChestStyle.GreenDungeonChest;
+        case 36:
+          return ChestStyle.PinkDungeonChest;
+        case 37:
+          return ChestStyle.BlueDungeonChest;
+        case 38:
+          return ChestStyle.BoneChest;
+        case 39:
+          return ChestStyle.CactusChest;
+        case 40:
+          return ChestStyle.FleshChest;
+        case 41:
+          return ChestStyle.ObsidianChest;
+        case 42:
+          return ChestStyle.PumpkinChest;
+        case 43:
+          return ChestStyle.SpookyChest;
+        case 44:
+          return ChestStyle.GlassChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }

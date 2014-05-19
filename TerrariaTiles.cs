@@ -793,22 +793,31 @@ namespace Terraria.Plugins.Common {
         case 35:
           return ChestStyle.GreenDungeonChest;
         case 36:
-          return ChestStyle.PinkDungeonChest;
+          isLocked = true;
+          return ChestStyle.GreenDungeonChest;
         case 37:
-          return ChestStyle.BlueDungeonChest;
+          return ChestStyle.PinkDungeonChest;
         case 38:
-          return ChestStyle.BoneChest;
+          isLocked = true;
+          return ChestStyle.PinkDungeonChest;
         case 39:
-          return ChestStyle.CactusChest;
+          return ChestStyle.BlueDungeonChest;
         case 40:
-          return ChestStyle.FleshChest;
+          isLocked = true;
+          return ChestStyle.BlueDungeonChest;
         case 41:
-          return ChestStyle.ObsidianChest;
+          return ChestStyle.BoneChest;
         case 42:
-          return ChestStyle.PumpkinChest;
+          return ChestStyle.CactusChest;
         case 43:
-          return ChestStyle.SpookyChest;
+          return ChestStyle.FleshChest;
         case 44:
+          return ChestStyle.ObsidianChest;
+        case 45:
+          return ChestStyle.PumpkinChest;
+        case 46:
+          return ChestStyle.SpookyChest;
+        case 47:
           return ChestStyle.GlassChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
@@ -889,7 +898,10 @@ namespace Terraria.Plugins.Common {
         chestStyle != ChestStyle.CorruptionChest &&
         chestStyle != ChestStyle.CrimsonChest &&
         chestStyle != ChestStyle.HallowedChest &&
-        chestStyle != ChestStyle.FrozenChest
+        chestStyle != ChestStyle.FrozenChest &&
+        chestStyle != ChestStyle.BlueDungeonChest &&
+        chestStyle != ChestStyle.GreenDungeonChest &&
+        chestStyle != ChestStyle.PinkDungeonChest
       )
         throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
 
@@ -922,13 +934,17 @@ namespace Terraria.Plugins.Common {
       ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
       switch (chestStyle) {
         case ChestStyle.GoldChest:
+        case ChestStyle.PinkDungeonChest:
+        case ChestStyle.BlueDungeonChest:
+        case ChestStyle.GreenDungeonChest:
           if (isLocked) {
             if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
               return ChestKind.DungeonChest;
-
-            return ChestKind.Unknown;
           }
+          
+          return ChestKind.Unknown;
 
+        case ChestStyle.WaterChest:
           if (chestTile.liquid < 255 || chestTile.lava())
             return ChestKind.Unknown;
           if (anyChestTileLocation.X > 250 && anyChestTileLocation.X < Main.maxTilesX - 250)
@@ -937,6 +953,19 @@ namespace Terraria.Plugins.Common {
             return ChestKind.Unknown;
 
           return ChestKind.OceanChest;
+
+        case ChestStyle.FrozenChest:
+        case ChestStyle.HallowedChest:
+        case ChestStyle.JungleChest:
+        case ChestStyle.CrimsonChest:
+        case ChestStyle.CorruptionChest:
+          if (isLocked) {
+            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+              return ChestKind.HardmodeDungeonChest;
+          }
+          
+          return ChestKind.Unknown;
+
         case ChestStyle.ShadowChest:
           if (!isLocked)
             return ChestKind.Unknown;

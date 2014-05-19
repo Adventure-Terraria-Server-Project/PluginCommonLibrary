@@ -52,6 +52,7 @@ namespace Terraria.Plugins.Common {
     BlueDungeonVase,
     GreenDungeonVase,
     PinkDungeonVase,
-    ObsidianVase
+    ObsidianVase,
+    Shark
   }
 }

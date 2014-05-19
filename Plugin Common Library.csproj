@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Terraria.Plugins.Common</RootNamespace>
-    <AssemblyName>Plugin Common Lib 2.7</AssemblyName>
+    <AssemblyName>Plugin Common Lib 2.9</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

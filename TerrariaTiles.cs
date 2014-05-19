@@ -776,6 +776,49 @@ namespace Terraria.Plugins.Common {
         case 27:
           isLocked = true;
           return ChestStyle.FrozenChest;
+        case 28:
+          return ChestStyle.DynastyChest;
+        case 29:
+          return ChestStyle.HoneyChest;
+        case 30:
+          return ChestStyle.SteampunkChest;
+        case 31:
+          return ChestStyle.PalmWoodChest;
+        case 32:
+          return ChestStyle.MushroomChest;
+        case 33:
+          return ChestStyle.BorealWoodChest;
+        case 34:
+          return ChestStyle.SlimeChest;
+        case 35:
+          return ChestStyle.GreenDungeonChest;
+        case 36:
+          isLocked = true;
+          return ChestStyle.GreenDungeonChest;
+        case 37:
+          return ChestStyle.PinkDungeonChest;
+        case 38:
+          isLocked = true;
+          return ChestStyle.PinkDungeonChest;
+        case 39:
+          return ChestStyle.BlueDungeonChest;
+        case 40:
+          isLocked = true;
+          return ChestStyle.BlueDungeonChest;
+        case 41:
+          return ChestStyle.BoneChest;
+        case 42:
+          return ChestStyle.CactusChest;
+        case 43:
+          return ChestStyle.FleshChest;
+        case 44:
+          return ChestStyle.ObsidianChest;
+        case 45:
+          return ChestStyle.PumpkinChest;
+        case 46:
+          return ChestStyle.SpookyChest;
+        case 47:
+          return ChestStyle.GlassChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }
@@ -855,7 +898,10 @@ namespace Terraria.Plugins.Common {
         chestStyle != ChestStyle.CorruptionChest &&
         chestStyle != ChestStyle.CrimsonChest &&
         chestStyle != ChestStyle.HallowedChest &&
-        chestStyle != ChestStyle.FrozenChest
+        chestStyle != ChestStyle.FrozenChest &&
+        chestStyle != ChestStyle.BlueDungeonChest &&
+        chestStyle != ChestStyle.GreenDungeonChest &&
+        chestStyle != ChestStyle.PinkDungeonChest
       )
         throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
 
@@ -888,13 +934,17 @@ namespace Terraria.Plugins.Common {
       ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
       switch (chestStyle) {
         case ChestStyle.GoldChest:
+        case ChestStyle.PinkDungeonChest:
+        case ChestStyle.BlueDungeonChest:
+        case ChestStyle.GreenDungeonChest:
           if (isLocked) {
             if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
               return ChestKind.DungeonChest;
-
-            return ChestKind.Unknown;
           }
+          
+          return ChestKind.Unknown;
 
+        case ChestStyle.WaterChest:
           if (chestTile.liquid < 255 || chestTile.lava())
             return ChestKind.Unknown;
           if (anyChestTileLocation.X > 250 && anyChestTileLocation.X < Main.maxTilesX - 250)
@@ -903,6 +953,19 @@ namespace Terraria.Plugins.Common {
             return ChestKind.Unknown;
 
           return ChestKind.OceanChest;
+
+        case ChestStyle.FrozenChest:
+        case ChestStyle.HallowedChest:
+        case ChestStyle.JungleChest:
+        case ChestStyle.CrimsonChest:
+        case ChestStyle.CorruptionChest:
+          if (isLocked) {
+            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+              return ChestKind.HardmodeDungeonChest;
+          }
+          
+          return ChestKind.Unknown;
+
         case ChestStyle.ShadowChest:
           if (!isLocked)
             return ChestKind.Unknown;
@@ -1296,6 +1359,32 @@ namespace Terraria.Plugins.Common {
           new DPoint(1, 1), // DynastyWood
           new DPoint(1, 1), // RedDynastyShingles
           new DPoint(1, 1), // BlueDynastyShingles
+          new DPoint(1, 1), //MinecartTrack
+          new DPoint(1, 1), //CoralstoneBlock
+          new DPoint(2,2), //BlueJellyfishBowl
+          new DPoint(2,2), //GreenJellyfishBowl
+          new DPoint(2,2), //PinkJellyfishBowl
+          new DPoint(2,2), //ShipInABottle
+          new DPoint(2,3), //SeaweedPlanter
+          new DPoint(1,1), //BorealWood
+          new DPoint(1,1), //PalmWood
+          new DPoint(1,1), //PalmTree
+          new DPoint(1,1), //BeachPiles
+          new DPoint(1,1), //TinPlating
+          new DPoint(1,1), //Waterfall
+          new DPoint(1,1), //Lavafall
+          new DPoint(1,1), //Confetti
+          new DPoint(1,1), //ConfettiBlack
+          new DPoint(1,1), //CopperCoinPile
+          new DPoint(1,1), //SilverCoinPile
+          new DPoint(1,1), //GoldCoinPile
+          new DPoint(1,1), //PlatinumCoinPile
+          new DPoint(3,3), //WeaponsRack
+          new DPoint(2,2), //FireworksBox
+          new DPoint(1,1), //LivingFire
+          new DPoint(2,3), //AlphabetStatues
+          new DPoint(1,2), //FireworkFountain
+          new DPoint(3,2), //GrasshopperCage
         };
       }
 

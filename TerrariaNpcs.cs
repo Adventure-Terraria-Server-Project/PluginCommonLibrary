@@ -42,7 +42,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public IEnumerable<int> EnumerateFriendlyNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 22, 38, 54, 107, 108, 124, 160 ,178, 207, 208, 209, 227, 228, 229});
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 22, 38, 54, 107, 108, 124, 160 ,178, 207, 208, 209, 227, 228, 229, 368, 369});
     }
 
     public IEnumerable<int> EnumerateFriendlyFemaleNPCIndexes() {
@@ -50,11 +50,11 @@ namespace Terraria.Plugins.Common {
     }
 
     public IEnumerable<int> EnumerateFriendlyMaleNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 19, 22, 38, 54, 107, 108, 160, 207, 209, 227, 228, 229});
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 19, 22, 38, 54, 107, 108, 160, 207, 209, 227, 228, 229, 368, 369});
     }
 
     public IEnumerable<int> EnumerateShopNPCIndexes() {
-      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124, 160, 178, 207, 208, 209, 227, 228, 229});
+      return this.EnumerateSpecificNPCIndexes(new List<int> { 17, 18, 19, 20, 38, 54, 107, 108, 124, 160, 178, 207, 208, 209, 227, 228, 229, 368});
     }
 
     public bool Spawn(

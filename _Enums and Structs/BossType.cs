@@ -19,5 +19,6 @@ namespace Terraria.Plugins.Common {
     Golem = 245,
     Plantera = 262,
     BrainOfCthulu = 266,
+    DukeFishron = 370
   }
 }

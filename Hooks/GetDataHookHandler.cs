@@ -395,10 +395,10 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             int editType = e.Msg.readBuffer[e.Index];
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
-            int blockType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 9);
-            int objectStyle = e.Msg.readBuffer[e.Index + 10];
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
+            int blockType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
+            int objectStyle = e.Msg.readBuffer[e.Index + 6];
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || editType > 14)
               return;
@@ -436,15 +436,16 @@ namespace Terraria.Plugins.Common.Hooks {
           case PacketTypes.ChestOpen: {
             if (this.ChestOpen == null && this.ChestRename == null)
               break;
-          
+
             int chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
-            int nameLength = e.Msg.readBuffer[e.Index + 10];
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
+            int nameLength = e.Msg.readBuffer[e.Index + 6];
+
             string newName = string.Empty;
             if ((nameLength > 0 && nameLength <= 20) || nameLength == 255) { // Name change requested?
               if (nameLength != 255)
-                newName = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 11, nameLength);
+                newName = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 7, nameLength + 1);
 
               this.OnChestRename(new ChestRenameEventArgs(player, chestIndex, newName));
             }
@@ -456,8 +457,8 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.ChestGetContents == null)
               break;
           
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
@@ -488,8 +489,8 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             int signIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
             string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - 11);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
@@ -502,8 +503,8 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.SignRead == null)
               break;
 
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
 
             e.Handled = this.OnSignRead(new TileLocationEventArgs(player, new DPoint(x, y)));
             break;
@@ -512,8 +513,8 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.HitSwitch == null)
               break;
 
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
       
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
@@ -597,10 +598,10 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.LiquidSet == null)
               break;
 
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
-            int liquidAmount = e.Msg.readBuffer[e.Index + 8];
-            LiquidKind liquidKind = (LiquidKind)e.Msg.readBuffer[e.Index + 9];
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int liquidAmount = e.Msg.readBuffer[e.Index + 4];
+            LiquidKind liquidKind = (LiquidKind)e.Msg.readBuffer[e.Index + 5];
             
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
@@ -613,9 +614,9 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             byte isOpening = e.Msg.readBuffer[e.Index];
-            int x = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
-            int y = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
-            int direction = e.Msg.readBuffer[e.Index + 9];
+            int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
+            int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
+            int direction = e.Msg.readBuffer[e.Index + 5];
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               break;
@@ -648,8 +649,8 @@ namespace Terraria.Plugins.Common.Hooks {
 
             int dummy = e.Msg.readBuffer[e.Index];
             UnlockType unlockType = (UnlockType)e.Msg.readBuffer[e.Index + 1];
-            int chestX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
-            int chestY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+            int chestX = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int chestY = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(chestX, chestY))
               break;
@@ -678,8 +679,8 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             int size = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
-            int tileX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 2);
-            int tileY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 6);
+            int tileX = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int tileY = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
 
             e.Handled = this.OnSendTileSquare(new SendTileSquareEventArgs(player, new DPoint(tileX, tileY), size));
             break;
@@ -688,8 +689,8 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.TilePaint == null)
               break;
 
-            int tileX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int tileY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            int tileX = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int tileY = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
             int color = e.Msg.readBuffer[e.Index + 8];
 
             e.Handled = this.OnTilePaint(new TilePaintEventArgs(player, new DPoint(tileX, tileY), (PaintColor)color));

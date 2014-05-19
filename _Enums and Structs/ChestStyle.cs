@@ -28,6 +28,20 @@ namespace Terraria.Plugins.Common {
     FrozenChest,
     DynastyChest,
     HoneyChest,
-    SteampunkChest
+    SteampunkChest,
+    PalmWoodChest,
+    MushroomChest,
+    BorealWoodChest,
+    SlimeChest,
+    GreenDungeonChest,
+    PinkDungeonChest,
+    BlueDungeonChest,
+    BoneChest,
+    CactusChest,
+    FleshChest,
+    ObsidianChest,
+    PumpkinChest,
+    SpookyChest,
+    GlassChest
   }
 }

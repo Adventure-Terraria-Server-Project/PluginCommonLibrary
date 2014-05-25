@@ -944,8 +944,15 @@ namespace Terraria.Plugins.Common {
         case ChestStyle.BlueDungeonChest:
         case ChestStyle.GreenDungeonChest:
           if (isLocked) {
-            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall ||
+                chestTile.wall >= (int)WallType.DungeonBlueSlabWall && chestTile.wall <= (int)WallType.DungeonGreenTiledWall)
               return ChestKind.DungeonChest;
+          }
+          if (chestStyle == ChestStyle.GoldChest && chestTile.wall == (int)WallType.SandstoneBrickWall){
+              if (anyChestTileLocation.Y < Main.worldSurface - 250 || anyChestTileLocation.Y > Main.worldSurface + 50)
+                  return ChestKind.Unknown;
+              else
+                  return ChestKind.PyramidChest;
           }
           
           return ChestKind.Unknown;
@@ -966,7 +973,8 @@ namespace Terraria.Plugins.Common {
         case ChestStyle.CrimsonChest:
         case ChestStyle.CorruptionChest:
           if (isLocked) {
-            if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+              if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall ||
+                  chestTile.wall >= (int)WallType.DungeonBlueSlabWall && chestTile.wall <= (int)WallType.DungeonGreenTiledWall)
               return ChestKind.HardmodeDungeonChest;
           }
           

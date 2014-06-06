@@ -10,6 +10,7 @@ namespace Terraria.Plugins.Common {
     HellShadowChest,
     SkyIslandChest,
     TreasureChest,
-    HardmodeDungeonChest
+    HardmodeDungeonChest,
+    PyramidChest
   }
 }

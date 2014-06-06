@@ -6,6 +6,7 @@ namespace Terraria.Plugins.Common {
     FrostLegion = -2,
     ThePirates = -3,
     PumpkinInvasion = -4,
+    FrostInvasion = -5,
     EyeOfCthulhu = 4,
     EaterOfWorlds = 13,
     Skeletron = 35,

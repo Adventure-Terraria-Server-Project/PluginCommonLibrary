@@ -633,8 +633,8 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
             
             int playerIndex = e.Msg.readBuffer[e.Index];
-            int spawnX = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 1);
-            int spawnY = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 5);
+            int spawnX = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
+            int spawnY = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
 
             if (!TerrariaUtils.Tiles.IsValidCoord(spawnX, spawnY))
               break;

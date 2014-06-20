@@ -940,9 +940,6 @@ namespace Terraria.Plugins.Common {
       ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
       switch (chestStyle) {
         case ChestStyle.GoldChest:
-        case ChestStyle.PinkDungeonChest:
-        case ChestStyle.BlueDungeonChest:
-        case ChestStyle.GreenDungeonChest:
           if (isLocked) {
             if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall ||
                 chestTile.wall >= (int)WallType.DungeonBlueSlabWall && chestTile.wall <= (int)WallType.DungeonGreenTiledWall)
@@ -988,11 +985,13 @@ namespace Terraria.Plugins.Common {
             return ChestKind.Unknown;
 
           return ChestKind.HellShadowChest;
-        case ChestStyle.WoodenChest:
-          if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
-            return ChestKind.DungeonChest;
 
-          return ChestKind.Unknown;
+        //case ChestStyle.WoodenChest:
+        //  if (chestTile.wall >= (int)WallType.DungeonBlueBrickWall && chestTile.wall <= (int)WallType.DungeonPinkBrickWall)
+        //    return ChestKind.DungeonChest;
+
+        //  return ChestKind.Unknown;
+
         case ChestStyle.SkywareChest:
           if (anyChestTileLocation.Y < Main.worldSurface)
             return ChestKind.SkyIslandChest;

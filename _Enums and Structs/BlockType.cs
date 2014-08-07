@@ -174,7 +174,7 @@ namespace Terraria.Plugins.Common {
     Tungsten = 168,
     Platinum = 169,
     TinChandelier = 170,
-    TungstenChandelier = 171,
+    ChristmasTree = 171,
     PlatinumChandelier = 172,
     PlatinumCandelabra = 173,
     PlatinumCandle = 174,
@@ -274,8 +274,8 @@ namespace Terraria.Plugins.Common {
     AmberGemsparkBlock = 268,
     Womannequin = 269,
     FireflyinaBottle = 270,
-    Lantern = 271, // Fictional Name
-    UnknownBlock8 = 272,
+    LightningBugInaBottle = 271,
+    Cog = 272,
     StoneSlab = 273,
     SandstoneSlab = 274,
     BunnyCage = 275,
@@ -285,7 +285,7 @@ namespace Terraria.Plugins.Common {
     BirdCage = 279,
     BlueJayCage = 280,
     CardinalCage = 281,
-    GoldfishBowl = 282, // Fictional Name
+    FishBowl = 282,
     HeavyWorkBench = 283,
     CopperPlating = 284,
     SnailCage = 285,

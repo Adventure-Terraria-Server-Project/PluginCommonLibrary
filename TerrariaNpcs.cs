@@ -73,19 +73,25 @@ namespace Terraria.Plugins.Common {
       if (npcType < 0)
         npc.netDefaults(npcType);
 
-      if (lifeOverride > 0) { 
-        npc.life = lifeOverride;
-        npc.lifeMax = lifeOverride;
+      if (lifeOverride > 0) {
+          if (npc.lifeMax < 128)
+              lifeOverride = 128;
+          else if (lifeOverride > 32768)
+              lifeOverride = 32768;
+          
+          npc.life = lifeOverride;
+          npc.lifeMax = lifeOverride;
       }
 
       if (noDrops) {
-        npc.value = 0;
-        npc.npcSlots = 0f;
+          npc.value = 0f;
+          npc.npcSlots = 0f;
       }
 
       if (valueOverride > -1)
-        npc.value = valueOverride;
+          npc.value = valueOverride;
 
+      npc.UpdateNPC(npcIndex);
       TSPlayer.All.SendData(PacketTypes.NpcUpdate, string.Empty, npcIndex);
       return true;
     }

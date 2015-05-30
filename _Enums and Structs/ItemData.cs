@@ -83,7 +83,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public static ItemData FromNetItem(NetItem netItem) {
-      return new ItemData((ItemPrefix)netItem.prefix, (ItemType)netItem.netID, netItem.stack);
+      return new ItemData((ItemPrefix)netItem.PrefixId, (ItemType)netItem.NetId, netItem.Stack);
     }
 
     [Pure]

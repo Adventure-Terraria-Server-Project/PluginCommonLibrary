@@ -24,14 +24,14 @@ namespace Terraria.Plugins.Common {
         switch (level) {
           case TraceLevel.Error:
             Console.ForegroundColor = PluginTrace.ConsoleErrorColor;
-            Log.Error(message);
+            TShock.Log.Error(message);
             break;
           case TraceLevel.Warning:
             Console.ForegroundColor = PluginTrace.ConsoleWarningColor;
-            Log.Warn(message);
+            TShock.Log.Warn(message);
             break;
           default:
-            Log.Info(message);
+            TShock.Log.Info(message);
             break;
         }
 

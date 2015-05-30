@@ -18,7 +18,7 @@ namespace Terraria.Plugins.Common {
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        exactName = player.UserAccountName;
+        exactName = player.User.Name;
       } else {
         exactName = tsUser.Name;
       }
@@ -34,7 +34,7 @@ namespace Terraria.Plugins.Common {
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        userId = player.UserID;
+        userId = player.User.ID;
       } else {
         userId = tsUser.ID;
       }
@@ -50,7 +50,7 @@ namespace Terraria.Plugins.Common {
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        user = TShock.Users.GetUserByID(player.UserID);
+        user = TShock.Users.GetUserByID(player.User.ID);
       } else {
         user = tsUser;
       }

@@ -59,6 +59,13 @@ namespace Terraria.Plugins.Common {
     }
 
     public bool Spawn(int npcType, DPoint location, out int npcIndex, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false) {
+      if (!Main.npcLifeBytes.ContainsKey(npcType)) {
+        TShock.Log.Write(string.Format("Error spawning NPC. The NPC type id \"{0}\" seems to be invalid.", npcType), TraceLevel.Error);
+        npcIndex = -1;
+
+        return false;
+      }
+
       // Thread static.
       if (Main.rand == null)
         Main.rand = new Random();
@@ -74,24 +81,25 @@ namespace Terraria.Plugins.Common {
         npc.netDefaults(npcType);
 
       if (lifeOverride > 0) {
-          if (npc.lifeMax < 128)
-              lifeOverride = 128;
-          else if (lifeOverride > 32768)
-              lifeOverride = 32768;
+        if (npc.lifeMax < 128)
+          lifeOverride = 128;
+        else if (lifeOverride > 32768)
+          lifeOverride = 32768;
           
-          npc.life = lifeOverride;
-          npc.lifeMax = lifeOverride;
+        npc.life = lifeOverride;
+        npc.lifeMax = lifeOverride;
       }
 
       if (noDrops) {
-          npc.value = 0f;
-          npc.npcSlots = 0f;
+        npc.value = 0f;
+        npc.npcSlots = 0f;
       }
 
       if (valueOverride > -1)
-          npc.value = valueOverride;
+        npc.value = valueOverride;
 
       npc.UpdateNPC(npcIndex);
+
       TSPlayer.All.SendData(PacketTypes.NpcUpdate, string.Empty, npcIndex);
       return true;
     }

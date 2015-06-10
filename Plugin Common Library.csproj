@@ -153,6 +153,7 @@
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />
     <Compile Include="Hooks\TilePaintEventArgs.cs" />
     <Compile Include="Hooks\UnlockEventArgs.cs" />
+    <Compile Include="Hooks\PlayerDeathEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="TerrariaProjectiles.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />

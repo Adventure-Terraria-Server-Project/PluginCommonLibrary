@@ -366,6 +366,24 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: PlayerDeath]
+    public event EventHandler<PlayerDeathEventArgs> PlayerDeath;
+
+    protected virtual bool OnPlayerDeath(PlayerDeathEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.PlayerDeath != null)
+          this.PlayerDeath(this, e);
+      }
+      catch (Exception ex) {
+        this.ReportEventHandlerException("PlayerDeath", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     public GetDataHookHandler(TerrariaPlugin plugin, bool invokeTileEditOnChestKill = false, int hookPriority = 0) {
       Contract.Requires<ArgumentNullException>(plugin != null);
@@ -694,6 +712,18 @@ namespace Terraria.Plugins.Common.Hooks {
             int color = e.Msg.readBuffer[e.Index + 8];
 
             e.Handled = this.OnTilePaint(new TilePaintEventArgs(player, new DPoint(tileX, tileY), (PaintColor)color));
+            break;
+          }
+          case PacketTypes.PlayerKillMe: {
+            if (this.PlayerDeath == null)
+              break;
+            int playerIndex = e.Msg.readBuffer[e.Index];
+            int direction = e.Msg.readBuffer[e.Index + 1];
+            int dmg = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            bool pvp = e.Msg.readBuffer[e.Index + 4] != 0;
+            string deathText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 6, e.Length - 7);
+
+            e.Handled = this.OnPlayerDeath(new PlayerDeathEventArgs(player, direction, dmg, pvp, deathText));
             break;
           }
         }

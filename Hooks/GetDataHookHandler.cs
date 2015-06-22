@@ -465,10 +465,23 @@ namespace Terraria.Plugins.Common.Hooks {
               if (nameLength != 255)
                 newName = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 7, nameLength + 1);
 
-              this.OnChestRename(new ChestRenameEventArgs(player, chestIndex, newName));
+              e.Handled = this.OnChestRename(new ChestRenameEventArgs(player, chestIndex, newName));
+              if (e.Handled) {
+                int lastOpenedChestIndex = Main.player[player.Index].chest;
+
+                // Close the chest, so that other players can view it.
+                Main.player[player.Index].chest = -1;
+
+                Chest lastOpenedChest = Main.chest[lastOpenedChestIndex];
+                string oldName = lastOpenedChest.name;
+                DPoint lastOpenedChestPos = new DPoint(lastOpenedChest.x, lastOpenedChest.y);
+                player.SendData(PacketTypes.ChestName, oldName, lastOpenedChestIndex, lastOpenedChestPos.X, lastOpenedChestPos.Y);
+              }
             }
 
-            e.Handled = this.OnChestOpen(new ChestOpenEventArgs(player, chestIndex, new DPoint(x, y)));
+            if (!e.Handled)
+              e.Handled = this.OnChestOpen(new ChestOpenEventArgs(player, chestIndex, new DPoint(x, y)));
+
             break;
           }
           case PacketTypes.ChestGetContents: {

@@ -59,13 +59,6 @@ namespace Terraria.Plugins.Common {
     }
 
     public bool Spawn(int npcType, DPoint location, out int npcIndex, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false) {
-      if (!Main.npcLifeBytes.ContainsKey(npcType)) {
-        TShock.Log.Write(string.Format("Error spawning NPC. The NPC type id \"{0}\" seems to be invalid.", npcType), TraceLevel.Error);
-        npcIndex = -1;
-
-        return false;
-      }
-
       // Thread static.
       if (Main.rand == null)
         Main.rand = new Random();
@@ -79,6 +72,14 @@ namespace Terraria.Plugins.Common {
       NPC npc = Main.npc[npcIndex];
       if (npcType < 0)
         npc.netDefaults(npcType);
+
+      if (!Main.npcLifeBytes.ContainsKey(npc.netID)) {
+        TShock.Log.Write(string.Format("Error spawning NPC. The NPC type id \"{0}\" seems to be invalid.", npcType), TraceLevel.Error);
+        npcIndex = -1;
+        npc.active = false;
+
+        return false;
+      }
 
       if (lifeOverride > 0) {
         if (npc.lifeMax < 128)

@@ -16,6 +16,7 @@ namespace Terraria.Plugins.Common {
     DestroyWireBlue,
     PlaceWireGreen,
     DestroyWireGreen,
-    SlopeTile
+    SlopeTile,
+    FrameMinecartTrack
   }
 }

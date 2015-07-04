@@ -7,6 +7,8 @@ namespace Terraria.Plugins.Common {
     ThePirates = -3,
     PumpkinInvasion = -4,
     FrostInvasion = -5,
+    SolarEclipse = -6,
+    MartianMoon = -7,
     EyeOfCthulhu = 4,
     EaterOfWorlds = 13,
     Skeletron = 35,

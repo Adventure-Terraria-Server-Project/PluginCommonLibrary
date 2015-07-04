@@ -459,7 +459,7 @@ namespace Terraria.Plugins.Common.Hooks {
             ));
             break;
           }
-          case PacketTypes.ObjectPlacement: { // 79
+          case (PacketTypes)79: { // ObjectPlacement
             if (this.ObjectPlacement == null && this.TileEdit == null)
               break;
 
@@ -645,7 +645,7 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.ItemDrop:
-          case PacketTypes.ItemDrop2: { // 90
+          case (PacketTypes)90: { // ItemDrop2
             if (this.ItemUpdate == null)
               break;
 
@@ -684,7 +684,7 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
             break;
           }
-          case PacketTypes.QuickStackNearby: { // 85
+          case (PacketTypes)85: { // QuickStackNearby
             if (this.QuickStackNearby == null)
               break;
 

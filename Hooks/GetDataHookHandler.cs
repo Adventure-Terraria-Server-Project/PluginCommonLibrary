@@ -693,6 +693,11 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             e.Handled = this.OnQuickStackNearby(new PlayerSlotEventArgs(player, slotIndex));
+            if (e.Handled) {
+              // NOTE: The client seems to require this packet in order to keep functioning properly!
+              NetMessage.SendData(5, -1, -1, "", player.Index, slotIndex, Main.player[player.Index].inventory[slotIndex].prefix);
+            }
+
             break;
           }
           case PacketTypes.PlayerSlot: {

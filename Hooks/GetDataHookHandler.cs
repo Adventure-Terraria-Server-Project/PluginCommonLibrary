@@ -459,7 +459,7 @@ namespace Terraria.Plugins.Common.Hooks {
             ));
             break;
           }
-          case (PacketTypes)79: { // ObjectPlacement
+          case PacketTypes.PlaceObject: {
             if (this.ObjectPlacement == null && this.TileEdit == null)
               break;
 
@@ -471,9 +471,9 @@ namespace Terraria.Plugins.Common.Hooks {
 
             int blockType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
             int objectStyle = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 6);
-            int alternative = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 8);
-            int random = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 10);
-            bool direction = BitConverter.ToBoolean(e.Msg.readBuffer, e.Index + 12);
+            int alternative = e.Msg.readBuffer[e.Index + 8];
+            int random = ((sbyte) e.Msg.readBuffer[e.Index + 9]);
+            bool direction = BitConverter.ToBoolean(e.Msg.readBuffer, e.Index + 10);
 
             if (this.InvokeTileOnObjectPlacement) {
               e.Handled = this.OnTileEdit(
@@ -639,13 +639,13 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             //int playerIndex = BitConverter.ToInt32(e.Msg.readBuffer, e.Index);
-            int bossType = BitConverter.ToInt32(e.Msg.readBuffer, e.Index + 4);
+            int bossType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
 
             e.Handled = this.OnBossSpawn(new BossSpawnEventArgs(player, (BossType)bossType));
             break;
           }
           case PacketTypes.ItemDrop:
-          case (PacketTypes)90: { // ItemDrop2
+          case PacketTypes.UpdateItemDrop: { // ItemDrop2
             if (this.ItemUpdate == null)
               break;
 
@@ -684,7 +684,7 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
             break;
           }
-          case (PacketTypes)85: { // QuickStackNearby
+          case PacketTypes.ForceItemIntoNearestChest: { // QuickStackNearby
             if (this.QuickStackNearby == null)
               break;
 

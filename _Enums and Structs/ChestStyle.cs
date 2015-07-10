@@ -42,6 +42,10 @@ namespace Terraria.Plugins.Common {
     ObsidianChest,
     PumpkinChest,
     SpookyChest,
-    GlassChest
+    GlassChest,
+    MartianChest,
+    MeteoriteChest,
+    GraniteChest,
+    MarbleChest
   }
 }

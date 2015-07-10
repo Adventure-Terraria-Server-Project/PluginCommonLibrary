@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Text;
 using Newtonsoft.Json.Serialization;
+using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
 using DPoint = System.Drawing.Point;
@@ -503,10 +504,11 @@ namespace Terraria.Plugins.Common.Hooks {
 
             int style = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
-            if (type == 0) { // Chest placement
+            if (type == 0 || type == 2) { // Chest placement / Dresser Placement
               e.Handled = this.OnChestPlace(new ChestPlaceEventArgs(player, new DPoint(x, y), (ChestStyle)style));
             } else { // Chest kill
-              if (TerrariaUtils.Tiles[x, y].type != (int)BlockType.Chest)
+              int tileType = TerrariaUtils.Tiles[x, y].type;
+              if (tileType != TileID.Containers || tileType != TileID.Dressers)
                 break;
 
               if (this.InvokeTileEditOnChestKill)

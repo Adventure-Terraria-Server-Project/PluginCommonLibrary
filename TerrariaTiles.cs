@@ -687,6 +687,8 @@ namespace Terraria.Plugins.Common {
           return ItemType.PinkDungeonVase;
         case StatueStyle.ObsidianVase:
           return ItemType.ObsidianVase;
+        case StatueStyle.Shark:
+          return ItemType.SharkStatue;
         default:
           throw new ArgumentException("StatueStyle");
       }
@@ -819,6 +821,14 @@ namespace Terraria.Plugins.Common {
           return ChestStyle.SpookyChest;
         case 47:
           return ChestStyle.GlassChest;
+        case 48:
+          return ChestStyle.MartianChest;
+        case 49:
+          return ChestStyle.MeteoriteChest;
+        case 50:
+          return ChestStyle.GraniteChest;
+        case 51:
+          return ChestStyle.MarbleChest;
         default:
           throw new ArgumentOutOfRangeException("objectStyle");
       }

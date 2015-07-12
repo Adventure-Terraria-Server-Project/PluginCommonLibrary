@@ -12,7 +12,7 @@ namespace Terraria.Plugins.Common {
     IronOre = 6,
     CopperOre = 7,
     GoldOre = 8,
-    SilverOre = 9,
+    SilverOre = 9, 
     DoorClosed = 10,
     DoorOpened = 11,
     CrystalHeart = 12,

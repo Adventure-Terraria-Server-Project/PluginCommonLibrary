@@ -152,6 +152,25 @@ namespace Terraria.Plugins.Common {
       return TerrariaItems.vanityTypes.Contains(itemType);
     }
 
+    private static List<ItemType> rareTypes;
+    public bool IsRareType(ItemType itemType) {
+      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
+        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+      
+      if (TerrariaItems.rareTypes == null) {
+        TerrariaItems.rareTypes = new List<ItemType>(20);
+
+        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+          Item dummyItem = new Item();
+          dummyItem.netDefaults(i);
+          if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.rare > 0)
+            TerrariaItems.rareTypes.Add((ItemType)i);
+        }
+      }
+
+      return TerrariaItems.rareTypes.Contains(itemType);
+    }
+
     private static ItemType[][] blockTypesItemTypes;
     public ItemType GetItemTypeFromBlockType(BlockType blockType, int objectStyle = 0) {
       if ((int)blockType < TerrariaUtils.BlockType_Min || (int)blockType > TerrariaUtils.BlockType_Max)
@@ -444,15 +463,12 @@ namespace Terraria.Plugins.Common {
     }
 
     public string GetItemName(ItemData itemData, bool includePrefix = false) {
-      if ((itemData.Prefix != ItemPrefix.None && includePrefix) || itemData.Type < 0) {
-        Item dummyItem = new Item();
-        dummyItem.netDefaults((int)itemData.Type);
-        dummyItem.prefix = (byte)itemData.Prefix;
+      string name = "";
+      if ((itemData.Prefix != ItemPrefix.None && includePrefix) || itemData.Type < 0)
+        name += "<" + this.GetItemPrefixName(itemData.Prefix) + "> ";
 
-        return dummyItem.AffixName();
-      }
-
-      return Main.itemName[(int)itemData.Type];
+      name += Main.itemName[(int)itemData.Type];
+      return name;
     }
 
     public string GetItemName(ItemType itemType) {
@@ -465,6 +481,10 @@ namespace Terraria.Plugins.Common {
         format = "{0} ({1})";
 
       return string.Format(format, this.GetItemName(itemData, true), itemData.StackSize);
+    }
+
+    public string GetItemPrefixName(ItemPrefix prefix) {
+      return Lang.prefix[(int)prefix];
     }
 
     public int CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData, bool sendPacket = true) {

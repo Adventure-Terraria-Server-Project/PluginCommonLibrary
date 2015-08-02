@@ -741,7 +741,7 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.DoorUse == null)
               break;
 
-            byte isOpening = e.Msg.readBuffer[e.Index];
+            byte action = e.Msg.readBuffer[e.Index];
             int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
             int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
 
@@ -754,7 +754,7 @@ namespace Terraria.Plugins.Common.Hooks {
             if (direction == 0)
               actualDirection = Direction.Left;
 
-            e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), isOpening == 0, actualDirection));
+            e.Handled = this.OnDoorUse(new DoorUseEventArgs(player, new DPoint(x, y), (DoorAction)action, actualDirection));
             break;
           }
           case PacketTypes.PlayerSpawn: {

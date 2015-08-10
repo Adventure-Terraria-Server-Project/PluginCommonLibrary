@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Text;
 using Newtonsoft.Json.Serialization;
 using Terraria.ID;
@@ -595,12 +596,13 @@ namespace Terraria.Plugins.Common.Hooks {
             int signIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
             int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
             int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
+            string newText;
+            using (MemoryStream stream = new MemoryStream(e.Msg.readBuffer, e.Index + 6, e.Length - 7))
+              newText = new BinaryReader(stream).ReadString();
 
             if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || !Main.tile[x, y].active())
               return;
-
-            string newText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 10, e.Length - 11);
-
+              
             e.Handled = this.OnSignEdit(new SignEditEventArgs(player, signIndex, new DPoint(x, y), newText));
             break;
           }

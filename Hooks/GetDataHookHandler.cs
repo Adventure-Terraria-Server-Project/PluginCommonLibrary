@@ -509,7 +509,7 @@ namespace Terraria.Plugins.Common.Hooks {
               e.Handled = this.OnChestPlace(new ChestPlaceEventArgs(player, new DPoint(x, y), (ChestStyle)style));
             } else { // Chest kill
               int tileType = TerrariaUtils.Tiles[x, y].type;
-              if (tileType != TileID.Containers || tileType != TileID.Dressers)
+              if (tileType != TileID.Containers && tileType != TileID.Dressers)
                 break;
 
               if (this.InvokeTileEditOnChestKill)

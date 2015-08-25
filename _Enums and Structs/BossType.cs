@@ -22,6 +22,8 @@ namespace Terraria.Plugins.Common {
     Golem = 245,
     Plantera = 262,
     BrainOfCthulu = 266,
-    DukeFishron = 370
+    DukeFishron = 370,
+    Cultist = 439,
+    MoonLord = 398
   }
 }

@@ -422,6 +422,24 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: Teleport]
+    public event EventHandler<TeleportEventArgs> Teleport;
+
+    protected virtual bool OnTeleport(TeleportEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        if (this.Teleport != null)
+          this.Teleport(this, e);
+      }
+      catch (Exception ex) {
+        this.ReportEventHandlerException("Teleport", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     public GetDataHookHandler(TerrariaPlugin plugin, bool invokeTileEditOnChestKill = false, int hookPriority = 0) {
       Contract.Requires<ArgumentNullException>(plugin != null);
@@ -844,6 +862,29 @@ namespace Terraria.Plugins.Common.Hooks {
             string deathText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 6, e.Length - 7);
 
             e.Handled = this.OnPlayerDeath(new PlayerDeathEventArgs(player, direction, dmg, pvp, deathText));
+            break;
+          }
+          case PacketTypes.Teleport: {
+            if (this.Teleport == null)
+              break;
+
+            BitsByte flags = e.Msg.readBuffer[e.Index];
+					  int playerIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
+            float x = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 3);
+            float y = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 7);
+					  Vector2 destLocation = new Vector2(x, y);
+
+            TeleportType tpType = TeleportType.PlayerToPos;
+					  if (flags[0])
+						  tpType = TeleportType.NpcToPos;
+					  if (flags[1]) {
+						  if (flags[0])
+                tpType = TeleportType.Unknown;
+              else
+                tpType = TeleportType.PlayerNearPlayerWormhole;
+            }
+
+            e.Handled = this.OnTeleport(new TeleportEventArgs(player, destLocation, tpType));
             break;
           }
         }

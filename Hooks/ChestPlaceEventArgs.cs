@@ -5,11 +5,13 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class ChestPlaceEventArgs: TileLocationEventArgs {
-    public ChestStyle ChestStyle { get; private set; }
+    public int StorageType { get; private set; }
+    public int StorageStyle { get; private set; }
 
 
-    public ChestPlaceEventArgs(TSPlayer player, DPoint chestLocation, ChestStyle chestStyle): base(player, chestLocation) {
-      this.ChestStyle = chestStyle;
+    public ChestPlaceEventArgs(TSPlayer player, DPoint storageLocation, int storageType, int storageStyle): base(player, storageLocation) {
+      this.StorageType = storageType;
+      this.StorageStyle = storageStyle;
     }
   }
 }

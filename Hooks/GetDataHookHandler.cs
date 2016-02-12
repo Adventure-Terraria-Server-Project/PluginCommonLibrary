@@ -524,7 +524,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int style = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
             if (type == 0 || type == 2) { // Chest placement / Dresser Placement
-              e.Handled = this.OnChestPlace(new ChestPlaceEventArgs(player, new DPoint(x, y), (ChestStyle)style));
+              e.Handled = this.OnChestPlace(new ChestPlaceEventArgs(player, new DPoint(x, y), type, style));
             } else { // Chest kill
               int tileType = TerrariaUtils.Tiles[x, y].type;
               if (tileType != TileID.Containers && tileType != TileID.Dressers)
@@ -555,20 +555,9 @@ namespace Terraria.Plugins.Common.Hooks {
             string newName = string.Empty;
             if ((nameLength > 0 && nameLength <= 20) || nameLength == 255) { // Name change requested?
               if (nameLength != 255)
-                newName = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 7, nameLength + 1);
+                newName = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 8, nameLength);
 
               e.Handled = this.OnChestRename(new ChestRenameEventArgs(player, chestIndex, newName));
-              if (e.Handled) {
-                int lastOpenedChestIndex = Main.player[player.Index].chest;
-
-                // Close the chest, so that other players can view it.
-                Main.player[player.Index].chest = -1;
-
-                Chest lastOpenedChest = Main.chest[lastOpenedChestIndex];
-                string oldName = lastOpenedChest.name;
-                DPoint lastOpenedChestPos = new DPoint(lastOpenedChest.x, lastOpenedChest.y);
-                player.SendData(PacketTypes.ChestName, oldName, lastOpenedChestIndex, lastOpenedChestPos.X, lastOpenedChestPos.Y);
-              }
             }
 
             if (!e.Handled)
@@ -715,11 +704,6 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             e.Handled = this.OnQuickStackNearby(new PlayerSlotEventArgs(player, slotIndex));
-            if (e.Handled) {
-              // NOTE: The client seems to require this packet in order to keep functioning properly!
-              NetMessage.SendData(5, -1, -1, "", player.Index, slotIndex, Main.player[player.Index].inventory[slotIndex].prefix);
-            }
-
             break;
           }
           case PacketTypes.PlayerSlot: {
@@ -869,16 +853,16 @@ namespace Terraria.Plugins.Common.Hooks {
               break;
 
             BitsByte flags = e.Msg.readBuffer[e.Index];
-					  int playerIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
+            int playerIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
             float x = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 3);
             float y = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 7);
-					  Vector2 destLocation = new Vector2(x, y);
+            Vector2 destLocation = new Vector2(x, y);
 
             TeleportType tpType = TeleportType.PlayerToPos;
-					  if (flags[0])
-						  tpType = TeleportType.NpcToPos;
-					  if (flags[1]) {
-						  if (flags[0])
+            if (flags[0])
+              tpType = TeleportType.NpcToPos;
+            if (flags[1]) {
+              if (flags[0])
                 tpType = TeleportType.Unknown;
               else
                 tpType = TeleportType.PlayerNearPlayerWormhole;

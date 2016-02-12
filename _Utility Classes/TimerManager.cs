@@ -72,13 +72,13 @@ namespace Terraria.Plugins.Common {
       try {
         return timer.Callback(timer);
       } catch (Exception ex) {
-        this.PluginTrace.WriteLineError("A Timer's callback has thrown an exception. Excpetion details: " + ex);
+        this.PluginTrace.WriteLineError("A timer's callback has thrown an exception. Excpetion details: " + ex);
         return false;
       }
     }
 
     public override string ToString() {
-      return string.Format("{0} Timers running.", this.RunningTimers.Count);
+      return string.Format("{0} timers running.", this.RunningTimers.Count);
     }
   }
 }

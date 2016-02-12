@@ -53,9 +53,6 @@ namespace Terraria.Plugins.Common {
     }
 
     public string GetBlockTypeName(BlockType blockType) {
-      if (blockType < 0 || (int)blockType >= TerrariaUtils.BlockType_Max)
-        throw new ArgumentException(string.Format("The block type \"{0}\" is invalid.", blockType), "blockType");
-
       return blockType.ToString();
     }
 
@@ -1535,7 +1532,7 @@ namespace Terraria.Plugins.Common {
       }
 
       if (objectType < 0 || (int)objectType >= TerrariaTiles.objectSizes.Length)
-        throw new ArgumentException(string.Format("The object type \"{0}\" is invalid.", objectType), "objectType");
+        return new DPoint(1, 1);
 
       return TerrariaTiles.objectSizes[(int)objectType];
     }

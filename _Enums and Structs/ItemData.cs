@@ -28,56 +28,30 @@ namespace Terraria.Plugins.Common {
 
       public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
         ItemData itemData = (ItemData)value;
-        writer.WriteValue(string.Format("{0}, {1}, {2}", (int)itemData.Prefix, (int)itemData.Type, itemData.StackSize));
+        writer.WriteValue($"{(int)itemData.Prefix}, {(int)itemData.Type}, {itemData.StackSize}");
       }
     }
     #endregion
 
     public static readonly ItemData None = default(ItemData);
 
-    #region [Property: Prefix]
-    private ItemPrefix prefix;
-
-    public ItemPrefix Prefix {
-      get { return this.prefix; }
-      set { this.prefix = value; }
-    }
-    #endregion
-
-    #region [Property: Type]
-    private ItemType type;
-
-    public ItemType Type {
-      get { return this.type; }
-      set { this.type = value; }
-    }
-    #endregion
-
-    #region [Property: StackSize]
-    private int stackSize;
-
-    public int StackSize {
-      get { return this.stackSize; }
-      set { this.stackSize = value; }
-    }
-    #endregion
+    public ItemPrefix Prefix { get; set; }
+    public ItemType Type  { get; set; }
+    public int StackSize { get; set; }
 
 
-    #region [Methods: Constructors]
-    public ItemData(ItemPrefix prefix, ItemType type, int stackSize) {
-      this.prefix = prefix;
-      this.type = type;
-      this.stackSize = stackSize;
+    public ItemData(ItemPrefix prefix, ItemType type, int stackSize = 1) {
+      this.Prefix = prefix;
+      this.Type = type;
+      this.StackSize = stackSize;
     }
 
     public ItemData(ItemType type, int stackSize = 1) {
-      this.prefix = ItemPrefix.None;
-      this.type = type;
-      this.stackSize = stackSize;
+      this.Prefix = ItemPrefix.None;
+      this.Type = type;
+      this.StackSize = stackSize;
     }
-    #endregion
 
-    #region [Method: Static FromItem, FromNetItem, ToItem]
     public static ItemData FromItem(Item item) {
       return new ItemData((ItemPrefix)item.prefix, (ItemType)item.netID, item.stack);
     }
@@ -95,18 +69,16 @@ namespace Terraria.Plugins.Common {
 
       return item;
     }
-    #endregion
 
-    #region [Methods: GetHashCode, Equals, ==, !=]
     public override int GetHashCode() {
       return (int)this.Prefix ^ (int)this.Type ^ this.StackSize;
     }
 
     public bool Equals(ItemData other) {
       return (
-        this.prefix == other.prefix &&
-        this.type == other.type &&
-        this.stackSize == other.stackSize
+        this.Prefix == other.Prefix &&
+        this.Type == other.Type &&
+        this.StackSize == other.StackSize
       );
     }
 
@@ -124,7 +96,6 @@ namespace Terraria.Plugins.Common {
     public static bool operator !=(ItemData a, ItemData b) {
       return !a.Equals(b);
     }
-    #endregion
 
     #region [Method: ToString]
     public override string ToString() {

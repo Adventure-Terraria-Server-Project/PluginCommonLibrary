@@ -1,84 +1,116 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Threading;
 
 namespace Terraria.Plugins.Common {
-  public class TimerManager {
-    private const int FrameUpdateFreq = 10;
+	public class TimerManager {
+		private const int FrameUpdateFreq = 10;
 
-    public PluginTrace PluginTrace { get; private set; }
-    protected List<TimerBase> RunningTimers { get; private set; }
+		public PluginTrace PluginTrace { get; }
+		private List<TimerBase> runningTimers; // immutable
+		private readonly object alterTimersLock;
 
 
-    public TimerManager(PluginTrace pluginTrace) {
-      this.PluginTrace = pluginTrace;
-      this.RunningTimers = new List<TimerBase>();
-    }
+		public TimerManager(PluginTrace pluginTrace) {
+			this.PluginTrace = pluginTrace;
 
-    public void StartTimer(TimerBase timer) {
-      if (!this.IsTimerRunning(timer)) {
-        this.RunningTimers.Add(timer);
-        timer.Reset();
-      }
-    }
+			this.runningTimers = new List<TimerBase>(10);
+			this.alterTimersLock = new object();
+		}
 
-    public void StartOrResetTimer(TimerBase timer) {
-      if (!this.IsTimerRunning(timer))
-        this.RunningTimers.Add(timer);
+		public void StartTimer(TimerBase timer) {
+			if (!this.IsTimerRunning(timer)) {
+				timer.Reset();
+				this.AddTimer(timer);
+			}
+		}
 
-      timer.Reset();
-    }
+		public void StartOrResetTimer(TimerBase timer) {
+			if (this.IsTimerRunning(timer))
+				timer.Reset();
+			else
+				this.AddTimer(timer);
+		}
 
-    public void ContinueTimer(TimerBase timer) {
-      if (!this.IsTimerRunning(timer))
-        this.RunningTimers.Add(timer);
-    }
+		public void ContinueTimer(TimerBase timer) {
+			if (!this.IsTimerRunning(timer))
+				this.AddTimer(timer);
+		}
 
-    public void RemoveTimer(TimerBase timer, bool andInvokeCallback = false) {
-      try {
-        if (andInvokeCallback)
-          this.InvokeTimerCallback(timer);
-      } finally {
-        this.RunningTimers.Remove(timer);
-      }
-    }
+		private void AddTimer(TimerBase timer) {
+			lock (this.alterTimersLock) {
+				List<TimerBase> newTimers = new List<TimerBase>(this.runningTimers.Count);
+				newTimers.AddRange(this.runningTimers);
 
-    public bool IsTimerRunning(TimerBase timer) {
-      return this.RunningTimers.Contains(timer);
-    }
+				newTimers.Add(timer);
+				Interlocked.Exchange(ref this.runningTimers, newTimers);
+			}
+		}
 
-    private int frameCounter;
-    public void HandleGameUpdate() {
-      if (this.frameCounter >= TimerManager.FrameUpdateFreq) {
-        this.frameCounter = 0;
+		public void RemoveTimer(TimerBase timer, bool andInvokeCallback = false) {
+			lock (this.alterTimersLock) {
+				List<TimerBase> newTimers = new List<TimerBase>(this.runningTimers.Count);
+				newTimers.AddRange(this.runningTimers);
 
-        for (int i = 0; i < this.RunningTimers.Count; i++) {
-          TimerBase abstractTimer = this.RunningTimers[i];
-          abstractTimer.Update(TimerManager.FrameUpdateFreq);
+				newTimers.Remove(timer);
+				Interlocked.Exchange(ref this.runningTimers, newTimers);
+			}
 
-          if (abstractTimer.IsExpired()) {
-            if (this.InvokeTimerCallback(abstractTimer))
-              abstractTimer.Reset();
-            else
-              this.RunningTimers.RemoveAt(i--);
-          }
-        }
-      }
+			if (andInvokeCallback)
+				this.InvokeTimerCallback(timer);
+		}
 
-      this.frameCounter++;
-    }
+		public bool IsTimerRunning(TimerBase timer) {
+			return this.runningTimers.Contains(timer);
+		}
 
-    private bool InvokeTimerCallback(TimerBase timer) {
-      try {
-        return timer.Callback(timer);
-      } catch (Exception ex) {
-        this.PluginTrace.WriteLineError("A timer's callback has thrown an exception. Excpetion details: " + ex);
-        return false;
-      }
-    }
+		private int frameCounter;
+		public void HandleGameUpdate() {
+			if (this.frameCounter >= TimerManager.FrameUpdateFreq) {
+				this.frameCounter = 0;
 
-    public override string ToString() {
-      return string.Format("{0} timers running.", this.RunningTimers.Count);
-    }
-  }
+				List<TimerBase> timersToRemove = null;
+				foreach (TimerBase timer in this.runningTimers) {
+					timer.Update(TimerManager.FrameUpdateFreq);
+
+					if (timer.IsExpired()) {
+						if (this.InvokeTimerCallback(timer)) {
+							timer.Reset();
+						} else {
+							if (timersToRemove == null)
+								timersToRemove = new List<TimerBase>();
+
+							timersToRemove.Add(timer);
+						}
+					}
+				}
+
+				if (timersToRemove != null) {
+					lock (this.alterTimersLock) {
+						List<TimerBase> newTimers = new List<TimerBase>(this.runningTimers.Count);
+						newTimers.AddRange(this.runningTimers.Where((t) => !timersToRemove.Contains(t)));
+
+						Interlocked.Exchange(ref this.runningTimers, newTimers);
+					}
+				}
+			}
+
+			this.frameCounter++;
+		}
+
+		private bool InvokeTimerCallback(TimerBase timer) {
+			try {
+				return timer.Callback(timer);
+			} catch (Exception ex) {
+				this.PluginTrace.WriteLineError("A timer's callback has thrown an exception. Excpetion details: " + ex);
+				return false;
+			}
+		}
+
+		public override string ToString() {
+			return $"{this.runningTimers.Count} timers running.";
+		}
+	}
 }

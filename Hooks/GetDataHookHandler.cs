@@ -472,7 +472,7 @@ namespace Terraria.Plugins.Common.Hooks {
               return;
 
             int blockType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
-            int objectStyle = e.Msg.readBuffer[e.Index + 6];
+            int objectStyle = e.Msg.readBuffer[e.Index + 7];
 
             e.Handled = this.OnTileEdit(
               new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, objectStyle

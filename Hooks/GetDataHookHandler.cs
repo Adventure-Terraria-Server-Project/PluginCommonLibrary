@@ -440,6 +440,22 @@ namespace Terraria.Plugins.Common.Hooks {
     }
     #endregion
 
+    #region [Event: NpcTookDamage]
+    public event EventHandler<NpcTookDamageEventArgs> NpcTookDamage;
+
+    protected virtual bool OnNpcTookDamage(NpcTookDamageEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        this.NpcTookDamage?.Invoke(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("NpcTookDamage", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
 
     public GetDataHookHandler(TerrariaPlugin plugin, bool invokeTileEditOnChestKill = false, int hookPriority = 0) {
       Contract.Requires<ArgumentNullException>(plugin != null);
@@ -695,7 +711,7 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnItemOwner(new ItemOwnerEventArgs(player, itemIndex, newOwner));
             break;
           }
-          case PacketTypes.ForceItemIntoNearestChest: { // QuickStackNearby
+          case PacketTypes.ForceItemIntoNearestChest: {
             if (this.QuickStackNearby == null)
               break;
 
@@ -871,6 +887,19 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnTeleport(new TeleportEventArgs(player, destLocation, tpType));
             break;
           }
+          case PacketTypes.NpcStrike: {
+            if (this.NpcTookDamage == null)
+              break;
+
+            int npcIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int damage = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            float knockback = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 4);
+            int hitDirection = e.Msg.readBuffer[e.Index + 8] - 1; // 1 left, -1 right
+            bool isCritical = (e.Msg.readBuffer[e.Index + 9] == 1);
+
+            e.Handled = this.OnNpcTookDamage(new NpcTookDamageEventArgs(player, npcIndex, damage, knockback, hitDirection, isCritical));
+            break;
+          }
         }
       } catch (Exception ex) {
         ServerApi.LogWriter.PluginWriteLine(
@@ -888,9 +917,7 @@ namespace Terraria.Plugins.Common.Hooks {
     #region [IDisposable Implementation]
     private bool isDisposed;
 
-    public bool IsDisposed {
-      get { return this.isDisposed; } 
-    }
+    public bool IsDisposed => this.isDisposed;
 
     protected virtual void Dispose(bool isDisposing) {
       if (this.isDisposed)

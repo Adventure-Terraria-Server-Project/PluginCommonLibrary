@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -584,113 +585,92 @@ namespace Terraria.Plugins.Common {
       return this.GetStatueStyle(tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2));
     }
 
+    private static readonly Lazy<Dictionary<StatueStyle,ItemType>> statueStyleItemTypeLookup = new Lazy<Dictionary<StatueStyle, ItemType>>(() => {
+      return new Dictionary<StatueStyle, ItemType>{
+        [StatueStyle.Armor] = ItemType.Statue,
+        [StatueStyle.Angel] = ItemType.AngelStatue,
+        [StatueStyle.Star] = ItemType.StarStatue,
+        [StatueStyle.Sword] = ItemType.SwordStatue,
+        [StatueStyle.Slime] = ItemType.SlimeStatue,
+        [StatueStyle.Goblin] = ItemType.GoblinStatue,
+        [StatueStyle.Shield] = ItemType.ShieldStatue,
+        [StatueStyle.Bat] = ItemType.BatStatue,
+        [StatueStyle.Fish] = ItemType.FishStatue,
+        [StatueStyle.Bunny] = ItemType.BunnyStatue,
+        [StatueStyle.Skeleton] = ItemType.SkeletonStatue,
+        [StatueStyle.Reaper] = ItemType.ReaperStatue,
+        [StatueStyle.Woman] = ItemType.WomanStatue,
+        [StatueStyle.Imp] = ItemType.ImpStatue,
+        [StatueStyle.Gargoyle] = ItemType.GargoyleStatue,
+        [StatueStyle.Gloom] = ItemType.GloomStatue,
+        [StatueStyle.Hornet] = ItemType.HornetStatue,
+        [StatueStyle.Bomb] = ItemType.BombStatue,
+        [StatueStyle.Crab] = ItemType.CrabStatue,
+        [StatueStyle.Hammer] = ItemType.HammerStatue,
+        [StatueStyle.Potion] = ItemType.PotionStatue,
+        [StatueStyle.Spear] = ItemType.SpearStatue,
+        [StatueStyle.Cross] = ItemType.CrossStatue,
+        [StatueStyle.Jellyfish] = ItemType.JellyfishStatue,
+        [StatueStyle.Bow] = ItemType.BowStatue,
+        [StatueStyle.Boomerang] = ItemType.BoomerangStatue,
+        [StatueStyle.Boot] = ItemType.BootStatue,
+        [StatueStyle.Chest] = ItemType.ChestStatue,
+        [StatueStyle.Bird] = ItemType.BirdStatue,
+        [StatueStyle.Axe] = ItemType.AxeStatue,
+        [StatueStyle.Corrupt] = ItemType.CorruptStatue,
+        [StatueStyle.Tree] = ItemType.TreeStatue,
+        [StatueStyle.Anvil] = ItemType.AnvilStatue,
+        [StatueStyle.Pickaxe] = ItemType.PickaxeStatue,
+        [StatueStyle.Mushroom] = ItemType.MushroomStatue,
+        [StatueStyle.Eyeball] = ItemType.EyeballStatue,
+        [StatueStyle.Pillar] = ItemType.PillarStatue,
+        [StatueStyle.Heart] = ItemType.HeartStatue,
+        [StatueStyle.Pot] = ItemType.PotStatue,
+        [StatueStyle.Sunflower] = ItemType.SunflowerStatue,
+        [StatueStyle.King] = ItemType.KingStatue,
+        [StatueStyle.Queen] = ItemType.QueenStatue,
+        [StatueStyle.Piranha] = ItemType.PiranhaStatue,
+        [StatueStyle.Lihzahrd] = ItemType.LihzahrdStatue,
+        [StatueStyle.LihzahrdGuardian] = ItemType.LihzahrdGuardianStatue,
+        [StatueStyle.LihzahrdWatcher] = ItemType.LihzahrdWatcherStatue,
+        [StatueStyle.BlueDungeonVase] = ItemType.BlueDungeonVase,
+        [StatueStyle.GreenDungeonVase] = ItemType.GreenDungeonVase,
+        [StatueStyle.PinkDungeonVase] = ItemType.PinkDungeonVase,
+        [StatueStyle.ObsidianVase] = ItemType.ObsidianVase,
+        [StatueStyle.Shark] = ItemType.SharkStatue,
+        // 1.3.1
+        [StatueStyle.Squirrel] = ItemType.SquirrelStatue,
+        [StatueStyle.Butterfly] = ItemType.ButterflyStatue,
+        [StatueStyle.Worm] = ItemType.WormStatue,
+        [StatueStyle.Firefly] = ItemType.FireflyStatue,
+        [StatueStyle.Scorpion] = ItemType.ScorpionStatue,
+        [StatueStyle.Snail] = ItemType.SnailStatue,
+        [StatueStyle.Grasshopper] = ItemType.GrasshopperStatue,
+        [StatueStyle.Mouse] = ItemType.MouseStatue,
+        [StatueStyle.Duck] = ItemType.DuckStatue,
+        [StatueStyle.Penguin] = ItemType.PenguinStatue,
+        [StatueStyle.Frog] = ItemType.FrogStatue,
+        [StatueStyle.Buggy] = ItemType.BuggyStatue,
+        [StatueStyle.Unicorn] = ItemType.UnicornStatue,
+        [StatueStyle.Drippler] = ItemType.DripplerStatue,
+        [StatueStyle.Wraith] = ItemType.WraithStatue,
+        [StatueStyle.BoneSkeleton] = ItemType.BoneSkeletonStatue,
+        [StatueStyle.UndeadViking] = ItemType.UndeadVikingStatue,
+        [StatueStyle.Medusa] = ItemType.MedusaStatue,
+        [StatueStyle.Harpy] = ItemType.HarpyStatue,
+        [StatueStyle.Pigron] = ItemType.PigronStatue,
+        [StatueStyle.Hoplite] = ItemType.HopliteStatue,
+        [StatueStyle.GraniteGolem] = ItemType.GraniteGolemStatue,
+        [StatueStyle.ZombieArm] = ItemType.ZombieArmStatue,
+        [StatueStyle.BloodZombie] = ItemType.BloodZombieStatue,
+      };
+    });
     public ItemType GetItemTypeFromStatueStyle(StatueStyle statueStyle) {
-      switch (statueStyle) {
-        case StatueStyle.Armor:
-          return ItemType.Statue;
-        case StatueStyle.Angel:
-          return ItemType.AngelStatue;
-        case StatueStyle.Star:
-          return ItemType.StarStatue;
-        case StatueStyle.Sword:
-          return ItemType.SwordStatue;
-        case StatueStyle.Slime:
-          return ItemType.SlimeStatue;
-        case StatueStyle.Goblin:
-          return ItemType.GoblinStatue;
-        case StatueStyle.Shield:
-          return ItemType.ShieldStatue;
-        case StatueStyle.Bat:
-          return ItemType.BatStatue;
-        case StatueStyle.Fish:
-          return ItemType.FishStatue;
-        case StatueStyle.Bunny:
-          return ItemType.BunnyStatue;
-        case StatueStyle.Skeleton:
-          return ItemType.SkeletonStatue;
-        case StatueStyle.Reaper:
-          return ItemType.ReaperStatue;
-        case StatueStyle.Woman:
-          return ItemType.WomanStatue;
-        case StatueStyle.Imp:
-          return ItemType.ImpStatue;
-        case StatueStyle.Gargoyle:
-          return ItemType.GargoyleStatue;
-        case StatueStyle.Gloom:
-          return ItemType.GloomStatue;
-        case StatueStyle.Hornet:
-          return ItemType.HornetStatue;
-        case StatueStyle.Bomb:
-          return ItemType.BombStatue;
-        case StatueStyle.Crab:
-          return ItemType.CrabStatue;
-        case StatueStyle.Hammer:
-          return ItemType.HammerStatue;
-        case StatueStyle.Potion:
-          return ItemType.PotionStatue;
-        case StatueStyle.Spear:
-          return ItemType.SpearStatue;
-        case StatueStyle.Cross:
-          return ItemType.CrossStatue;
-        case StatueStyle.Jellyfish:
-          return ItemType.JellyfishStatue;
-        case StatueStyle.Bow:
-          return ItemType.BowStatue;
-        case StatueStyle.Boomerang:
-          return ItemType.BoomerangStatue;
-        case StatueStyle.Boot:
-          return ItemType.BootStatue;
-        case StatueStyle.Chest:
-          return ItemType.ChestStatue;
-        case StatueStyle.Bird:
-          return ItemType.BirdStatue;
-        case StatueStyle.Axe:
-          return ItemType.AxeStatue;
-        case StatueStyle.Corrupt:
-          return ItemType.CorruptStatue;
-        case StatueStyle.Tree:
-          return ItemType.TreeStatue;
-        case StatueStyle.Anvil:
-          return ItemType.AnvilStatue;
-        case StatueStyle.Pickaxe:
-          return ItemType.PickaxeStatue;
-        case StatueStyle.Mushroom:
-          return ItemType.MushroomStatue;
-        case StatueStyle.Eyeball:
-          return ItemType.EyeballStatue;
-        case StatueStyle.Pillar:
-          return ItemType.PillarStatue;
-        case StatueStyle.Heart:
-          return ItemType.HeartStatue;
-        case StatueStyle.Pot:
-          return ItemType.PotStatue;
-        case StatueStyle.Sunflower:
-          return ItemType.SunflowerStatue;
-        case StatueStyle.King:
-          return ItemType.KingStatue;
-        case StatueStyle.Queen:
-          return ItemType.QueenStatue;
-        case StatueStyle.Piranha:
-          return ItemType.PiranhaStatue;
-        case StatueStyle.Lihzahrd:
-          return ItemType.LihzahrdStatue;
-        case StatueStyle.LihzahrdGuardian:
-          return ItemType.LihzahrdGuardianStatue;
-        case StatueStyle.LihzahrdWatcher:
-          return ItemType.LihzahrdWatcherStatue;
-        case StatueStyle.BlueDungeonVase:
-          return ItemType.BlueDungeonVase;
-        case StatueStyle.GreenDungeonVase:
-          return ItemType.GreenDungeonVase;
-        case StatueStyle.PinkDungeonVase:
-          return ItemType.PinkDungeonVase;
-        case StatueStyle.ObsidianVase:
-          return ItemType.ObsidianVase;
-        case StatueStyle.Shark:
-          return ItemType.SharkStatue;
-        default:
-          throw new ArgumentException("StatueStyle");
-      }
+      ItemType itemType;
+      if (!statueStyleItemTypeLookup.Value.TryGetValue(statueStyle, out itemType))
+        throw new ArgumentException("StatueStyle");
+
+      return itemType;
     }
 
     public PressurePlateKind GetPressurePlateKind(int objectStyle) {
@@ -710,127 +690,71 @@ namespace Terraria.Plugins.Common {
       }
     }
 
+    private static readonly Lazy<Tuple<ChestStyle, bool>[]> objectIdChestStyleLockedLookup = new Lazy<Tuple<ChestStyle, bool>[]>(() => {
+      return new[] {
+        new Tuple<ChestStyle, bool>(ChestStyle.WoodenChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.GoldChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.GoldChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.ShadowChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.ShadowChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.Barrel, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.TrashCan, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.EbonwoodChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.RichMahoganyChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.PearlwoodChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.IvyChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.IceChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.LivingWoodChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.SkywareChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.ShadewoodChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.WebCoveredChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.LihzahrdChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.WaterChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.JungleChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.CorruptionChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.CrimsonChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.HallowedChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.FrozenChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.JungleChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.CorruptionChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.CrimsonChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.HallowedChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.FrozenChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.CrimsonChest, true), 
+        new Tuple<ChestStyle, bool>(ChestStyle.FrozenChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.DynastyChest, false), 
+        new Tuple<ChestStyle, bool>(ChestStyle.HoneyChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.SteampunkChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.PalmWoodChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.MushroomChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.BorealWoodChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.SlimeChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GreenDungeonChest, true),
+        new Tuple<ChestStyle, bool>(ChestStyle.GreenDungeonChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.PinkDungeonChest, true),
+        new Tuple<ChestStyle, bool>(ChestStyle.PinkDungeonChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.BlueDungeonChest, true),
+        new Tuple<ChestStyle, bool>(ChestStyle.BlueDungeonChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.BoneChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.CactusChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.FleshChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.ObsidianChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.PumpkinChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.SpookyChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GlassChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.MartianChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.MeteoriteChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GraniteChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.MarbleChest, false),
+      };
+    });
     public ChestStyle GetChestStyle(int objectStyle, out bool isLocked) {
-      isLocked = false;
+      if (objectStyle < 0 || objectStyle >= objectIdChestStyleLockedLookup.Value.Length)
+        throw new ArgumentOutOfRangeException("objectStyle");
 
-      switch (objectStyle) {
-        case 0:
-          return ChestStyle.WoodenChest;
-        case 1:
-          return ChestStyle.GoldChest;
-        case 2:
-          isLocked = true;
-          return ChestStyle.GoldChest;
-        case 3:
-          return ChestStyle.ShadowChest;
-        case 4:
-          isLocked = true;
-          return ChestStyle.ShadowChest;
-        case 5:
-          return ChestStyle.Barrel;
-        case 6:
-          return ChestStyle.TrashCan;
-        case 7:
-          return ChestStyle.EbonwoodChest;
-        case 8:
-          return ChestStyle.RichMahoganyChest;
-        case 9:
-          return ChestStyle.PearlwoodChest;
-        case 10:
-          return ChestStyle.IvyChest;
-        case 11:
-          return ChestStyle.IceChest;
-        case 12:
-          return ChestStyle.LivingWoodChest;
-        case 13:
-          return ChestStyle.SkywareChest;
-        case 14:
-          return ChestStyle.ShadewoodChest;
-        case 15:
-          return ChestStyle.WebCoveredChest;
-        case 16:
-          return ChestStyle.LihzahrdChest;
-        case 17:
-          return ChestStyle.WaterChest;
-        case 18:
-          return ChestStyle.JungleChest;
-        case 19:
-          return ChestStyle.CorruptionChest;
-        case 20:
-          return ChestStyle.CrimsonChest;
-        case 21:
-          return ChestStyle.HallowedChest;
-        case 22:
-          return ChestStyle.FrozenChest;
-        case 23:
-          isLocked = true;
-          return ChestStyle.JungleChest;
-        case 24:
-          isLocked = true;
-          return ChestStyle.CorruptionChest;
-        case 25:
-          isLocked = true;
-          return ChestStyle.CrimsonChest;
-        case 26:
-          isLocked = true;
-          return ChestStyle.HallowedChest;
-        case 27:
-          isLocked = true;
-          return ChestStyle.FrozenChest;
-        case 28:
-          return ChestStyle.DynastyChest;
-        case 29:
-          return ChestStyle.HoneyChest;
-        case 30:
-          return ChestStyle.SteampunkChest;
-        case 31:
-          return ChestStyle.PalmWoodChest;
-        case 32:
-          return ChestStyle.MushroomChest;
-        case 33:
-          return ChestStyle.BorealWoodChest;
-        case 34:
-          return ChestStyle.SlimeChest;
-        case 35:
-          return ChestStyle.GreenDungeonChest;
-        case 36:
-          isLocked = true;
-          return ChestStyle.GreenDungeonChest;
-        case 37:
-          return ChestStyle.PinkDungeonChest;
-        case 38:
-          isLocked = true;
-          return ChestStyle.PinkDungeonChest;
-        case 39:
-          return ChestStyle.BlueDungeonChest;
-        case 40:
-          isLocked = true;
-          return ChestStyle.BlueDungeonChest;
-        case 41:
-          return ChestStyle.BoneChest;
-        case 42:
-          return ChestStyle.CactusChest;
-        case 43:
-          return ChestStyle.FleshChest;
-        case 44:
-          return ChestStyle.ObsidianChest;
-        case 45:
-          return ChestStyle.PumpkinChest;
-        case 46:
-          return ChestStyle.SpookyChest;
-        case 47:
-          return ChestStyle.GlassChest;
-        case 48:
-          return ChestStyle.MartianChest;
-        case 49:
-          return ChestStyle.MeteoriteChest;
-        case 50:
-          return ChestStyle.GraniteChest;
-        case 51:
-          return ChestStyle.MarbleChest;
-        default:
-          throw new ArgumentOutOfRangeException("objectStyle");
-      }
+      Tuple<ChestStyle, bool> lookupItem = objectIdChestStyleLockedLookup.Value[objectStyle];
+      isLocked = lookupItem.Item2;
+      return lookupItem.Item1;
     }
 
     public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
@@ -843,93 +767,57 @@ namespace Terraria.Plugins.Common {
       return isLocked;
     }
 
-    public ItemType GetItemTypeFromChestType(ChestStyle chestStyle) {
-      switch (chestStyle) {
-        case ChestStyle.WoodenChest:
-          return ItemType.Chest;
-        case ChestStyle.GoldChest:
-          return ItemType.GoldChest;
-        case ChestStyle.ShadowChest:
-          return ItemType.ShadowChest;
-        case ChestStyle.Barrel:
-          return ItemType.Barrel;
-        case ChestStyle.EbonwoodChest:
-          return ItemType.EbonwoodChest;
-        case ChestStyle.RichMahoganyChest:
-          return ItemType.RichMahoganyChest;
-        case ChestStyle.PearlwoodChest:
-          return ItemType.PearlwoodChest;
-        case ChestStyle.IvyChest:
-          return ItemType.IvyChest;
-        case ChestStyle.IceChest:
-          return ItemType.IceChest;
-        case ChestStyle.LivingWoodChest:
-          return ItemType.LivingWoodChest;
-        case ChestStyle.SkywareChest:
-          return ItemType.SkywareChest;
-        case ChestStyle.ShadewoodChest:
-          return ItemType.ShadewoodChest;
-        case ChestStyle.WebCoveredChest:
-          return ItemType.WebCoveredChest;
-        case ChestStyle.LihzahrdChest:
-          return ItemType.LihzahrdChest;
-        case ChestStyle.WaterChest:
-          return ItemType.WaterChest;
-        case ChestStyle.JungleChest:
-          return ItemType.JungleChest;
-        case ChestStyle.CorruptionChest:
-          return ItemType.CorruptionChest;
-        case ChestStyle.CrimsonChest:
-          return ItemType.CrimsonChest;
-        case ChestStyle.HallowedChest:
-          return ItemType.HallowedChest;
-        case ChestStyle.FrozenChest:
-          return ItemType.FrozenChest;
-        case ChestStyle.DynastyChest:
-          return ItemType.DynastyChest;
-        case ChestStyle.HoneyChest:
-          return ItemType.HoneyChest;
-        case ChestStyle.SteampunkChest:
-          return ItemType.SteampunkChest;
-        case ChestStyle.PalmWoodChest:
-          return ItemType.PalmWoodChest;
-        case ChestStyle.MushroomChest:
-          return ItemType.MushroomChest;
-        case ChestStyle.BorealWoodChest:
-          return ItemType.BorealWoodChest;
-        case ChestStyle.SlimeChest:
-          return ItemType.SlimeChest;
-        case ChestStyle.GreenDungeonChest:
-          return ItemType.GreenDungeonChest;
-        case ChestStyle.PinkDungeonChest:
-          return ItemType.PinkDungeonChest;
-        case ChestStyle.BlueDungeonChest:
-          return ItemType.BlueDungeonChest;
-        case ChestStyle.BoneChest:
-          return ItemType.BoneChest;
-        case ChestStyle.CactusChest:
-          return ItemType.CactusChest;
-        case ChestStyle.FleshChest:
-          return ItemType.FleshChest;
-        case ChestStyle.ObsidianChest:
-          return ItemType.ObsidianChest;
-        case ChestStyle.PumpkinChest:
-          return ItemType.PumpkinChest;
-        case ChestStyle.SpookyChest:
-          return ItemType.SpookyChest;
-        case ChestStyle.GlassChest:
-          return ItemType.GlassChest;
-        case ChestStyle.MartianChest:
-          return ItemType.MartianChest;
-        case ChestStyle.MeteoriteChest:
-          return ItemType.MeteoriteChest;
-        case ChestStyle.GraniteChest:
-          return ItemType.GraniteChest;
-        case ChestStyle.MarbleChest:
-          return ItemType.MarbleChest;
-        default:
-          throw new ArgumentException("ChestStyle");
-      }
+    private static readonly Lazy<Dictionary<ChestStyle,ItemType>> chestStyleItemTypeLookup = new Lazy<Dictionary<ChestStyle, ItemType>>(() => {
+      return new Dictionary<ChestStyle, ItemType>{
+        [ChestStyle.WoodenChest] = ItemType.Chest,
+        [ChestStyle.GoldChest] = ItemType.GoldChest,
+        [ChestStyle.ShadowChest] = ItemType.ShadowChest,
+        [ChestStyle.Barrel] = ItemType.Barrel,
+        [ChestStyle.EbonwoodChest] = ItemType.EbonwoodChest,
+        [ChestStyle.RichMahoganyChest] = ItemType.RichMahoganyChest,
+        [ChestStyle.PearlwoodChest] = ItemType.PearlwoodChest,
+        [ChestStyle.IvyChest] = ItemType.IvyChest,
+        [ChestStyle.IceChest] = ItemType.IceChest,
+        [ChestStyle.LivingWoodChest] = ItemType.LivingWoodChest,
+        [ChestStyle.SkywareChest] = ItemType.SkywareChest,
+        [ChestStyle.ShadewoodChest] = ItemType.ShadewoodChest,
+        [ChestStyle.WebCoveredChest] = ItemType.WebCoveredChest,
+        [ChestStyle.LihzahrdChest] = ItemType.LihzahrdChest,
+        [ChestStyle.WaterChest] = ItemType.WaterChest,
+        [ChestStyle.JungleChest] = ItemType.JungleChest,
+        [ChestStyle.CorruptionChest] = ItemType.CorruptionChest,
+        [ChestStyle.CrimsonChest] = ItemType.CrimsonChest,
+        [ChestStyle.HallowedChest] = ItemType.HallowedChest,
+        [ChestStyle.FrozenChest] = ItemType.FrozenChest,
+        [ChestStyle.DynastyChest] = ItemType.DynastyChest,
+        [ChestStyle.HoneyChest] = ItemType.HoneyChest,
+        [ChestStyle.SteampunkChest] = ItemType.SteampunkChest,
+        [ChestStyle.PalmWoodChest] = ItemType.PalmWoodChest,
+        [ChestStyle.MushroomChest] = ItemType.MushroomChest,
+        [ChestStyle.BorealWoodChest] = ItemType.BorealWoodChest,
+        [ChestStyle.SlimeChest] = ItemType.SlimeChest,
+        [ChestStyle.GreenDungeonChest] = ItemType.GreenDungeonChest,
+        [ChestStyle.PinkDungeonChest] = ItemType.PinkDungeonChest,
+        [ChestStyle.BlueDungeonChest] = ItemType.BlueDungeonChest,
+        [ChestStyle.BoneChest] = ItemType.BoneChest,
+        [ChestStyle.CactusChest] = ItemType.CactusChest,
+        [ChestStyle.FleshChest] = ItemType.FleshChest,
+        [ChestStyle.ObsidianChest] = ItemType.ObsidianChest,
+        [ChestStyle.PumpkinChest] = ItemType.PumpkinChest,
+        [ChestStyle.SpookyChest] = ItemType.SpookyChest,
+        [ChestStyle.GlassChest] = ItemType.GlassChest,
+        [ChestStyle.MartianChest] = ItemType.MartianChest,
+        [ChestStyle.MeteoriteChest] = ItemType.MeteoriteChest,
+        [ChestStyle.GraniteChest] = ItemType.GraniteChest,
+        [ChestStyle.MarbleChest] = ItemType.MarbleChest,
+      };
+    });
+    public ItemType GetItemTypeFromChestStyle(ChestStyle chestStyle) {
+      ItemType itemType;
+      if (!chestStyleItemTypeLookup.Value.TryGetValue(chestStyle, out itemType))
+        throw new ArgumentException("ChestStyle");
+      
+      return itemType;
     }
 
     public void LockChest(DPoint anyChestTileLocation) {
@@ -1105,436 +993,462 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    private static DPoint[] objectSizes;
+    private static readonly Lazy<DPoint[]> objectSizesLookup = new Lazy<DPoint[]>(() => {
+      return new[] {
+        new DPoint(1, 1), // Dirt
+        new DPoint(1, 1), // Stone
+        new DPoint(1, 1), // Grass
+        new DPoint(1, 1), // Grass Plant
+        new DPoint(1, 1), // Torch
+        new DPoint(1, 1), // Tree (dynamic!)
+        new DPoint(1, 1), // Iron Ore
+        new DPoint(1, 1), // Copper Ore
+        new DPoint(1, 1), // Gold Ore
+        new DPoint(1, 1), // Silver Ore
+        new DPoint(1, 3), // Door (Closed)
+        new DPoint(2, 3), // Door (Opened)
+        new DPoint(2, 2), // Crystal Heart
+        new DPoint(1, 1), // Bottle
+        new DPoint(3, 2), // Wooden Table
+        new DPoint(1, 2), // Wooden Chair
+        new DPoint(2, 1), // Iron Anvil
+        new DPoint(3, 2), // Furnace
+        new DPoint(2, 1), // Work Bench
+        new DPoint(1, 1), // Wood Platform
+        new DPoint(1, 2), // Sapling
+        new DPoint(2, 2), // Chest
+        new DPoint(1, 1), // Demonite Ore
+        new DPoint(1, 1), // Corrupt Grass
+        new DPoint(1, 1), // Corruption Plant
+        new DPoint(1, 1), // Ebonstone Block
+        new DPoint(3, 2), // Demon Altar
+        new DPoint(2, 4), // Sunflower
+        new DPoint(2, 2), // Pot
+        new DPoint(2, 1), // Piggy Bank
+        new DPoint(1, 1), // Wood
+        new DPoint(2, 2), // Shadow Orb
+        new DPoint(1, 1), // Corruption Thorny Bush
+        new DPoint(1, 1), // Candle
+        new DPoint(3, 3), // Copper Chandelier
+        new DPoint(3, 3), // Silver Chandelier
+        new DPoint(3, 3), // Gold Chandelier
+        new DPoint(1, 1), // Meteorite
+        new DPoint(1, 1), // Gray Brick
+        new DPoint(1, 1), // Red Brick
+        new DPoint(1, 1), // Clay
+        new DPoint(1, 1), // Blue Brick
+        new DPoint(1, 2), // Chain Lantern
+        new DPoint(1, 1), // Green Brick
+        new DPoint(1, 1), // Pink Brick
+        new DPoint(1, 1), // Gold Brick
+        new DPoint(1, 1), // Silver Brick
+        new DPoint(1, 1), // Copper Brick
+        new DPoint(1, 1), // Spike
+        new DPoint(1, 1), // Water Candle
+        new DPoint(1, 1), // Book
+        new DPoint(1, 1), // Cobweb
+        new DPoint(1, 1), // Vines (dynamic!)
+        new DPoint(1, 1), // Sand
+        new DPoint(1, 1), // Glass
+        new DPoint(2, 2), // Sign
+        new DPoint(1, 1), // Obsidian
+        new DPoint(1, 1), // Ash
+        new DPoint(1, 1), // Hellstone
+        new DPoint(1, 1), // Mud
+        new DPoint(1, 1), // Jungle Grass
+        new DPoint(1, 1), // Jungle Plant
+        new DPoint(1, 1), // Jungle Vine (dynamic!)
+        new DPoint(1, 1), // Sapphire
+        new DPoint(1, 1), // Ruby
+        new DPoint(1, 1), // Emerald
+        new DPoint(1, 1), // Topaz
+        new DPoint(1, 1), // Amethyst
+        new DPoint(1, 1), // Diamond
+        new DPoint(1, 1), // Jungle Thorny Bush
+        new DPoint(1, 1), // Mushroom Grass
+        new DPoint(1, 1), // Glowing Mushroom
+        new DPoint(1, 1), // Giant Glowing Mushroom (dynamic!)
+        new DPoint(1, 2), // Tall Grass Plant
+        new DPoint(1, 2), // Tall Jungle Plant
+        new DPoint(1, 1), // Obsidian Brick
+        new DPoint(1, 1), // Hellstone Brick
+        new DPoint(3, 2), // Hellforge
+        new DPoint(1, 1), // ClayPot
+        new DPoint(4, 2), // Bed
+        new DPoint(1, 1), // Cactus (dynamic!)
+        new DPoint(1, 1), // Coral
+        new DPoint(1, 1), // Plantable Plant (Growing)
+        new DPoint(1, 1), // Plantable Plant (Mature)
+        new DPoint(1, 1), // Plantable Plant (Blooming)
+        new DPoint(2, 2), // Tombstone
+        new DPoint(3, 2), // Loom
+        new DPoint(3, 2), // Piano
+        new DPoint(3, 2), // Dresser
+        new DPoint(3, 2), // Bench
+        new DPoint(4, 2), // Bathtub
+        new DPoint(1, 3), // Banner
+        new DPoint(1, 6), // LampPost
+        new DPoint(1, 3), // Tiki Torch
+        new DPoint(2, 2), // Keg
+        new DPoint(2, 2), // Chinese Lantern
+        new DPoint(2, 2), // Cooking Pot
+        new DPoint(2, 2), // Safe
+        new DPoint(2, 2), // Skull Lantern
+        new DPoint(2, 2), // TashCan
+        new DPoint(2, 2), // Candelabra
+        new DPoint(3, 4), // Bookcase
+        new DPoint(3, 4), // Throne
+        new DPoint(2, 1), // Bowl
+        new DPoint(2, 5), // Grandfather Clock
+        new DPoint(2, 3), // Statue
+        new DPoint(3, 3), // Sawmill
+        new DPoint(1, 1), // Cobalt Ore
+        new DPoint(1, 1), // Mythril Ore
+        new DPoint(1, 1), // Hallowed Grass
+        new DPoint(1, 1), // Hallowed Plant
+        new DPoint(1, 1), // Adamantite Ore
+        new DPoint(1, 1), // Ebonsand
+        new DPoint(1, 2), // Tall Hallowed Plant
+        new DPoint(3, 2), // Tinkerer's Workshop
+        new DPoint(1, 1), // Hallowed Vine (dynamic!)
+        new DPoint(1, 1), // Pearlsand
+        new DPoint(1, 1), // Pearlstone
+        new DPoint(1, 1), // Pearlstone Brick
+        new DPoint(1, 1), // Iridescent Brick
+        new DPoint(1, 1), // Mudstone
+        new DPoint(1, 1), // Cobalt Brick
+        new DPoint(1, 1), // Mythril Brick
+        new DPoint(1, 1), // Silt
+        new DPoint(1, 1), // Wooden Beam
+        new DPoint(2, 2), // Crystal Ball
+        new DPoint(2, 2), // Disco Ball
+        new DPoint(1, 1), // Ice
+        new DPoint(2, 3), // Mannequin
+        new DPoint(1, 1), // Crystal Shard
+        new DPoint(1, 1), // Active Stone
+        new DPoint(1, 1), // Inactive Stone
+        new DPoint(2, 2), // Lever
+        new DPoint(3, 2), // Adamantite Forge
+        new DPoint(2, 1), // Mythril Anvil
+        new DPoint(1, 1), // Pressure Plate
+        new DPoint(1, 1), // Switch
+        new DPoint(1, 1), // Dart Trap
+        new DPoint(2, 2), // Boulder
+        new DPoint(2, 2), // Music Box
+        new DPoint(1, 1), // Demonite Brick
+        new DPoint(1, 1), // Explosives
+        new DPoint(2, 2), // Inlet Pump
+        new DPoint(2, 2), // Outlet Pump
+        new DPoint(1, 1), // XSecond Timer
+        new DPoint(1, 1), // Red Candy Cane
+        new DPoint(1, 1), // Green Candy Cane
+        new DPoint(1, 1), // Snow
+        new DPoint(1, 1), // Snow Brick
+        new DPoint(1, 1), // X-Mas Light
+        new DPoint(1, 1), // Adamantite Beam
+        new DPoint(1, 1), // Sandstone Brick
+        new DPoint(1, 1), // Ebonstone Brick
+        new DPoint(1, 1), // Red Stucco
+        new DPoint(1, 1), // Blue Stucco
+        new DPoint(1, 1), // Green Stucco
+        new DPoint(1, 1), // Gray Stucco
+        new DPoint(1, 1), // Ebonwood
+        new DPoint(1, 1), // Rich Mahogany
+        new DPoint(1, 1), // Pearlwood
+        new DPoint(1, 1), // Rainbow Brick
+        new DPoint(1, 1), // Ice Block
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // Purple Ice Block
+        new DPoint(1, 1), // Pink Ice Block
+        new DPoint(1, 1), // !Different sizes
+        new DPoint(1, 1), // Tin
+        new DPoint(1, 1), // Lead
+        new DPoint(1, 1), // Tungsten
+        new DPoint(1, 1), // Platinum
+        new DPoint(3, 3), // Tin Chandelier
+        new DPoint(3, 3), // Tungsten Chandelier
+        new DPoint(3, 3), // Platinum Chandelier
+        new DPoint(2, 2), // Candelabra
+        new DPoint(1, 1), // Platinum Candle
+        new DPoint(1, 1), // Tin Brick
+        new DPoint(1, 1), // Tungsten Brick
+        new DPoint(1, 1), // Platinum Brick
+        new DPoint(1, 1), // Amber
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // 180
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // 
+        new DPoint(3, 2), // 
+        new DPoint(3, 2), // 187
+        new DPoint(1, 1), // Cactus
+        new DPoint(1, 1), // Cloud
+        new DPoint(1, 1), // Glowing Mushroom
+        new DPoint(1, 1), // Living Wood Wand
+        new DPoint(1, 1), // Leaf
+        new DPoint(1, 1), // Slime Block
+        new DPoint(1, 1), // Bone Wand
+        new DPoint(1, 1), // Flesh Block
+        new DPoint(1, 1), // Rain Cloud
+        new DPoint(1, 1), // Frozen Slime Block
+        new DPoint(1, 1), // Asphalt Block
+        new DPoint(1, 1), // CrimsonGrass
+        new DPoint(1, 1), // Red Ice Block
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // Sunplate Block
+        new DPoint(1, 1), // Crimstone Block
+        new DPoint(1, 1), // Crimtane Ore
+        new DPoint(1, 1), // 
+        new DPoint(1, 1), // Ice Brick
+        new DPoint(2, 4), // Water Fountain
+        new DPoint(1, 1), // Shadewood
+        new DPoint(4, 3), // Cannon
+        new DPoint(1, 1), // Land Mine
+        new DPoint(1, 1), // Chlorophyte
+        new DPoint(3, 3), // Turret
+        new DPoint(1, 1), // Rope
+        new DPoint(1, 1), // Chain
+        new DPoint(3, 2), // Campfire
+        new DPoint(1, 2), // Rocket
+        new DPoint(3, 2), // Blend-O-Matic
+        new DPoint(3, 2), // Meat Grinder
+        new DPoint(3, 3), // Silt Extractinator
+        new DPoint(3, 3), // Solidifier
+        new DPoint(1, 1), // Palladium
+        new DPoint(1, 1), // Orichalcum
+        new DPoint(1, 1), // Titanium
+        new DPoint(1, 1), // Slush Block
+        new DPoint(1, 1), // Hive
+        new DPoint(1, 1), // Lihzahrd Brick
+        new DPoint(1, 1), // Orange Bloodroot
+        new DPoint(3, 3), // Dye Vat
+        new DPoint(1, 1), // Honey Block
+        new DPoint(1, 1), // Crispy Honey Block
+        new DPoint(3, 3), // Larva
+        new DPoint(1, 1), // Wooden Spike
+        new DPoint(3, 3), // !Different sizes!
+        new DPoint(1, 1), // Crimsand Block
+        new DPoint(3, 1), // Teleporter
+        new DPoint(2, 2), // Life Fruit
+        new DPoint(3, 2), // Lihzahrd Altar
+        new DPoint(2, 2), // Plantera's Bulb
+        new DPoint(1, 1), // Metal Bar
+        new DPoint(3, 3), // Picture
+        new DPoint(4, 3), // Picture
+        new DPoint(6, 4), // Picture
+        new DPoint(3, 3), // Imbuing Station
+        new DPoint(3, 3), // Bubble Machine
+        new DPoint(2, 3), // Picture
+        new DPoint(3, 2), // Picture
+        new DPoint(3, 3), // Autohammer
+        new DPoint(1, 1), // Palladium Cloumn
+        new DPoint(1, 1), // Bubblegum Block
+        new DPoint(1, 1), // Titanstone Block
+        new DPoint(1, 1), // PumpkinBlock
+        new DPoint(1, 1), // Hay
+        new DPoint(1, 1), // Spooky Wood
+        new DPoint(2, 2), // Pumpkin
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // ?
+        new DPoint(1, 1), // AmethystGemsparkBlock
+        new DPoint(1, 1), // TopazGemsparkBlock
+        new DPoint(1, 1), // SapphireGemsparkBlock
+        new DPoint(1, 1), // EmeraldGemsparkBlock
+        new DPoint(1, 1), // RubyGemsparkBlock
+        new DPoint(1, 1), // DiamondGemsparkBlock
+        new DPoint(1, 1), // AmberGemsparkBlock
+        new DPoint(2, 3), // Womannequin
+        new DPoint(1, 2), // FireflyinaBottle
+        new DPoint(1, 2), // LightningBugInaBottle
+        new DPoint(1, 1), // Cog
+        new DPoint(1, 1), // StoneSlab
+        new DPoint(1, 1), // SandstoneSlab
+        new DPoint(6, 3), // BunnyCage
+        new DPoint(6, 3), // SquirrelCage
+        new DPoint(6, 3), // MallardDuckCage
+        new DPoint(6, 3), // DuckCage
+        new DPoint(6, 3), // BirdCage
+        new DPoint(6, 3), // BlueJayCage
+        new DPoint(6, 3), // CardinalCage
+        new DPoint(2, 2), // FishBowl
+        new DPoint(3, 3), // HeavyWorkBench
+        new DPoint(1, 1), // CopperPlating
+        new DPoint(3, 2), // SnailCage
+        new DPoint(3, 2), // GlowingSnailCage
+        new DPoint(2, 2), // AmmoBox
+        new DPoint(2, 2), // MonarchButterflyJar
+        new DPoint(2, 2), // PurpleEmperorButterflyJar
+        new DPoint(2, 2), // RedAdmiralButterflyJar
+        new DPoint(2, 2), // UlyssesButterflyJar
+        new DPoint(2, 2), // SulphurButterflyJar
+        new DPoint(2, 2), // TreeNymphButterflyJar
+        new DPoint(2, 2), // ZebraSwallowtailButterflyJar
+        new DPoint(2, 2), // JuliaButterflyJar
+        new DPoint(6, 3), // ScorpionCage
+        new DPoint(6, 3), // BlackScorpionCage
+        new DPoint(3, 2), // FrogCage
+        new DPoint(3, 2), // MouseCage
+        new DPoint(3, 3), // BoneWelder
+        new DPoint(3, 3), // FleshCloningVaat
+        new DPoint(3, 3), // GlassKiln
+        new DPoint(3, 3), // LihzahrdFurnace
+        new DPoint(3, 3), // LivingLoom
+        new DPoint(3, 3), // SkyMill
+        new DPoint(3, 3), // IceMachine
+        new DPoint(3, 3), // SteampunkBoiler
+        new DPoint(3, 3), // HoneyDispenser
+        new DPoint(6, 3), // PenguinCage
+        new DPoint(3, 2), // WormCage
+        new DPoint(1, 1), // DynastyWood
+        new DPoint(1, 1), // RedDynastyShingles
+        new DPoint(1, 1), // BlueDynastyShingles
+        new DPoint(1, 1), // MinecartTrack
+        new DPoint(1, 1), // CoralstoneBlock
+        new DPoint(2, 2), // BlueJellyfishBowl
+        new DPoint(2, 2), // GreenJellyfishBowl
+        new DPoint(2, 2), // PinkJellyfishBowl
+        new DPoint(2, 2), // ShipInABottle
+        new DPoint(2, 3), // SeaweedPlanter
+        new DPoint(1, 1), // BorealWood
+        new DPoint(1, 1), // PalmWood
+        new DPoint(1, 1), // PalmTree
+        new DPoint(1, 1), // BeachPiles
+        new DPoint(1, 1), // TinPlating
+        new DPoint(1, 1), // Waterfall
+        new DPoint(1, 1), // Lavafall
+        new DPoint(1, 1), // Confetti
+        new DPoint(1, 1), // ConfettiBlack
+        new DPoint(1, 1), // CopperCoinPile
+        new DPoint(1, 1), // SilverCoinPile
+        new DPoint(1, 1), // GoldCoinPile
+        new DPoint(1, 1), // PlatinumCoinPile
+        new DPoint(3, 3), // WeaponsRack
+        new DPoint(2, 2), // FireworksBox
+        new DPoint(1, 1), // LivingFire
+        new DPoint(2, 3), // AlphabetStatues
+        new DPoint(1, 2), // FireworkFountain
+        new DPoint(3, 2), // GrasshopperCage
+        new DPoint(1, 1), // LivingCursedFire
+        new DPoint(1, 1), // LivingDemonFire
+        new DPoint(1, 1), // LivingFrostFire
+        new DPoint(1, 1), // LivingIchor
+        new DPoint(1, 1), // LivingUltrabrightFire
+        new DPoint(1, 1), // Honeyfall
+        new DPoint(1, 1), // ChlorophyteBrick
+        new DPoint(1, 1), // CrimtaneBrick
+        new DPoint(1, 1), // ShroomitePlating
+        new DPoint(2, 3), // MushroomStatue
+        new DPoint(1, 1), // MartianConduitPlating
+        new DPoint(1, 1), // ChimneySmoke
+        new DPoint(1, 1), // CrimtaneThorns
+        new DPoint(1, 1), // VineRope
+        new DPoint(3, 2), // BewitchingTable
+        new DPoint(3, 2), // AlchemyTable
+        new DPoint(2, 3), // Sundial
+        new DPoint(1, 1), // MarbleBlock
+        new DPoint(6, 3), // GoldBirdCage
+        new DPoint(6, 3), // GoldBunnyCage
+        new DPoint(2, 2), // GoldButterflyCage
+        new DPoint(3, 2), // GoldFrogCage
+        new DPoint(3, 2), // GoldGrasshopperCage
+        new DPoint(3, 2), // GoldMouseCage
+        new DPoint(3, 2), // GoldWormCage
+        new DPoint(1, 1), // SilkRope
+        new DPoint(1, 1), // WebRope
+        new DPoint(1, 1), // Marble
+        new DPoint(1, 1), // Granite
+        new DPoint(1, 1), // GraniteBlock
+        new DPoint(1, 1), // MeteoriteBrick
+        new DPoint(1, 1), // PinkSlimeBlock
+        new DPoint(1, 1), // PeaceCandle
+        new DPoint(1, 1), // WaterDrip
+        new DPoint(1, 1), // LavaDrip
+        new DPoint(1, 1), // HoneyDrip
+        new DPoint(2, 2), // FishingCrate
+        new DPoint(3, 2), // SharpeningStation
+        new DPoint(2, 3), // TargetDummy
+        new DPoint(1, 1), // Bubble
+        new DPoint(1, 1), // PlanterBox
+        new DPoint(1, 1), // LavaMoss
+        new DPoint(1, 1), // VineFlowers
+        new DPoint(1, 1), // LivingMahogany
+        new DPoint(1, 1), // LivingMahoganyLeaves
+        new DPoint(1, 1), // CrystalBlock
+        new DPoint(2, 2), // TrapdoorOpen
+        new DPoint(2, 1), // TrapdoorClosed
+        new DPoint(1, 5), // TallGateClosed
+        new DPoint(1, 5), // TallGateOpen
+        new DPoint(1, 2), // LavaLamp
+        new DPoint(3, 2), // CageEnchantedNightcrawler
+        new DPoint(3, 2), // CageBuggy
+        new DPoint(3, 2), // CageGrubby
+        new DPoint(3, 2), // CageSluggy
+        new DPoint(2, 2), // ItemFrame
+        new DPoint(1, 1), // Sandstone
+        new DPoint(1, 1), // HardenedSand
+        new DPoint(1, 1), // CorruptHardenedSand
+        new DPoint(1, 1), // CrimsonHardenedSand
+        new DPoint(1, 1), // CorruptSandstone
+        new DPoint(1, 1), // CrimsonSandstone
+        new DPoint(1, 1), // HallowHardenedSand
+        new DPoint(1, 1), // HallowSandstone
+        new DPoint(1, 1), // DesertFossil
+        new DPoint(3, 2), // Fireplace
+        new DPoint(3, 2), // Chimney
+        new DPoint(1, 1), // FossilOre
+        new DPoint(1, 1), // LunarOre
+        new DPoint(1, 1), // LunarBrick
+        new DPoint(2, 3), // LunarMonolith
+        new DPoint(2, 2), // Detonator
+        new DPoint(3, 3), // LunarCraftingStation
+        new DPoint(6, 3), // SquirrelOrangeCage
+        new DPoint(6, 3), // SquirrelGoldCage
+        new DPoint(1, 1), // LunarBlockSolar
+        new DPoint(1, 1), // LunarBlockVortex
+        new DPoint(1, 1), // LunarBlockNebula
+        new DPoint(1, 1), // LunarBlockStardust
+        // 1.3.1
+        new DPoint(1, 1), // LogicGateLamp = 419
+        new DPoint(1, 1), // LogicGate = 420
+        new DPoint(1, 1), // ConveyorBeltLeft = 421
+        new DPoint(1, 1), // ConveyorBeltRight = 422
+        new DPoint(1, 1), // LogicSensor = 423
+        new DPoint(1, 1), // WirePipe = 424
+        new DPoint(2, 2), // AnnouncementBox = 425
+        new DPoint(1, 1), // TeamBlockRed = 426
+        new DPoint(1, 1), // TeamBlockRedPlatform = 427
+        new DPoint(1, 1), // WeightedPressurePlate = 428
+        new DPoint(1, 1), // WireBulb = 429
+        new DPoint(1, 1), // TeamBlockGreen = 430
+        new DPoint(1, 1), // TeamBlockBlue = 431
+        new DPoint(1, 1), // TeamBlockYellow = 432
+        new DPoint(1, 1), // TeamBlockPink = 433
+        new DPoint(1, 1), // TeamBlockWhite = 434
+        new DPoint(1, 1), // TeamBlockGreenPlatform = 435
+        new DPoint(1, 1), // TeamBlockBluePlatform = 436
+        new DPoint(1, 1), // TeamBlockYellowPlatform = 437
+        new DPoint(1, 1), // TeamBlockPinkPlatform = 438
+        new DPoint(1, 1), // TeamBlockWhitePlatform = 439
+        new DPoint(3, 3), // GemLocks = 440
+        new DPoint(2, 2), // FakeContainers = 441
+        new DPoint(1, 1), // ProjectilePressurePad = 442
+        new DPoint(2, 3), // GeyserTrap = 443
+        new DPoint(2, 2), // BeeHive = 444
+        new DPoint(1, 1), // PixelBox = 445
+      };
+    });
     public DPoint GetObjectSize(BlockType objectType) {
-      if (TerrariaTiles.objectSizes == null) {
-        TerrariaTiles.objectSizes = new[] {
-          new DPoint(1, 1), // Dirt
-          new DPoint(1, 1), // Stone
-          new DPoint(1, 1), // Grass
-          new DPoint(1, 1), // Grass Plant
-          new DPoint(1, 1), // Torch
-          new DPoint(1, 1), // Tree (dynamic!)
-          new DPoint(1, 1), // Iron Ore
-          new DPoint(1, 1), // Copper Ore
-          new DPoint(1, 1), // Gold Ore
-          new DPoint(1, 1), // Silver Ore
-          new DPoint(1, 3), // Door (Closed)
-          new DPoint(2, 3), // Door (Opened)
-          new DPoint(2, 2), // Crystal Heart
-          new DPoint(1, 1), // Bottle
-          new DPoint(3, 2), // Wooden Table
-          new DPoint(1, 2), // Wooden Chair
-          new DPoint(2, 1), // Iron Anvil
-          new DPoint(3, 2), // Furnace
-          new DPoint(2, 1), // Work Bench
-          new DPoint(1, 1), // Wood Platform
-          new DPoint(1, 2), // Sapling
-          new DPoint(2, 2), // Chest
-          new DPoint(1, 1), // Demonite Ore
-          new DPoint(1, 1), // Corrupt Grass
-          new DPoint(1, 1), // Corruption Plant
-          new DPoint(1, 1), // Ebonstone Block
-          new DPoint(3, 2), // Demon Altar
-          new DPoint(2, 4), // Sunflower
-          new DPoint(2, 2), // Pot
-          new DPoint(2, 1), // Piggy Bank
-          new DPoint(1, 1), // Wood
-          new DPoint(2, 2), // Shadow Orb
-          new DPoint(1, 1), // Corruption Thorny Bush
-          new DPoint(1, 1), // Candle
-          new DPoint(3, 3), // Copper Chandelier
-          new DPoint(3, 3), // Silver Chandelier
-          new DPoint(3, 3), // Gold Chandelier
-          new DPoint(1, 1), // Meteorite
-          new DPoint(1, 1), // Gray Brick
-          new DPoint(1, 1), // Red Brick
-          new DPoint(1, 1), // Clay
-          new DPoint(1, 1), // Blue Brick
-          new DPoint(1, 2), // Chain Lantern
-          new DPoint(1, 1), // Green Brick
-          new DPoint(1, 1), // Pink Brick
-          new DPoint(1, 1), // Gold Brick
-          new DPoint(1, 1), // Silver Brick
-          new DPoint(1, 1), // Copper Brick
-          new DPoint(1, 1), // Spike
-          new DPoint(1, 1), // Water Candle
-          new DPoint(1, 1), // Book
-          new DPoint(1, 1), // Cobweb
-          new DPoint(1, 1), // Vines (dynamic!)
-          new DPoint(1, 1), // Sand
-          new DPoint(1, 1), // Glass
-          new DPoint(2, 2), // Sign
-          new DPoint(1, 1), // Obsidian
-          new DPoint(1, 1), // Ash
-          new DPoint(1, 1), // Hellstone
-          new DPoint(1, 1), // Mud
-          new DPoint(1, 1), // Jungle Grass
-          new DPoint(1, 1), // Jungle Plant
-          new DPoint(1, 1), // Jungle Vine (dynamic!)
-          new DPoint(1, 1), // Sapphire
-          new DPoint(1, 1), // Ruby
-          new DPoint(1, 1), // Emerald
-          new DPoint(1, 1), // Topaz
-          new DPoint(1, 1), // Amethyst
-          new DPoint(1, 1), // Diamond
-          new DPoint(1, 1), // Jungle Thorny Bush
-          new DPoint(1, 1), // Mushroom Grass
-          new DPoint(1, 1), // Glowing Mushroom
-          new DPoint(1, 1), // Giant Glowing Mushroom (dynamic!)
-          new DPoint(1, 2), // Tall Grass Plant
-          new DPoint(1, 2), // Tall Jungle Plant
-          new DPoint(1, 1), // Obsidian Brick
-          new DPoint(1, 1), // Hellstone Brick
-          new DPoint(3, 2), // Hellforge
-          new DPoint(1, 1), // ClayPot
-          new DPoint(4, 2), // Bed
-          new DPoint(1, 1), // Cactus (dynamic!)
-          new DPoint(1, 1), // Coral
-          new DPoint(1, 1), // Plantable Plant (Growing)
-          new DPoint(1, 1), // Plantable Plant (Mature)
-          new DPoint(1, 1), // Plantable Plant (Blooming)
-          new DPoint(2, 2), // Tombstone
-          new DPoint(3, 2), // Loom
-          new DPoint(3, 2), // Piano
-          new DPoint(3, 2), // Dresser
-          new DPoint(3, 2), // Bench
-          new DPoint(4, 2), // Bathtub
-          new DPoint(1, 3), // Banner
-          new DPoint(1, 6), // LampPost
-          new DPoint(1, 3), // Tiki Torch
-          new DPoint(2, 2), // Keg
-          new DPoint(2, 2), // Chinese Lantern
-          new DPoint(2, 2), // Cooking Pot
-          new DPoint(2, 2), // Safe
-          new DPoint(2, 2), // Skull Lantern
-          new DPoint(2, 2), // TashCan
-          new DPoint(2, 2), // Candelabra
-          new DPoint(3, 4), // Bookcase
-          new DPoint(3, 4), // Throne
-          new DPoint(2, 1), // Bowl
-          new DPoint(2, 5), // Grandfather Clock
-          new DPoint(2, 3), // Statue
-          new DPoint(3, 3), // Sawmill
-          new DPoint(1, 1), // Cobalt Ore
-          new DPoint(1, 1), // Mythril Ore
-          new DPoint(1, 1), // Hallowed Grass
-          new DPoint(1, 1), // Hallowed Plant
-          new DPoint(1, 1), // Adamantite Ore
-          new DPoint(1, 1), // Ebonsand
-          new DPoint(1, 2), // Tall Hallowed Plant
-          new DPoint(3, 2), // Tinkerer's Workshop
-          new DPoint(1, 1), // Hallowed Vine (dynamic!)
-          new DPoint(1, 1), // Pearlsand
-          new DPoint(1, 1), // Pearlstone
-          new DPoint(1, 1), // Pearlstone Brick
-          new DPoint(1, 1), // Iridescent Brick
-          new DPoint(1, 1), // Mudstone
-          new DPoint(1, 1), // Cobalt Brick
-          new DPoint(1, 1), // Mythril Brick
-          new DPoint(1, 1), // Silt
-          new DPoint(1, 1), // Wooden Beam
-          new DPoint(2, 2), // Crystal Ball
-          new DPoint(2, 2), // Disco Ball
-          new DPoint(1, 1), // Ice
-          new DPoint(2, 3), // Mannequin
-          new DPoint(1, 1), // Crystal Shard
-          new DPoint(1, 1), // Active Stone
-          new DPoint(1, 1), // Inactive Stone
-          new DPoint(2, 2), // Lever
-          new DPoint(3, 2), // Adamantite Forge
-          new DPoint(2, 1), // Mythril Anvil
-          new DPoint(1, 1), // Pressure Plate
-          new DPoint(1, 1), // Switch
-          new DPoint(1, 1), // Dart Trap
-          new DPoint(2, 2), // Boulder
-          new DPoint(2, 2), // Music Box
-          new DPoint(1, 1), // Demonite Brick
-          new DPoint(1, 1), // Explosives
-          new DPoint(2, 2), // Inlet Pump
-          new DPoint(2, 2), // Outlet Pump
-          new DPoint(1, 1), // XSecond Timer
-          new DPoint(1, 1), // Red Candy Cane
-          new DPoint(1, 1), // Green Candy Cane
-          new DPoint(1, 1), // Snow
-          new DPoint(1, 1), // Snow Brick
-          new DPoint(1, 1), // X-Mas Light
-          new DPoint(1, 1), // Adamantite Beam
-          new DPoint(1, 1), // Sandstone Brick
-          new DPoint(1, 1), // Ebonstone Brick
-          new DPoint(1, 1), // Red Stucco
-          new DPoint(1, 1), // Blue Stucco
-          new DPoint(1, 1), // Green Stucco
-          new DPoint(1, 1), // Gray Stucco
-          new DPoint(1, 1), // Ebonwood
-          new DPoint(1, 1), // Rich Mahogany
-          new DPoint(1, 1), // Pearlwood
-          new DPoint(1, 1), // Rainbow Brick
-          new DPoint(1, 1), // Ice Block
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // Purple Ice Block
-          new DPoint(1, 1), // Pink Ice Block
-          new DPoint(1, 1), // !Different sizes
-          new DPoint(1, 1), // Tin
-          new DPoint(1, 1), // Lead
-          new DPoint(1, 1), // Tungsten
-          new DPoint(1, 1), // Platinum
-          new DPoint(3, 3), // Tin Chandelier
-          new DPoint(3, 3), // Tungsten Chandelier
-          new DPoint(3, 3), // Platinum Chandelier
-          new DPoint(2, 2), // Candelabra
-          new DPoint(1, 1), // Platinum Candle
-          new DPoint(1, 1), // Tin Brick
-          new DPoint(1, 1), // Tungsten Brick
-          new DPoint(1, 1), // Platinum Brick
-          new DPoint(1, 1), // Amber
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // 180
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // 
-          new DPoint(3, 2), // 
-          new DPoint(3, 2), // 187
-          new DPoint(1, 1), // Cactus
-          new DPoint(1, 1), // Cloud
-          new DPoint(1, 1), // Glowing Mushroom
-          new DPoint(1, 1), // Living Wood Wand
-          new DPoint(1, 1), // Leaf
-          new DPoint(1, 1), // Slime Block
-          new DPoint(1, 1), // Bone Wand
-          new DPoint(1, 1), // Flesh Block
-          new DPoint(1, 1), // Rain Cloud
-          new DPoint(1, 1), // Frozen Slime Block
-          new DPoint(1, 1), // Asphalt Block
-          new DPoint(1, 1), // CrimsonGrass
-          new DPoint(1, 1), // Red Ice Block
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // Sunplate Block
-          new DPoint(1, 1), // Crimstone Block
-          new DPoint(1, 1), // Crimtane Ore
-          new DPoint(1, 1), // 
-          new DPoint(1, 1), // Ice Brick
-          new DPoint(2, 4), // Water Fountain
-          new DPoint(1, 1), // Shadewood
-          new DPoint(4, 3), // Cannon
-          new DPoint(1, 1), // Land Mine
-          new DPoint(1, 1), // Chlorophyte
-          new DPoint(3, 3), // Turret
-          new DPoint(1, 1), // Rope
-          new DPoint(1, 1), // Chain
-          new DPoint(3, 2), // Campfire
-          new DPoint(1, 2), // Rocket
-          new DPoint(3, 2), // Blend-O-Matic
-          new DPoint(3, 2), // Meat Grinder
-          new DPoint(3, 3), // Silt Extractinator
-          new DPoint(3, 3), // Solidifier
-          new DPoint(1, 1), // Palladium
-          new DPoint(1, 1), // Orichalcum
-          new DPoint(1, 1), // Titanium
-          new DPoint(1, 1), // Slush Block
-          new DPoint(1, 1), // Hive
-          new DPoint(1, 1), // Lihzahrd Brick
-          new DPoint(1, 1), // Orange Bloodroot
-          new DPoint(3, 3), // Dye Vat
-          new DPoint(1, 1), // Honey Block
-          new DPoint(1, 1), // Crispy Honey Block
-          new DPoint(3, 3), // Larva
-          new DPoint(1, 1), // Wooden Spike
-          new DPoint(3, 3), // !Different sizes!
-          new DPoint(1, 1), // Crimsand Block
-          new DPoint(3, 1), // Teleporter
-          new DPoint(2, 2), // Life Fruit
-          new DPoint(3, 2), // Lihzahrd Altar
-          new DPoint(2, 2), // Plantera's Bulb
-          new DPoint(1, 1), // Metal Bar
-          new DPoint(3, 3), // Picture
-          new DPoint(4, 3), // Picture
-          new DPoint(6, 4), // Picture
-          new DPoint(3, 3), // Imbuing Station
-          new DPoint(3, 3), // Bubble Machine
-          new DPoint(2, 3), // Picture
-          new DPoint(3, 2), // Picture
-          new DPoint(3, 3), // Autohammer
-          new DPoint(1, 1), // Palladium Cloumn
-          new DPoint(1, 1), // Bubblegum Block
-          new DPoint(1, 1), // Titanstone Block
-          new DPoint(1, 1), // PumpkinBlock
-          new DPoint(1, 1), // Hay
-          new DPoint(1, 1), // Spooky Wood
-          new DPoint(2, 2), // Pumpkin
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // ?
-          new DPoint(1, 1), // AmethystGemsparkBlock
-          new DPoint(1, 1), // TopazGemsparkBlock
-          new DPoint(1, 1), // SapphireGemsparkBlock
-          new DPoint(1, 1), // EmeraldGemsparkBlock
-          new DPoint(1, 1), // RubyGemsparkBlock
-          new DPoint(1, 1), // DiamondGemsparkBlock
-          new DPoint(1, 1), // AmberGemsparkBlock
-          new DPoint(2, 3), // Womannequin
-          new DPoint(1, 2), // FireflyinaBottle
-          new DPoint(1, 2), // LightningBugInaBottle
-          new DPoint(1, 1), // Cog
-          new DPoint(1, 1), // StoneSlab
-          new DPoint(1, 1), // SandstoneSlab
-          new DPoint(6, 3), // BunnyCage
-          new DPoint(6, 3), // SquirrelCage
-          new DPoint(6, 3), // MallardDuckCage
-          new DPoint(6, 3), // DuckCage
-          new DPoint(6, 3), // BirdCage
-          new DPoint(6, 3), // BlueJayCage
-          new DPoint(6, 3), // CardinalCage
-          new DPoint(2, 2), // FishBowl
-          new DPoint(3, 3), // HeavyWorkBench
-          new DPoint(1, 1), // CopperPlating
-          new DPoint(3, 2), // SnailCage
-          new DPoint(3, 2), // GlowingSnailCage
-          new DPoint(2, 2), // AmmoBox
-          new DPoint(2, 2), // MonarchButterflyJar
-          new DPoint(2, 2), // PurpleEmperorButterflyJar
-          new DPoint(2, 2), // RedAdmiralButterflyJar
-          new DPoint(2, 2), // UlyssesButterflyJar
-          new DPoint(2, 2), // SulphurButterflyJar
-          new DPoint(2, 2), // TreeNymphButterflyJar
-          new DPoint(2, 2), // ZebraSwallowtailButterflyJar
-          new DPoint(2, 2), // JuliaButterflyJar
-          new DPoint(6, 3), // ScorpionCage
-          new DPoint(6, 3), // BlackScorpionCage
-          new DPoint(3, 2), // FrogCage
-          new DPoint(3, 2), // MouseCage
-          new DPoint(3, 3), // BoneWelder
-          new DPoint(3, 3), // FleshCloningVaat
-          new DPoint(3, 3), // GlassKiln
-          new DPoint(3, 3), // LihzahrdFurnace
-          new DPoint(3, 3), // LivingLoom
-          new DPoint(3, 3), // SkyMill
-          new DPoint(3, 3), // IceMachine
-          new DPoint(3, 3), // SteampunkBoiler
-          new DPoint(3, 3), // HoneyDispenser
-          new DPoint(6, 3), // PenguinCage
-          new DPoint(3, 2), // WormCage
-          new DPoint(1, 1), // DynastyWood
-          new DPoint(1, 1), // RedDynastyShingles
-          new DPoint(1, 1), // BlueDynastyShingles
-          new DPoint(1, 1), // MinecartTrack
-          new DPoint(1, 1), // CoralstoneBlock
-          new DPoint(2, 2), // BlueJellyfishBowl
-          new DPoint(2, 2), // GreenJellyfishBowl
-          new DPoint(2, 2), // PinkJellyfishBowl
-          new DPoint(2, 2), // ShipInABottle
-          new DPoint(2, 3), // SeaweedPlanter
-          new DPoint(1, 1), // BorealWood
-          new DPoint(1, 1), // PalmWood
-          new DPoint(1, 1), // PalmTree
-          new DPoint(1, 1), // BeachPiles
-          new DPoint(1, 1), // TinPlating
-          new DPoint(1, 1), // Waterfall
-          new DPoint(1, 1), // Lavafall
-          new DPoint(1, 1), // Confetti
-          new DPoint(1, 1), // ConfettiBlack
-          new DPoint(1, 1), // CopperCoinPile
-          new DPoint(1, 1), // SilverCoinPile
-          new DPoint(1, 1), // GoldCoinPile
-          new DPoint(1, 1), // PlatinumCoinPile
-          new DPoint(3, 3), // WeaponsRack
-          new DPoint(2, 2), // FireworksBox
-          new DPoint(1, 1), // LivingFire
-          new DPoint(2, 3), // AlphabetStatues
-          new DPoint(1, 2), // FireworkFountain
-          new DPoint(3, 2), // GrasshopperCage
-          new DPoint(1, 1), // LivingCursedFire
-          new DPoint(1, 1), // LivingDemonFire
-          new DPoint(1, 1), // LivingFrostFire
-          new DPoint(1, 1), // LivingIchor
-          new DPoint(1, 1), // LivingUltrabrightFire
-          new DPoint(1, 1), // Honeyfall
-          new DPoint(1, 1), // ChlorophyteBrick
-          new DPoint(1, 1), // CrimtaneBrick
-          new DPoint(1, 1), // ShroomitePlating
-          new DPoint(2, 3), // MushroomStatue
-          new DPoint(1, 1), // MartianConduitPlating
-          new DPoint(1, 1), // ChimneySmoke
-          new DPoint(1, 1), // CrimtaneThorns
-          new DPoint(1, 1), // VineRope
-          new DPoint(3, 2), // BewitchingTable
-          new DPoint(3, 2), // AlchemyTable
-          new DPoint(2, 3), // Sundial
-          new DPoint(1, 1), // MarbleBlock
-          new DPoint(6, 3), // GoldBirdCage
-          new DPoint(6, 3), // GoldBunnyCage
-          new DPoint(2, 2), // GoldButterflyCage
-          new DPoint(3, 2), // GoldFrogCage
-          new DPoint(3, 2), // GoldGrasshopperCage
-          new DPoint(3, 2), // GoldMouseCage
-          new DPoint(3, 2), // GoldWormCage
-          new DPoint(1, 1), // SilkRope
-          new DPoint(1, 1), // WebRope
-          new DPoint(1, 1), // Marble
-          new DPoint(1, 1), // Granite
-          new DPoint(1, 1), // GraniteBlock
-          new DPoint(1, 1), // MeteoriteBrick
-          new DPoint(1, 1), // PinkSlimeBlock
-          new DPoint(1, 1), // PeaceCandle
-          new DPoint(1, 1), // WaterDrip
-          new DPoint(1, 1), // LavaDrip
-          new DPoint(1, 1), // HoneyDrip
-          new DPoint(2, 2), // FishingCrate
-          new DPoint(3, 2), // SharpeningStation
-          new DPoint(2, 3), // TargetDummy
-          new DPoint(1, 1), // Bubble
-          new DPoint(1, 1), // PlanterBox
-          new DPoint(1, 1), // LavaMoss
-          new DPoint(1, 1), // VineFlowers
-          new DPoint(1, 1), // LivingMahogany
-          new DPoint(1, 1), // LivingMahoganyLeaves
-          new DPoint(1, 1), // CrystalBlock
-          new DPoint(2, 2), // TrapdoorOpen
-          new DPoint(2, 1), // TrapdoorClosed
-          new DPoint(1, 5), // TallGateClosed
-          new DPoint(1, 5), // TallGateOpen
-          new DPoint(1, 2), // LavaLamp
-          new DPoint(3, 2), // CageEnchantedNightcrawler
-          new DPoint(3, 2), // CageBuggy
-          new DPoint(3, 2), // CageGrubby
-          new DPoint(3, 2), // CageSluggy
-          new DPoint(2, 2), // ItemFrame
-          new DPoint(1, 1), // Sandstone
-          new DPoint(1, 1), // HardenedSand
-          new DPoint(1, 1), // CorruptHardenedSand
-          new DPoint(1, 1), // CrimsonHardenedSand
-          new DPoint(1, 1), // CorruptSandstone
-          new DPoint(1, 1), // CrimsonSandstone
-          new DPoint(1, 1), // HallowHardenedSand
-          new DPoint(1, 1), // HallowSandstone
-          new DPoint(1, 1), // DesertFossil
-          new DPoint(3, 2), // Fireplace
-          new DPoint(3, 2), // Chimney
-          new DPoint(1, 1), // FossilOre
-          new DPoint(1, 1), // LunarOre
-          new DPoint(1, 1), // LunarBrick
-          new DPoint(2, 3), // LunarMonolith
-          new DPoint(2, 2), // Detonator
-          new DPoint(3, 3), // LunarCraftingStation
-          new DPoint(6, 3), // SquirrelOrangeCage
-          new DPoint(6, 3), // SquirrelGoldCage
-          new DPoint(1, 1), // LunarBlockSolar
-          new DPoint(1, 1), // LunarBlockVortex
-          new DPoint(1, 1), // LunarBlockNebula
-          new DPoint(1, 1), // LunarBlockStardust
-        };
-      }
-
-      if (objectType < 0 || (int)objectType >= TerrariaTiles.objectSizes.Length)
+      if (objectType < 0 || (int)objectType >= TerrariaTiles.objectSizesLookup.Value.Length)
         return new DPoint(1, 1);
 
-      return TerrariaTiles.objectSizes[(int)objectType];
+      return TerrariaTiles.objectSizesLookup.Value[(int)objectType];
     }
 
     public DPoint GetBlockTextureTileSize(BlockType blockType) {

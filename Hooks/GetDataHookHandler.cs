@@ -672,7 +672,7 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.ItemDrop:
-          case PacketTypes.UpdateItemDrop: { // ItemDrop2
+          case PacketTypes.UpdateItemDrop: {
             if (this.ItemUpdate == null)
               break;
 

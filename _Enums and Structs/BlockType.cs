@@ -1,6 +1,8 @@
 ﻿using System;
 
 namespace Terraria.Plugins.Common {
+  // TODO: update this on new versions
+  // TODO: remove this in favor of the native TileID class
   public enum BlockType {
     Invalid = -1,
     DirtBlock = 0,
@@ -450,5 +452,23 @@ namespace Terraria.Plugins.Common {
     GeyserTrap = 443,
     BeeHive = 444,
     PixelBox = 445,
+    // 1.3.3
+    SillyBalloonPink = 446,
+    SillyBalloonPurple = 447,
+    SillyBalloonGreen = 448,
+    SillyStreamerBlue = 449,
+    SillyStreamerGreen = 450,
+    SillyStreamerPink = 451,
+    SillyBalloonMachine = 452,
+    SillyBalloonTile = 453,
+    Pigronata = 454,
+    PartyMonolith = 455,
+    PartyBundleOfBalloonTile = 456,
+    PartyPresent = 457,
+    SandFallBlock = 458,
+    SnowFallBlock = 459,
+    SnowCloud = 460,
+    SandDrip = 461,
+    DjinnLamp = 462
   }
 }

@@ -993,6 +993,7 @@ namespace Terraria.Plugins.Common {
       }
     }
 
+    // TODO: update this on new versions
     private static readonly Lazy<DPoint[]> objectSizesLookup = new Lazy<DPoint[]>(() => {
       return new[] {
         new DPoint(1, 1), // Dirt
@@ -1442,6 +1443,24 @@ namespace Terraria.Plugins.Common {
         new DPoint(2, 3), // GeyserTrap = 443
         new DPoint(2, 2), // BeeHive = 444
         new DPoint(1, 1), // PixelBox = 445
+        // 1.3.3
+        new DPoint(1, 1), // SillyBalloonPink = 446
+        new DPoint(1, 1), // SillyBalloonPurple = 447
+        new DPoint(1, 1), // SillyBalloonGreen = 448
+        new DPoint(1, 1), // SillyStreamerBlue = 449
+        new DPoint(1, 1), // SillyStreamerGreen = 450
+        new DPoint(1, 1), // SillyStreamerPink = 451
+        new DPoint(1, 1), // SillyBalloonMachine = 452
+        new DPoint(1, 1), // SillyBalloonTile = 453
+        new DPoint(4, 3), // Pigronata = 454
+        new DPoint(1, 1), // PartyMonolith = 455
+        new DPoint(1, 1), // PartyBundleOfBalloonTile = 456
+        new DPoint(1, 1), // PartyPresent = 457
+        new DPoint(1, 1), // SandFallBlock = 458
+        new DPoint(1, 1), // SnowFallBlock = 459
+        new DPoint(1, 1), // SnowCloud = 460
+        new DPoint(1, 1), // SandDrip = 461
+        new DPoint(2, 1), // DjinnLamp = 46
       };
     });
     public DPoint GetObjectSize(BlockType objectType) {

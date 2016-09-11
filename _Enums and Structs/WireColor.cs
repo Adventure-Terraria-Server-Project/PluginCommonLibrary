@@ -5,6 +5,7 @@ namespace Terraria.Plugins.Common {
     None,
     Red,
     Green,
-    Blue
+    Blue,
+    Yellow
   }
 }

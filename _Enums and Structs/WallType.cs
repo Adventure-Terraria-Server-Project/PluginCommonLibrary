@@ -226,6 +226,12 @@ namespace Terraria.Plugins.Common {
     CrimsonSandstone = 221,
     HallowSandstone = 222,
     DesertFossil = 223,
-    LunarBrickWall = 224
+    LunarBrickWall = 224,
+    CogWall = 225,
+    SandFall = 226,
+    SnowFall = 227,
+    SillyBalloonPinkWall = 228,
+    SillyBalloonPurpleWall = 229,
+    SillyBalloonGreenWall = 230
   }
 }

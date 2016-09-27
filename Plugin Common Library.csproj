@@ -141,6 +141,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\ItemsAdapter.cs" />
+    <Compile Include="Collections\Inventory.cs" />
+    <Compile Include="Collections\PlayerItemsAdapter.cs" />
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
     <Compile Include="Hooks\ChestOpenEventArgs.cs" />
     <Compile Include="Hooks\ChestPlaceEventArgs.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="_Enums and Structs\TrapStyle.cs" />
     <Compile Include="_Enums and Structs\UnlockType.cs" />
     <Compile Include="_Enums and Structs\WireColor.cs" />
+    <Compile Include="_General Exceptions\PaymentException.cs" />
     <Compile Include="_Threading\AsyncWorkQueue.cs" />
     <Compile Include="Hooks\DoorUseEventArgs.cs" />
     <Compile Include="Hooks\PlayerSpawnEventArgs.cs" />

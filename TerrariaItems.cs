@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Terraria.ID;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
@@ -249,6 +250,17 @@ namespace Terraria.Plugins.Common {
       }
 
       return false;
+    }
+
+    public int GetHigherTierCoinType(int itemType) {
+      if (itemType == ItemID.CopperCoin)
+        return ItemID.SilverCoin;
+      else if (itemType == ItemID.SilverCoin)
+        return ItemID.GoldCoin;
+      else if (itemType == ItemID.GoldCoin)
+        return ItemID.PlatinumCoin;
+
+      return -1;
     }
 
     public string GetItemName(ItemData itemData, bool includePrefix = false) {

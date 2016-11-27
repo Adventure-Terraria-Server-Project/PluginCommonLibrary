@@ -7,6 +7,7 @@ namespace Terraria.Plugins.Common {
     FrostLegion,
     Pirate,
     Pumpkin,
-    Frost
+    Frost,
+    Martians
   }
 }

@@ -59,10 +59,6 @@ namespace Terraria.Plugins.Common {
     }
 
     public bool Spawn(int npcType, DPoint location, out int npcIndex, int lifeOverride = 0, int valueOverride = -1, bool noDrops = false) {
-      // Thread static.
-      if (Main.rand == null)
-        Main.rand = new Random();
-
       npcIndex = NPC.NewNPC(location.X, location.Y, npcType);
       if (npcIndex == Main.npc.Length) {
         npcIndex = -1;

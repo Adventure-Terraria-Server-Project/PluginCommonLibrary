@@ -469,6 +469,11 @@ namespace Terraria.Plugins.Common {
     SnowFallBlock = 459,
     SnowCloud = 460,
     SandDrip = 461,
-    DjinnLamp = 462
+    DjinnLamp = 462,
+    // 1.3.4
+    DefendersForge = 463,
+		WarTable = 464,
+		WarTableBanner = 465,
+		ElderCrystalStand = 466
   }
 }

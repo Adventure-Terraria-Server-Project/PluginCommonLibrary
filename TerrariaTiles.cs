@@ -81,10 +81,6 @@ namespace Terraria.Plugins.Common {
       DPoint objectSize = this.GetObjectSize(objectType);
       DPoint textureTileSize = this.GetBlockTextureTileSize(objectType);
 
-      // WorldGen.genRand is thread static.
-      if (WorldGen.genRand == null)
-        WorldGen.genRand = new Random();
-
       for (int x = 0; x < objectSize.X; x++) {
         for (int y = 0; y < objectSize.Y; y++) {
           Tile objectTile;
@@ -137,10 +133,6 @@ namespace Terraria.Plugins.Common {
         tile.active(false);
       }
 
-      // WorldGen.genRand is thread static.
-      if (WorldGen.genRand == null)
-        WorldGen.genRand = new Random();
-
       if (squareFrame)
         WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y, true);
       if (!localOnly)
@@ -155,10 +147,6 @@ namespace Terraria.Plugins.Common {
       tile.frameX = -1;
       tile.frameY = -1;
       tile.frameNumber(0);
-
-      // WorldGen.genRand is thread static.
-      if (WorldGen.genRand == null)
-        WorldGen.genRand = new Random();
 
       if (squareFrames)
         WorldGen.SquareTileFrame(tileLocation.X, tileLocation.Y);
@@ -1460,7 +1448,12 @@ namespace Terraria.Plugins.Common {
         new DPoint(1, 1), // SnowFallBlock = 459
         new DPoint(1, 1), // SnowCloud = 460
         new DPoint(1, 1), // SandDrip = 461
-        new DPoint(2, 1), // DjinnLamp = 46
+        new DPoint(2, 1), // DjinnLamp = 462
+        // 1.3.4
+        new DPoint(3, 4), // DefendersForge = 463
+        new DPoint(5, 4), // WarTable = 464
+        new DPoint(2, 3), // WarTableBanner = 465
+        new DPoint(5, 3)  // ElderCrystalStand = 466
       };
     });
     public DPoint GetObjectSize(BlockType objectType) {

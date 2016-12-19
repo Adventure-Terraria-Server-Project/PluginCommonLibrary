@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Microsoft.Xna.Framework;
 using Terraria.ID;
 using DPoint = System.Drawing.Point;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Terraria.Utilities;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
@@ -94,6 +95,9 @@ namespace Terraria.Plugins.Common {
 
       if (valueOverride > -1)
         npc.value = valueOverride;
+
+      if (Main.rand == null)
+        Main.rand = new UnifiedRandom();
 
       npc.UpdateNPC(npcIndex);
 

@@ -12,9 +12,9 @@ namespace Terraria.Plugins.Common {
     public Tile this[int x, int y] {
       get {
         #if DEBUG
-        Contract.Assert(TerrariaUtils.Tiles.IsValidCoord(x, y), string.Format("{{{0}, {1}}}", x, y));
+        Contract.Assert(TerrariaUtils.Tiles.IsValidCoord(x, y), $"{{{x}, {y}}}");
         #endif
-        return Main.tile[x, y];
+        return (Tile)Main.tile[x, y];
       }
     }
 
@@ -23,7 +23,7 @@ namespace Terraria.Plugins.Common {
         #if DEBUG
         Contract.Assert(TerrariaUtils.Tiles.IsValidCoord(point.X, point.Y), point.ToString());
         #endif
-        return Main.tile[point.X, point.Y];
+        return (Tile)Main.tile[point.X, point.Y];
       }
     }
 

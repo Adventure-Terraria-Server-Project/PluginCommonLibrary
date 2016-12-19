@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common {
@@ -14,7 +15,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public static Vector2 OffsetPolar(this Vector2 vector, float angle, float steps) {
-      return vector.Add(new Vector2((float)Math.Cos(angle) * steps, (float)(Math.Sin(angle) * steps)));
+      return Vector2.Add(vector, new Vector2((float)Math.Cos(angle) * steps, (float)(Math.Sin(angle) * steps)));
     }
 
     public static float DistanceBetween(this Vector2 vector1, Vector2 vector2) {

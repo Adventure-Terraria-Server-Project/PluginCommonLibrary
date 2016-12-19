@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Serialization;
 using Terraria.ID;
 using TerrariaApi.Server;

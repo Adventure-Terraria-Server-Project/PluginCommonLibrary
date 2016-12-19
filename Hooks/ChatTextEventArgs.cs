@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-
+using Microsoft.Xna.Framework;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Hooks {

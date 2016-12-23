@@ -1,4 +1,4 @@
-CoderCow Terraria Plugins Common Library
+Terraria Plugin Common Library
 =====================
 
-Library functions shared over multiple Terraria plugins.
+This library provides some common functionality for Terraria plugins based on [TerrariaAPI-Server](https://github.com/NyxStudios/TerrariaAPI-Server) and [TShock](https://github.com/NyxStudios/TShock).

@@ -249,9 +249,6 @@
     <Compile Include="_Utility Classes\Vector2Ex.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="License.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\TShock\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj">
       <Project>{6877506e-adc6-4142-98a6-79e4fa02855a}</Project>
       <Name>TerrariaServerAPI</Name>
@@ -266,6 +263,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Serialization;
+using Terraria.DataStructures;
 using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
@@ -852,17 +853,20 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnTilePaint(new TilePaintEventArgs(player, new DPoint(tileX, tileY), (PaintColor)color));
             break;
           }
-          case PacketTypes.PlayerKillMe: {
+          case PacketTypes.PlayerDeathV2: {
             if (this.PlayerDeath == null)
               break;
 
-            int playerIndex = e.Msg.readBuffer[e.Index];
-            int direction = e.Msg.readBuffer[e.Index + 1];
-            int dmg = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
-            bool pvp = e.Msg.readBuffer[e.Index + 4] != 0;
-            string deathText = Encoding.UTF8.GetString(e.Msg.readBuffer, e.Index + 6, e.Length - 7);
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index + 1, e.Length, false))) {
+              int playerIndex = reader.ReadByte();
+              var deathReason = PlayerDeathReason.FromReader(reader);
+              int damage = reader.ReadInt16();
+              int direction = reader.ReadByte() - 1;
+              bool pvp = reader.ReadByte() != 0;
 
-            e.Handled = this.OnPlayerDeath(new PlayerDeathEventArgs(player, direction, dmg, pvp, deathText));
+              e.Handled = this.OnPlayerDeath(new PlayerDeathEventArgs(player, deathReason, direction, damage, pvp));
+            }
+            
             break;
           }
           case PacketTypes.Teleport: {

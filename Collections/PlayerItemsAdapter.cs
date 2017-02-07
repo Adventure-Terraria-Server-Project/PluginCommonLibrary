@@ -11,8 +11,6 @@ namespace Terraria.Plugins.Common.Collections {
     private readonly int playerIndex;
     private readonly bool sendPacketOnChanges;
 
-    /// <param name="fromIndex">Use this to limit </param>
-    /// <param name="toIndex"></param>
     /// <param name="sendPacketOnChanges">if set to <c>true</c> data packets about the inventory changes are sent to the player.</param>
     public PlayerItemsAdapter(int playerIndex, Item[] itemArray, int fromIndex = 0, int toIndex = 0, bool sendPacketOnChanges = true): base (itemArray, fromIndex, toIndex) {
       this.playerIndex = playerIndex;

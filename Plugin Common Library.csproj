@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="Collections\ItemsAdapter.cs" />
     <Compile Include="Collections\Inventory.cs" />
+    <Compile Include="Collections\NetItemsAdapter.cs" />
     <Compile Include="Collections\PlayerItemsAdapter.cs" />
     <Compile Include="Hooks\ChatTextEventArgs.cs" />
     <Compile Include="Hooks\ChestOpenEventArgs.cs" />
@@ -265,12 +266,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="deploy.py" />
     <Content Include="LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>REM IF "$(ConfigurationName)" == "Release" (
+REM   python "$(ProjectDir)\deploy.py"
+REM )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

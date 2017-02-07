@@ -190,8 +190,12 @@ namespace Terraria.Plugins.Common.Collections {
       // apply all the changes
       for (int i = 0; i < updates.Length; i++) {
         ItemData? updateItem = updates[i];
-        if (updateItem != null)
-          destinationInventory[i] = updateItem.Value;
+        if (updateItem != null) {
+          if (updateItem.Value.StackSize > 0)
+            destinationInventory[i] = updateItem.Value;
+          else
+            destinationInventory[i] = ItemData.None;
+        }
       }
     }
 

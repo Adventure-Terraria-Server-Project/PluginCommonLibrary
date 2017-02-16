@@ -857,7 +857,7 @@ namespace Terraria.Plugins.Common.Hooks {
             if (this.PlayerDeath == null)
               break;
 
-            using (BinaryReader reader = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index + 1, e.Length, false))) {
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(e.Msg.readBuffer, e.Index, e.Length, false))) {
               int playerIndex = reader.ReadByte();
               var deathReason = PlayerDeathReason.FromReader(reader);
               int damage = reader.ReadInt16();

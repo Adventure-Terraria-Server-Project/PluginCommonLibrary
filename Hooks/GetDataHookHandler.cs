@@ -486,7 +486,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
             int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
 
-            if (!TerrariaUtils.Tiles.IsValidCoord(x, y) || editType > 14)
+            if (!TerrariaUtils.Tiles.IsValidCoord(x, y))
               return;
 
             int blockType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);

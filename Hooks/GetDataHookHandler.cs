@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Serialization;
 using Terraria.DataStructures;
+using Terraria.GameContent.UI;
 using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
@@ -16,6 +17,7 @@ namespace Terraria.Plugins.Common.Hooks {
     public TerrariaPlugin Plugin { get; private set; }
     public bool InvokeTileEditOnChestKill { get; set; }
     public bool InvokeTileOnObjectPlacement { get; set; }
+    public bool InvokeTileEditOnMasswireOperation { get; set; }
 
     #region [Event: TileEdit]
     public event EventHandler<TileEditEventArgs> TileEdit;
@@ -452,6 +454,22 @@ namespace Terraria.Plugins.Common.Hooks {
         this.NpcTookDamage?.Invoke(this, e);
       } catch (Exception ex) {
         this.ReportEventHandlerException("NpcTookDamage", ex);
+      }
+
+      return e.Handled;
+    }
+    #endregion
+
+    #region [Event: MassWireOperation]
+    public event EventHandler<MassWireOperationEventArgs> MassWireOperation;
+
+    protected virtual bool OnMassWireOperation(MassWireOperationEventArgs e) {
+      Contract.Requires<ArgumentNullException>(e != null);
+
+      try {
+        this.MassWireOperation?.Invoke(this, e);
+      } catch (Exception ex) {
+        this.ReportEventHandlerException("MassWireOperation", ex);
       }
 
       return e.Handled;
@@ -905,12 +923,51 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnNpcTookDamage(new NpcTookDamageEventArgs(player, npcIndex, damage, knockback, hitDirection, isCritical));
             break;
           }
+          case PacketTypes.MassWireOperation: {
+            if (this.MassWireOperation == null)
+              break;
+
+            int x1 = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
+            int y1 = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
+            int x2 = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 4);
+            int y2 = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 6);
+            WiresUI.Settings.MultiToolMode toolMode = (WiresUI.Settings.MultiToolMode)e.Msg.readBuffer[e.Index + 7];
+
+            DPoint startLocation = new DPoint(x1, y1);
+            DPoint endLocation = new DPoint(x2, y2);
+            e.Handled = this.OnMassWireOperation(new MassWireOperationEventArgs(player, startLocation, endLocation, toolMode));
+            if (!e.Handled && this.InvokeTileEditOnMasswireOperation) {
+              e.Handled = this.RaiseTileEditDependingOnToolMode(player, startLocation, toolMode);
+
+              if (!e.Handled && startLocation != endLocation)
+                e.Handled = this.RaiseTileEditDependingOnToolMode(player, endLocation, toolMode);
+            }
+            break;
+          }
         }
       } catch (Exception ex) {
         ServerApi.LogWriter.PluginWriteLine(
           this.Plugin, string.Format("Internal error on handling data packet {0}. Exception details: \n{1}", e.MsgID, ex), TraceLevel.Error
         );
       }
+    }
+
+    private bool RaiseTileEditDependingOnToolMode(TSPlayer player, DPoint tileLocation, WiresUI.Settings.MultiToolMode toolMode) {
+      bool handled = false;
+      bool isPlace = (toolMode & WiresUI.Settings.MultiToolMode.Cutter) == 0;
+       
+      if ((toolMode & WiresUI.Settings.MultiToolMode.Red) != 0)
+        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWire : TileEditType.DestroyWire, tileLocation, 0, 0));
+      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Blue) != 0)
+        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireBlue : TileEditType.DestroyWireBlue, tileLocation, 0, 0));
+      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Green) != 0)
+        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireGreen : TileEditType.DestroyWireGreen, tileLocation, 0, 0));
+      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Yellow) != 0)
+        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireYellow : TileEditType.DestroyWireYellow, tileLocation, 0, 0));
+      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Actuator) != 0)
+        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceActuator : TileEditType.DestroyActuator, tileLocation, 0, 0));
+      
+      return handled;
     }
 
     private void ReportEventHandlerException(string eventName, Exception exception) {

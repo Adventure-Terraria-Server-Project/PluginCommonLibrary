@@ -154,6 +154,7 @@
     <Compile Include="Hooks\ChestPlaceEventArgs.cs" />
     <Compile Include="Hooks\ChestRenameEventArgs.cs" />
     <Compile Include="Hooks\NpcTookDamageEventArgs.cs" />
+    <Compile Include="Hooks\MassWireOperationEventArgs.cs" />
     <Compile Include="Hooks\TeleportEventArgs.cs" />
     <Compile Include="Hooks\PlayerSlotEventArgs.cs" />
     <Compile Include="Hooks\SendTileSquareEventArgs.cs" />

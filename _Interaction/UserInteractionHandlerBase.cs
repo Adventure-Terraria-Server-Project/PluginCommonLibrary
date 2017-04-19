@@ -110,14 +110,14 @@ namespace Terraria.Plugins.Common {
             try {
               interaction.TimeExpiredCallback(interaction.ForPlayer);
             } catch (Exception ex) {
-              this.PluginTrace.WriteLineError("A command interaction's time expired callback has thrown an exception:\n" + ex);
+              this.PluginTrace.WriteLineError("A command interaction's TimeExpiredCallback has thrown an exception:\n" + ex);
             }
           }
           if (interaction.AbortedCallback != null) {
             try {
               interaction.AbortedCallback(interaction.ForPlayer);
             } catch (Exception ex) {
-              this.PluginTrace.WriteLineError("A command interaction's aborted callback has thrown an exception:\n" + ex);
+              this.PluginTrace.WriteLineError("A command interaction's AbortedCallback has thrown an exception:\n" + ex);
             }
           }
           interaction.IsActive = false;
@@ -140,7 +140,7 @@ namespace Terraria.Plugins.Common {
             try {
               interaction.AbortedCallback(interaction.ForPlayer);
             } catch (Exception ex) {
-              this.PluginTrace.WriteLineError("A command interaction's aborted callback has thrown an exception:\n" + ex);
+              this.PluginTrace.WriteLineError("A command interaction's AbortedCallback has thrown an exception:\n" + ex);
             }
           }
           interaction.IsActive = false;

@@ -68,10 +68,10 @@ namespace Terraria.Plugins.Common {
 
       NPC npc = Main.npc[npcIndex];
       if (npcType < 0)
-        npc.netDefaults(npcType);
+        npc.SetDefaults(npcType);
 
       if (!Main.npcLifeBytes.ContainsKey(npc.netID)) {
-        TShock.Log.Write(string.Format("Error spawning NPC. The NPC type id \"{0}\" seems to be invalid.", npcType), TraceLevel.Error);
+        TShock.Log.Write($"Error spawning NPC. The NPC type id \"{npcType}\" seems to be invalid.", TraceLevel.Error);
         npcIndex = -1;
         npc.active = false;
 

@@ -474,6 +474,10 @@ namespace Terraria.Plugins.Common {
     DefendersForge = 463,
 		WarTable = 464,
 		WarTableBanner = 465,
-		ElderCrystalStand = 466
+		ElderCrystalStand = 466,
+    // 1.3.5
+    Containers2 = 467,
+    FakeContainers2 = 468,
+    Tables2 = 469,
   }
 }

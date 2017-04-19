@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using Terraria.Localization;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
@@ -22,9 +23,9 @@ namespace Terraria.Plugins.Common.Collections {
       set {
         Item tItem = value.ToItem();
         this.itemArray[this.fromIndex + index] = tItem;
-
+        
         if (this.sendPacketOnChanges)
-          NetMessage.SendData((int)PacketTypes.PlayerSlot, this.playerIndex, -1, tItem.name, this.playerIndex, this.fromIndex + index, tItem.prefix);
+          NetMessage.SendData((int)PacketTypes.PlayerSlot, this.playerIndex, -1, null, this.playerIndex, this.fromIndex + index, tItem.prefix);
       }
     }
 

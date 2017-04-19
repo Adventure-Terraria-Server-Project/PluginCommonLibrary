@@ -559,9 +559,9 @@ namespace Terraria.Plugins.Common.Hooks {
 
             int style = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
-            if (type == 0 || type == 2) { // Chest placement / Dresser Placement
+            if (type == 0 || type == 2 || type == 4) { // Chest placement / Dresser Placement / Chest2 placement
               e.Handled = this.OnChestPlace(new ChestPlaceEventArgs(player, new DPoint(x, y), type, style));
-            } else { // Chest kill
+            } else { // Chest or Dresser or Chest2 kill
               int tileType = TerrariaUtils.Tiles[x, y].type;
               if (tileType != TileID.Containers && tileType != TileID.Dressers)
                 break;

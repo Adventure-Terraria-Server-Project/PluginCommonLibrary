@@ -46,6 +46,9 @@ namespace Terraria.Plugins.Common {
     MartianChest,
     MeteoriteChest,
     GraniteChest,
-    MarbleChest
+    MarbleChest,
+    // 1.3.5
+    CrystalChest,
+    GoldenChest,
   }
 }

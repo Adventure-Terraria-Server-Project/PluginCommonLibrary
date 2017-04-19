@@ -735,9 +735,21 @@ namespace Terraria.Plugins.Common {
         new Tuple<ChestStyle, bool>(ChestStyle.MeteoriteChest, false),
         new Tuple<ChestStyle, bool>(ChestStyle.GraniteChest, false),
         new Tuple<ChestStyle, bool>(ChestStyle.MarbleChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.CrystalChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GoldenChest, false),
       };
     });
-    public ChestStyle GetChestStyle(int objectStyle, out bool isLocked) {
+    private static readonly Lazy<Tuple<ChestStyle, bool>[]> objectIdChest2StyleLockedLookup = new Lazy<Tuple<ChestStyle, bool>[]>(() => {
+      return new[] {
+        new Tuple<ChestStyle, bool>(ChestStyle.CrystalChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GoldenChest, false),
+      };
+    });
+    public ChestStyle GetChestStyle(ushort tileId, int objectStyle, out bool isLocked) {
+      var lookupTable = objectIdChestStyleLockedLookup;
+      if (tileId == TileID.Containers2)
+        lookupTable =  objectIdChest2StyleLockedLookup;
+
       if (objectStyle < 0 || objectStyle >= objectIdChestStyleLockedLookup.Value.Length)
         throw new ArgumentOutOfRangeException("objectStyle");
 
@@ -747,7 +759,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
-      return this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
+      return this.GetChestStyle(tile.type, (tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
     }
 
     private static readonly Lazy<Dictionary<ChestStyle, int>> chestStyleKeyItemTypeLookup = new Lazy<Dictionary<ChestStyle, int>>(() => {
@@ -771,7 +783,7 @@ namespace Terraria.Plugins.Common {
 
     public bool IsChestLocked(Tile tile) {
       bool isLocked;
-      this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
+      this.GetChestStyle(tile.type, (tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
       return isLocked;
     }
 
@@ -818,6 +830,8 @@ namespace Terraria.Plugins.Common {
         [ChestStyle.MeteoriteChest] = ItemType.MeteoriteChest,
         [ChestStyle.GraniteChest] = ItemType.GraniteChest,
         [ChestStyle.MarbleChest] = ItemType.MarbleChest,
+        [ChestStyle.CrystalChest] = ItemType.CrystalChest,
+        [ChestStyle.GoldenChest] = ItemType.GoldenChest,
       };
     });
     public ItemType GetItemTypeFromChestStyle(ChestStyle chestStyle) {
@@ -828,6 +842,20 @@ namespace Terraria.Plugins.Common {
       return itemType;
     }
 
+    private static readonly Lazy<HashSet<ChestStyle>> chestStyleLockables = new Lazy<HashSet<ChestStyle>>(() => {
+      return new HashSet<ChestStyle>{
+        ChestStyle.GoldChest,
+        ChestStyle.ShadowChest,
+        ChestStyle.JungleChest,
+        ChestStyle.CorruptionChest,
+        ChestStyle.CrimsonChest,
+        ChestStyle.HallowedChest,
+        ChestStyle.FrozenChest,
+        ChestStyle.BlueDungeonChest,
+        ChestStyle.GreenDungeonChest,
+        ChestStyle.PinkDungeonChest
+      };
+    });
     public void LockChest(DPoint anyChestTileLocation) {
       Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
       if (!chestTile.active() || chestTile.type != (int)BlockType.Chest)
@@ -838,18 +866,7 @@ namespace Terraria.Plugins.Common {
       if (isLocked)
         throw new InvalidChestStyleException("Chest is already locked.", chestStyle);
 
-      if (
-        chestStyle != ChestStyle.GoldChest &&
-        chestStyle != ChestStyle.ShadowChest &&
-        chestStyle != ChestStyle.JungleChest &&
-        chestStyle != ChestStyle.CorruptionChest &&
-        chestStyle != ChestStyle.CrimsonChest &&
-        chestStyle != ChestStyle.HallowedChest &&
-        chestStyle != ChestStyle.FrozenChest &&
-        chestStyle != ChestStyle.BlueDungeonChest &&
-        chestStyle != ChestStyle.GreenDungeonChest &&
-        chestStyle != ChestStyle.PinkDungeonChest
-      )
+      if (!this.IsChestStyleLockable(chestStyle))
         throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
 
       ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
@@ -870,6 +887,10 @@ namespace Terraria.Plugins.Common {
       }
       
       TSPlayer.All.SendTileSquare(anyChestTileLocation, 4);
+    }
+
+    public bool IsChestStyleLockable(ChestStyle chestKind) {
+      return chestStyleLockables.Value.Contains(chestKind);
     }
  
     public ChestKind GuessChestKind(DPoint anyChestTileLocation) {
@@ -1594,8 +1615,8 @@ namespace Terraria.Plugins.Common {
         Item dummyItem = new Item();
         dummyItem.netDefaults(i);
 
-        if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createTile != -1) { 
-          string itemName = dummyItem.name;
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createTile != -1) { 
+          string itemName = dummyItem.Name;
           itemName = itemName.Replace(" ", "");
           itemName = itemName.Replace("'", "");
           itemName = itemName.Replace("´", "");
@@ -1612,8 +1633,8 @@ namespace Terraria.Plugins.Common {
         Item dummyItem = new Item();
         dummyItem.netDefaults(i);
 
-        if (!string.IsNullOrEmpty(dummyItem.name) && dummyItem.createWall != -1) { 
-          string itemName = dummyItem.name;
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createWall != -1) { 
+          string itemName = dummyItem.Name;
           itemName = itemName.Replace(" ", "");
           itemName = itemName.Replace("'", "");
           itemName = itemName.Replace("´", "");

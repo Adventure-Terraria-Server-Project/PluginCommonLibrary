@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Terraria.ID;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;
@@ -747,6 +748,25 @@ namespace Terraria.Plugins.Common {
 
     public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
       return this.GetChestStyle((tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
+    }
+
+    private static readonly Lazy<Dictionary<ChestStyle, int>> chestStyleKeyItemTypeLookup = new Lazy<Dictionary<ChestStyle, int>>(() => {
+      return new Dictionary<ChestStyle, int>{
+        [ChestStyle.GoldChest] = ItemID.GoldenKey,
+        [ChestStyle.ShadowChest] = ItemID.ShadowKey,
+        [ChestStyle.CorruptionChest] = ItemID.CorruptionKey,
+        [ChestStyle.CrimsonChest] = ItemID.CrimsonKey,
+        [ChestStyle.HallowedChest] = ItemID.HallowedKey,
+        [ChestStyle.FrozenChest] = ItemID.FrozenKey,
+        [ChestStyle.JungleChest] = ItemID.JungleKey,
+      };
+    });
+    public int KeyItemTypeFromChestStyle(ChestStyle chestStyle) {
+      int itemType;
+      if (!chestStyleKeyItemTypeLookup.Value.TryGetValue(chestStyle, out itemType))
+        throw new ArgumentException("ChestStyle");
+      
+      return itemType;
     }
 
     public bool IsChestLocked(Tile tile) {

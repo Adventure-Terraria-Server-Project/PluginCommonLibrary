@@ -165,6 +165,7 @@
     <Compile Include="Hooks\PlayerDeathEventArgs.cs" />
     <Compile Include="TerrariaNpcs.cs" />
     <Compile Include="TerrariaProjectiles.cs" />
+    <Compile Include="_Data\JsonTSPlayerConverter.cs" />
     <Compile Include="_Enums and Structs\DoorAction.cs" />
     <Compile Include="_Enums and Structs\HerbGrowthState.cs" />
     <Compile Include="_Enums and Structs\HerbStyle.cs" />

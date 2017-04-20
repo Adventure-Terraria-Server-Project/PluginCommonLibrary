@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Terraria.DataStructures;
 using Terraria.GameContent.UI;
@@ -14,10 +16,23 @@ using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Hooks {
   public class GetDataHookHandler: IDisposable {
+    public enum MassWireOpTileEditInvokeType {
+      DontInvoke,
+      /// <summary>
+      ///   No matter which wire is placed / destroyed, always invoke once with <c>TileEditType.PlaceWire</c>
+      /// </summary>
+      AlwaysPlaceWire,
+      /// <summary>
+      ///   If multiple wire operations happen at once, invoke TileEdit for each of them
+      /// </summary>
+      ForEach
+    }
+
     public TerrariaPlugin Plugin { get; private set; }
     public bool InvokeTileEditOnChestKill { get; set; }
     public bool InvokeTileOnObjectPlacement { get; set; }
-    public bool InvokeTileEditOnMasswireOperation { get; set; }
+    public MassWireOpTileEditInvokeType InvokeTileEditOnMasswireOperation { get; set; }
+    public HashSet<string> PrintDebugInfoFor { get; set; }
 
     #region [Event: TileEdit]
     public event EventHandler<TileEditEventArgs> TileEdit;
@@ -32,6 +47,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("TileEdit", ex);
       }
 
+      this.WriteHadnlerDebugInfo("TileEdit", e);
       return e.Handled;
     }
     #endregion
@@ -49,6 +65,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ObjectPlacement", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ObjectPlacement", e);
       return e.Handled;
     }
     #endregion
@@ -66,6 +83,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestPlace", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestPlace", e);
       return e.Handled;
     }
     #endregion
@@ -83,6 +101,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestOpen", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestOpen", e);
       return e.Handled;
     }
     #endregion
@@ -100,6 +119,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestRename", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestRename", e);
       return e.Handled;
     }
     #endregion
@@ -117,6 +137,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestKill", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestKill", e);
       return e.Handled;
     }
     #endregion
@@ -134,6 +155,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestGetContents", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestGetContents", e);
       return e.Handled;
     }
     #endregion
@@ -151,6 +173,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestModifySlot", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestModifySlot", e);
       return e.Handled;
     }
     #endregion
@@ -168,6 +191,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("SignEdit", ex);
       }
 
+      this.WriteHadnlerDebugInfo("SignEdit", e);
       return e.Handled;
     }
     #endregion
@@ -185,6 +209,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("SignRead", ex);
       }
 
+      this.WriteHadnlerDebugInfo("SignRead", e);
       return e.Handled;
     }
     #endregion
@@ -202,6 +227,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("HitSwitch", ex);
       }
 
+      this.WriteHadnlerDebugInfo("HitSwitch", e);
       return e.Handled;
     }
     #endregion
@@ -219,6 +245,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("BossSpawn", ex);
       }
 
+      this.WriteHadnlerDebugInfo("BossSpawn", e);
       return e.Handled;
     }
     #endregion
@@ -236,6 +263,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ItemUpdate", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ItemUpdate", e);
       return e.Handled;
     }
     #endregion
@@ -253,6 +281,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ItemOwner", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ItemOwner", e);
       return e.Handled;
     }
     #endregion
@@ -270,6 +299,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("QuickStackNearby", ex);
       }
 
+      this.WriteHadnlerDebugInfo("QuickStackNearby", e);
       return e.Handled;
     }
     #endregion
@@ -287,6 +317,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("PlayerModifySlot", ex);
       }
 
+      this.WriteHadnlerDebugInfo("PlayerModifySlot", e);
       return e.Handled;
     }
     #endregion
@@ -304,6 +335,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("LiquidSet", ex);
       }
 
+      this.WriteHadnlerDebugInfo("LiquidSet", e);
       return e.Handled;
     }
     #endregion
@@ -321,6 +353,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("DoorUse", ex);
       }
 
+      this.WriteHadnlerDebugInfo("DoorUse", e);
       return e.Handled;
     }
     #endregion
@@ -336,6 +369,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("PlayerSpawn", ex);
       }
 
+      this.WriteHadnlerDebugInfo("PlayerSpawn", e);
       return e.Handled;
     }
     #endregion
@@ -353,6 +387,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChestUnlock", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChestUnlock", e);
       return e.Handled;
     }
     #endregion
@@ -370,6 +405,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("ChatText", ex);
       }
 
+      this.WriteHadnlerDebugInfo("ChatText", e);
       return e.Handled;
     }
     #endregion
@@ -387,6 +423,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("SendTileSquare", ex);
       }
 
+      this.WriteHadnlerDebugInfo("SendTileSquare", e);
       return e.Handled;
     }
     #endregion
@@ -404,6 +441,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("TilePaint", ex);
       }
 
+      this.WriteHadnlerDebugInfo("TilePaint", e);
       return e.Handled;
     }
     #endregion
@@ -417,11 +455,11 @@ namespace Terraria.Plugins.Common.Hooks {
       try {
         if (this.PlayerDeath != null)
           this.PlayerDeath(this, e);
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         this.ReportEventHandlerException("PlayerDeath", ex);
       }
 
+      this.WriteHadnlerDebugInfo("PlayerDeath", e);
       return e.Handled;
     }
     #endregion
@@ -435,11 +473,11 @@ namespace Terraria.Plugins.Common.Hooks {
       try {
         if (this.Teleport != null)
           this.Teleport(this, e);
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         this.ReportEventHandlerException("Teleport", ex);
       }
 
+      this.WriteHadnlerDebugInfo("Teleport", e);
       return e.Handled;
     }
     #endregion
@@ -456,6 +494,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("NpcTookDamage", ex);
       }
 
+      this.WriteHadnlerDebugInfo("NpcTookDamage", e);
       return e.Handled;
     }
     #endregion
@@ -472,6 +511,7 @@ namespace Terraria.Plugins.Common.Hooks {
         this.ReportEventHandlerException("MassWireOperation", ex);
       }
 
+      this.WriteHadnlerDebugInfo("MassWireOperation", e);
       return e.Handled;
     }
     #endregion
@@ -511,8 +551,8 @@ namespace Terraria.Plugins.Common.Hooks {
             int objectStyle = e.Msg.readBuffer[e.Index + 7];
 
             e.Handled = this.OnTileEdit(
-              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, objectStyle
-            ));
+              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, objectStyle)
+            );
             break;
           }
           case PacketTypes.PlaceObject: {
@@ -924,7 +964,7 @@ namespace Terraria.Plugins.Common.Hooks {
             break;
           }
           case PacketTypes.MassWireOperation: {
-            if (this.MassWireOperation == null)
+            if (this.MassWireOperation == null && this.TileEdit == null)
               break;
 
             int x1 = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
@@ -936,18 +976,18 @@ namespace Terraria.Plugins.Common.Hooks {
             DPoint startLocation = new DPoint(x1, y1);
             DPoint endLocation = new DPoint(x2, y2);
             e.Handled = this.OnMassWireOperation(new MassWireOperationEventArgs(player, startLocation, endLocation, toolMode));
-            if (!e.Handled && this.InvokeTileEditOnMasswireOperation) {
+            if (!e.Handled && this.InvokeTileEditOnMasswireOperation != MassWireOpTileEditInvokeType.DontInvoke) {
               e.Handled = this.RaiseTileEditDependingOnToolMode(player, startLocation, toolMode);
 
-              if (!e.Handled && startLocation != endLocation)
-                e.Handled = this.RaiseTileEditDependingOnToolMode(player, endLocation, toolMode);
+              if (startLocation != endLocation)
+                e.Handled = this.RaiseTileEditDependingOnToolMode(player, endLocation, toolMode) || e.Handled;
             }
             break;
           }
         }
       } catch (Exception ex) {
         ServerApi.LogWriter.PluginWriteLine(
-          this.Plugin, string.Format("Internal error on handling data packet {0}. Exception details: \n{1}", e.MsgID, ex), TraceLevel.Error
+          this.Plugin, $"Internal error on handling data packet {e.MsgID}. Exception details: \n{ex}", TraceLevel.Error
         );
       }
     }
@@ -956,24 +996,34 @@ namespace Terraria.Plugins.Common.Hooks {
       bool handled = false;
       bool isPlace = (toolMode & WiresUI.Settings.MultiToolMode.Cutter) == 0;
        
-      if ((toolMode & WiresUI.Settings.MultiToolMode.Red) != 0)
-        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWire : TileEditType.DestroyWire, tileLocation, 0, 0));
-      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Blue) != 0)
-        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireBlue : TileEditType.DestroyWireBlue, tileLocation, 0, 0));
-      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Green) != 0)
-        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireGreen : TileEditType.DestroyWireGreen, tileLocation, 0, 0));
-      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Yellow) != 0)
-        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireYellow : TileEditType.DestroyWireYellow, tileLocation, 0, 0));
-      if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Actuator) != 0)
-        handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceActuator : TileEditType.DestroyActuator, tileLocation, 0, 0));
+      if (this.InvokeTileEditOnMasswireOperation == MassWireOpTileEditInvokeType.ForEach) {
+        if ((toolMode & WiresUI.Settings.MultiToolMode.Red) != 0)
+          handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWire : TileEditType.DestroyWire, tileLocation, 0, 0));
+        if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Blue) != 0)
+          handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireBlue : TileEditType.DestroyWireBlue, tileLocation, 0, 0));
+        if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Green) != 0)
+          handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireGreen : TileEditType.DestroyWireGreen, tileLocation, 0, 0));
+        if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Yellow) != 0)
+          handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceWireYellow : TileEditType.DestroyWireYellow, tileLocation, 0, 0));
+        if (!handled && (toolMode & WiresUI.Settings.MultiToolMode.Actuator) != 0)
+          handled = this.OnTileEdit(new TileEditEventArgs(player, isPlace ? TileEditType.PlaceActuator : TileEditType.DestroyActuator, tileLocation, 0, 0));
+      } else if (this.InvokeTileEditOnMasswireOperation == MassWireOpTileEditInvokeType.AlwaysPlaceWire) {
+        handled = this.OnTileEdit(new TileEditEventArgs(player, TileEditType.PlaceWire, tileLocation, 0, 0));
+      }
       
       return handled;
     }
 
     private void ReportEventHandlerException(string eventName, Exception exception) {
       ServerApi.LogWriter.PluginWriteLine(
-        this.Plugin, string.Format("One {0} event handler has thrown an unexpected exception. Exception details:\n{1}", eventName, exception), TraceLevel.Error
+        this.Plugin, $"One {eventName} event handler has thrown an unexpected exception. Exception details:\n{exception}", TraceLevel.Error
       );
+    }
+
+    [Conditional("DEBUG")]
+    private void WriteHadnlerDebugInfo(string eventName, EventArgs args) {
+      if (this.PrintDebugInfoFor != null && this.PrintDebugInfoFor.Contains(eventName))
+        Console.WriteLine($"[{eventName}] {JsonConvert.SerializeObject(args, new JsonTSPlayerConverter())}");
     }
 
     #region [IDisposable Implementation]

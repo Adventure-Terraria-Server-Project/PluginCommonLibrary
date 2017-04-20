@@ -1494,7 +1494,11 @@ namespace Terraria.Plugins.Common {
         new DPoint(3, 4), // DefendersForge = 463
         new DPoint(5, 4), // WarTable = 464
         new DPoint(2, 3), // WarTableBanner = 465
-        new DPoint(5, 3)  // ElderCrystalStand = 466
+        new DPoint(5, 3), // ElderCrystalStand = 466
+        // 1.3.5
+        new DPoint(2, 2), // Containers2 = 467
+        new DPoint(2, 2), // FakeContainers2 = 468
+        new DPoint(3, 2), // Tables2 = 469
       };
     });
     public DPoint GetObjectSize(BlockType objectType) {

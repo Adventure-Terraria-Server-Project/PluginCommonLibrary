@@ -52,7 +52,7 @@ namespace Terraria.Plugins.Common.Collections {
             string keyRaw = reader.GetAttribute(this.KeyNodeName);
             if (keyRaw == null) {
               throw new FormatException(
-                string.Format("The XML-Attribute \"{0}\" is missing on element \"{1}\".", this.KeyNodeName, reader.Name)
+                $"The XML-Attribute \"{this.KeyNodeName}\" is missing on element \"{reader.Name}\"."
               );
             }
 

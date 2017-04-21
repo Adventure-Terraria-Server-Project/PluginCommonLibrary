@@ -67,6 +67,7 @@ namespace Terraria.Plugins.Common {
     Penguin,
     Frog,
     Buggy,
+    WallCreeper,
     Unicorn,
     Drippler,
     Wraith,

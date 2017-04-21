@@ -5,6 +5,9 @@ using System.Diagnostics.Contracts;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
+  /// <summary>
+  ///   TShockAPI.NetItem[] to IList<ItemData> adapter.
+  /// </summary>
   public class NetItemsAdapter: IList<ItemData> {
     private static volatile Dictionary<int,int[]> PreferredSlots;
     protected readonly NetItem[] itemArray;
@@ -25,7 +28,7 @@ namespace Terraria.Plugins.Common.Collections {
     ///   Gets the indexes of the slot preferred for the given item type.
     /// </summary>
     /// <param name="itemType">Type of the item.</param>
-    public virtual HashSet<int> PreferredSlotIndexes(ItemType itemType) {
+    public virtual HashSet<int> PreferredSlotIndexes(int itemType) {
       return new HashSet<int>();
     }
 

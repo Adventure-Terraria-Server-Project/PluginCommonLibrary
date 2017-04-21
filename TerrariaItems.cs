@@ -14,239 +14,219 @@ namespace Terraria.Plugins.Common {
       return (itemType >= TerrariaUtils.ItemType_Min && itemType <= TerrariaUtils.ItemType_Max);
     }
 
-    private static bool[] craftableItemTypes;
-    public bool IsCraftableType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException(string.Format("The given item type {0} is invalid.", itemType), "itemType");
+    private static readonly Lazy<bool[]> craftableItemTypes = new Lazy<bool[]>(() => {
+      var craftableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
 
-      if (TerrariaItems.craftableItemTypes == null) {
-        TerrariaItems.craftableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
+      for (int i = 0; i < Main.recipe.Length; i++) {
+        Recipe recipe = Main.recipe[i];
+        if (recipe == null)
+          continue;
 
-        for (int i = 0; i < Main.recipe.Length; i++) {
-          Recipe recipe = Main.recipe[i];
-          if (recipe == null)
-            continue;
+        int index = recipe.createItem.netID;
+        if (index < 0)
+          index += TerrariaUtils.ItemType_Max;
 
-          int index = recipe.createItem.netID;
+        craftableItemTypes[index] = true;
+      }
+
+      return craftableItemTypes;
+    });
+    public bool IsCraftableType(int itemType) {
+      Check.ValidItemType(itemType);
+        
+      int index = itemType;
+      if (index < 0)
+        index += TerrariaUtils.ItemType_Max;
+
+      return TerrariaItems.craftableItemTypes.Value[index];
+    }
+
+    private static readonly Lazy<bool[]> equipableItemTypes = new Lazy<bool[]>(() => {
+      var equipableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (
+          !string.IsNullOrEmpty(dummyItem.Name) && !dummyItem.vanity && (
+            dummyItem.headSlot != -1 || dummyItem.bodySlot != -1 || dummyItem.legSlot != -1 || dummyItem.accessory
+          )
+        ) {
+          int index = i;
           if (index < 0)
             index += TerrariaUtils.ItemType_Max;
 
-          TerrariaItems.craftableItemTypes[index] = true;
+          equipableItemTypes[index] = true;
         }
       }
-      
-      {
-        int index = (int)itemType;
-        if (index < 0)
-          index += TerrariaUtils.ItemType_Max;
 
-        return TerrariaItems.craftableItemTypes[index];
-      }
+      return equipableItemTypes;
+    });
+    public bool IsEquipableType(int itemType) {
+      Check.ValidItemType(itemType);
+
+      int index = itemType;
+      if (itemType < 0)
+        index += TerrariaUtils.ItemType_Max;
+
+      return TerrariaItems.equipableItemTypes.Value[index];
     }
 
-    private static bool[] equipableItemTypes;
-    public bool IsEquipableType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
+    private static readonly Lazy<HashSet<int>> ammoTypes = new Lazy<HashSet<int>>(() => {
+      var ammoTypes = new HashSet<int>();
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.ammo > 0)
+          ammoTypes.Add(i);
+      }
       
-      if (TerrariaItems.equipableItemTypes == null) {
-        TerrariaItems.equipableItemTypes = new bool[TerrariaUtils.ItemType_Max + 1 + Math.Abs(TerrariaUtils.ItemType_Min)];
+      return ammoTypes;
+    });
+    public bool IsAmmoType(int itemType) {
+      Check.ValidItemType(itemType);
+      return TerrariaItems.ammoTypes.Value.Contains(itemType);
+    }
 
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (
-            !string.IsNullOrEmpty(dummyItem.Name) && !dummyItem.vanity && (
-              dummyItem.headSlot != -1 || dummyItem.bodySlot != -1 || dummyItem.legSlot != -1 || dummyItem.accessory
-            )
-          ) {
-            int index = i;
-            if (index < 0)
-              index += TerrariaUtils.ItemType_Max;
+    private static readonly Lazy<HashSet<int>> weaponTypes = new Lazy<HashSet<int>>(() => {
+      var weaponTypes = new HashSet<int>();
 
-            TerrariaItems.equipableItemTypes[index] = true;
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.damage > 0 && dummyItem.ammo == 0)
+          weaponTypes.Add(i);
+      }
+      
+      return weaponTypes;
+    });
+    public bool IsWeaponType(int itemType) {
+      Check.ValidItemType(itemType);
+      return TerrariaItems.weaponTypes.Value.Contains(itemType);
+    }
+
+    private static readonly Lazy<HashSet<int>> accessoryTypes = new Lazy<HashSet<int>>(() => {
+      var accessoryTypes = new HashSet<int>();
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.accessory)
+          accessoryTypes.Add(i);
+      }
+      
+      return accessoryTypes;
+    });
+    public bool IsAccessoryType(int itemType) {
+      Check.ValidItemType(itemType);
+      return TerrariaItems.accessoryTypes.Value.Contains(itemType);
+    }
+
+    private static readonly Lazy<HashSet<int>> vanityTypes = new Lazy<HashSet<int>>(() => {
+      var vanityTypes = new HashSet<int>();
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.vanity)
+          vanityTypes.Add(i);
+      }
+
+      return vanityTypes;
+    });
+    public bool IsVanityType(int itemType) {
+      Check.ValidItemType(itemType);
+      return TerrariaItems.vanityTypes.Value.Contains(itemType);
+    }
+
+    private static readonly Lazy<HashSet<int>> rareTypes = new Lazy<HashSet<int>>(() => {
+      var rareTypes = new HashSet<int>();
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.rare > 0)
+          rareTypes.Add(i);
+      }
+
+      return rareTypes;
+    });
+    public bool IsRareType(int itemType) {
+      Check.ValidItemType(itemType);
+      return TerrariaItems.rareTypes.Value.Contains(itemType);
+    }
+
+    private static readonly Lazy<int[][]> blockTypesItemTypes = new Lazy<int[][]>(() => {
+      var blockTypesItemTypes = new int[TerrariaUtils.ItemType_Max + 1][];
+
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createTile != -1) {
+          int[] styleArray = blockTypesItemTypes[dummyItem.createTile];
+          int[] newStyleArray;
+
+          if (styleArray != null) {
+            newStyleArray = new int[Math.Max(dummyItem.placeStyle + 1, styleArray.Length)];
+            styleArray.CopyTo(newStyleArray, 0);
+          } else {
+            newStyleArray = new int[dummyItem.placeStyle + 1];
           }
+
+          newStyleArray[dummyItem.placeStyle] = i;
+          blockTypesItemTypes[dummyItem.createTile] = newStyleArray;
         }
       }
 
-      {
-        int index = (int)itemType;
-        if (index < 0)
-          index += TerrariaUtils.ItemType_Max;
-
-        return TerrariaItems.equipableItemTypes[index];
-      }
-    }
-
-    private static List<ItemType> ammoTypes;
-    public bool IsAmmoType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
+      return blockTypesItemTypes;
+    });
+    public int GetItemTypeFromBlockType(int blockType, int objectStyle = 0) {
+      Check.ValidBlockType(blockType);
       
-      if (TerrariaItems.ammoTypes == null) {
-        TerrariaItems.ammoTypes = new List<ItemType>(20);
+      // TODO: update and fix this
+      switch (blockType) {
+        case TileID.Mannequin: 
+          return ItemID.Mannequin;
+        case TileID.Traps:
+          return ItemID.DartTrap;
+        case TileID.IceBlock:
+          return ItemID.None;
+        default: {
+          int[] styleArray = TerrariaItems.blockTypesItemTypes.Value[blockType];
+          Contract.Assert(styleArray != null, "BlockType: " + blockType);
 
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.ammo > 0)
-            TerrariaItems.ammoTypes.Add((ItemType)i);
-        }
-      }
+          if (objectStyle >= styleArray.Length)
+            throw new ArgumentException($"There is no item type for block \"{blockType}\" with object style {objectStyle}");
 
-      return TerrariaItems.ammoTypes.Contains(itemType);
-    }
-
-    private static List<ItemType> weaponTypes;
-    public bool IsWeaponType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
-      
-      if (TerrariaItems.weaponTypes == null) {
-        TerrariaItems.weaponTypes = new List<ItemType>(20);
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.damage > 0 && dummyItem.ammo == 0)
-            TerrariaItems.weaponTypes.Add((ItemType)i);
-        }
-      }
-
-      return TerrariaItems.weaponTypes.Contains(itemType);
-    }
-
-    private static List<ItemType> accessoryTypes;
-    public bool IsAccessoryType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
-      
-      if (TerrariaItems.accessoryTypes == null) {
-        TerrariaItems.accessoryTypes = new List<ItemType>(20);
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.accessory)
-            TerrariaItems.accessoryTypes.Add((ItemType)i);
-        }
-      }
-
-      return TerrariaItems.accessoryTypes.Contains(itemType);
-    }
-
-    private static List<ItemType> vanityTypes;
-    public bool IsVanityType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
-      
-      if (TerrariaItems.vanityTypes == null) {
-        TerrariaItems.vanityTypes = new List<ItemType>(20);
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.vanity)
-            TerrariaItems.vanityTypes.Add((ItemType)i);
-        }
-      }
-
-      return TerrariaItems.vanityTypes.Contains(itemType);
-    }
-
-    private static List<ItemType> rareTypes;
-    public bool IsRareType(ItemType itemType) {
-      if ((int)itemType < TerrariaUtils.ItemType_Min || (int)itemType > TerrariaUtils.ItemType_Max)
-        throw new ArgumentException($"The given item type {itemType} is invalid.", nameof(itemType));
-      
-      if (TerrariaItems.rareTypes == null) {
-        TerrariaItems.rareTypes = new List<ItemType>(20);
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.rare > 0)
-            TerrariaItems.rareTypes.Add((ItemType)i);
-        }
-      }
-
-      return TerrariaItems.rareTypes.Contains(itemType);
-    }
-
-    private static ItemType[][] blockTypesItemTypes;
-    public ItemType GetItemTypeFromBlockType(BlockType blockType, int objectStyle = 0) {
-      if ((int)blockType < TerrariaUtils.BlockType_Min || (int)blockType > TerrariaUtils.BlockType_Max)
-        throw new ArgumentException($"The given block type {blockType} is invalid.", nameof(blockType));
-
-      if (TerrariaItems.blockTypesItemTypes == null) {
-        TerrariaItems.blockTypesItemTypes = new ItemType[TerrariaUtils.ItemType_Max + 1][];
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createTile != -1) {
-            ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[dummyItem.createTile];
-            ItemType[] newStyleArray;
-
-            if (styleArray != null) {
-              newStyleArray = new ItemType[Math.Max(dummyItem.placeStyle + 1, styleArray.Length)];
-              styleArray.CopyTo(newStyleArray, 0);
-            } else {
-              newStyleArray = new ItemType[dummyItem.placeStyle + 1];
-            }
-
-            newStyleArray[dummyItem.placeStyle] = (ItemType)i;
-            TerrariaItems.blockTypesItemTypes[dummyItem.createTile] = newStyleArray;
-          }
-        }
-      }
-
-      {
-        switch (blockType) {
-          case BlockType.Mannequin:
-            return ItemType.Mannequin;
-          case BlockType.DartTrap:
-            return ItemType.DartTrap;
-          case BlockType.IceBlock:
-            return ItemType.None;
-          default: {
-            ItemType[] styleArray = TerrariaItems.blockTypesItemTypes[(int)blockType];
-            Contract.Assert(styleArray != null, "BlockType: " + blockType.ToString());
-
-            if (objectStyle >= styleArray.Length)
-              throw new ArgumentException(string.Format("There is no item type for block \"{0}\" with object style {1}", blockType, objectStyle));
-
-            return styleArray[objectStyle];
-          }
+          return styleArray[objectStyle];
         }
       }
     }
 
-    private static ItemType[] wallTypesItemTypes;
-    public ItemType GetItemTypeFromWallType(WallType wallType) {
-      if ((int)wallType < TerrariaUtils.WallType_Min || (int)wallType > TerrariaUtils.WallType_Max)
-        throw new ArgumentException($"The given item type {wallType} is invalid.", nameof(wallType));
+    private static readonly Lazy<int[]> wallTypesItemTypes = new Lazy<int[]>(() => {
+      var wallTypesItemTypes = new int[TerrariaUtils.WallType_Max + 1];
 
-      if (TerrariaItems.wallTypesItemTypes == null) {
-        TerrariaItems.wallTypesItemTypes = new ItemType[TerrariaUtils.WallType_Max + 1];
-
-        for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.WallType_Max + 1; i++) {
-          Item dummyItem = new Item();
-          dummyItem.netDefaults(i);
-          if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createWall != -1)
-            TerrariaItems.wallTypesItemTypes[dummyItem.createWall] = (ItemType)i;
-        }
+      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.WallType_Max + 1; i++) {
+        Item dummyItem = new Item();
+        dummyItem.netDefaults(i);
+        if (!string.IsNullOrEmpty(dummyItem.Name) && dummyItem.createWall != -1)
+          wallTypesItemTypes[dummyItem.createWall] = i;
       }
 
-      return TerrariaItems.wallTypesItemTypes[(int)wallType];
+      return wallTypesItemTypes;
+    });
+    public int GetItemTypeFromWallType(int wallType) {
+      Check.ValidWallType(wallType);
+      return TerrariaItems.wallTypesItemTypes.Value[wallType];
     }
 
-    public bool IsCoinType(ItemType itemType) {
+    public bool IsCoinType(int itemType) {
       switch (itemType) {
-        case ItemType.CopperCoin:
-        case ItemType.SilverCoin:
-        case ItemType.GoldCoin:
-        case ItemType.PlatinumCoin:
+        case ItemID.CopperCoin:
+        case ItemID.SilverCoin:
+        case ItemID.GoldCoin:
+        case ItemID.PlatinumCoin:
           return true;
       }
 
@@ -266,15 +246,17 @@ namespace Terraria.Plugins.Common {
 
     public string GetItemName(ItemData itemData, bool includePrefix = false) {
       string name = "";
-      if ((itemData.Prefix != ItemPrefix.None && includePrefix) || itemData.Type < 0)
+      if ((itemData.Prefix != 0 && includePrefix) || itemData.Type < 0)
         name += "<" + this.GetItemPrefixName(itemData.Prefix) + "> ";
 
-      name += Lang.GetItemNameValue((int)itemData.Type);
+      name += Lang.GetItemNameValue(itemData.Type);
       return name;
     }
 
-    public string GetItemName(ItemType itemType) {
-      return Lang.GetItemNameValue((int)itemType);
+    public string GetItemName(int itemType) {
+      Check.ValidItemType(itemType);
+
+      return Lang.GetItemNameValue(itemType);
     }
 
     public string GetItemRepresentativeString(ItemData itemData) {
@@ -285,8 +267,8 @@ namespace Terraria.Plugins.Common {
       return string.Format(format, this.GetItemName(itemData, true), itemData.StackSize);
     }
 
-    public string GetItemPrefixName(ItemPrefix prefix) {
-      return Lang.prefix[(int)prefix].Value;
+    public string GetItemPrefixName(int prefixType) {
+      return Lang.prefix[prefixType].Value;
     }
 
     public int CreateNew(TSPlayer forPlayer, DPoint location, ItemData itemData, bool sendPacket = true) {
@@ -319,78 +301,15 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    public IEnumerable<Item> EnumerateItemsAroundPoint(DPoint location, int radius) {
+    public IEnumerable<Item> EnumerateItemsAroundPoint(DPoint location, int radiusInPixels) {
       for (int i = 0; i < 200; i++) {
         Item item = Main.item[i];
 
         if (
           item.active && 
-          Math.Sqrt(Math.Pow(item.position.X - location.X, 2) + Math.Pow(item.position.Y - location.Y, 2)) <= radius
+          Math.Sqrt(Math.Pow(item.position.X - location.X, 2) + Math.Pow(item.position.Y - location.Y, 2)) <= radiusInPixels
         )
           yield return item;
-      }
-    }
-
-    public bool IsUniversalPrefix(ItemPrefix prefix) {
-      switch (prefix) {
-        case ItemPrefix.Keen:
-        case ItemPrefix.Superior:
-        case ItemPrefix.Forceful:
-        case ItemPrefix.Broken:
-        case ItemPrefix.Damaged:
-        case ItemPrefix.Shoddy:
-        case ItemPrefix.Hurtful:
-        case ItemPrefix.Strong:
-        case ItemPrefix.Unpleasant:
-        case ItemPrefix.Weak:
-        case ItemPrefix.Ruthless:
-        case ItemPrefix.Godly:
-        case ItemPrefix.Demonic:
-        case ItemPrefix.Zealous:
-          return true;
-      }
-
-      return false;
-    }
-
-    public bool IsCommonPrefix(ItemPrefix prefix) {
-      switch (prefix) {
-        case ItemPrefix.Quick:
-        case ItemPrefix.Quick2:
-        case ItemPrefix.Deadly:
-        case ItemPrefix.Deadly2:
-        case ItemPrefix.Agile:
-        case ItemPrefix.Nimble:
-        case ItemPrefix.Murderous:
-        case ItemPrefix.Slow:
-        case ItemPrefix.Sluggish:
-        case ItemPrefix.Lazy:
-        case ItemPrefix.Annoying:
-        case ItemPrefix.Nasty:
-          return true;
-      }
-
-      return false;
-    }
-
-    [Conditional("DEBUG")]
-    public void DebugPrintItemIdList() {
-      for (int i = TerrariaUtils.ItemType_Min; i < TerrariaUtils.ItemType_Max + 1; i++) {
-        Item dummyItem = new Item();
-        dummyItem.netDefaults(i);
-
-        string itemName;
-        if (string.IsNullOrEmpty(dummyItem.Name)) {
-          itemName = "NullOrEmpty";
-        } else {
-          itemName = dummyItem.Name;
-          itemName = itemName.Replace(" ", "");
-          itemName = itemName.Replace("'", "");
-          itemName = itemName.Replace("´", "");
-          itemName = itemName.Replace("`", "");
-        }
-
-        Debug.Print(itemName + " = " + i + ',');
       }
     }
   }

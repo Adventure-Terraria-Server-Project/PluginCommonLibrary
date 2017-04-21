@@ -10,6 +10,10 @@ using TerrariaApi.Server;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
+  /// <summary>
+  ///   Stores and manages a plugin's per Player data.
+  /// </summary>
+  /// <typeparam name="DataType"></typeparam>
   public class PlayerDataDictionary<DataType>: IEnumerable<DataType>, IDisposable {
     private readonly List<DataType> dataList;
     private readonly TerrariaPlugin owningPlugin;
@@ -32,9 +36,7 @@ namespace Terraria.Plugins.Common.Collections {
       set { this[tsPlayer.Index] = value; }
     }
 
-    public int Count {
-      get { return this.dataList.Count; }
-    }
+    public int Count => this.dataList.Count;
 
 
     public PlayerDataDictionary(
@@ -127,10 +129,7 @@ namespace Terraria.Plugins.Common.Collections {
 
     #region [IDisposable Implementation]
     private bool isDisposed;
-
-    public bool IsDisposed {
-      get { return this.isDisposed; } 
-    }
+    public bool IsDisposed => this.isDisposed;
 
     protected virtual void Dispose(bool isDisposing) {
       if (this.isDisposed)

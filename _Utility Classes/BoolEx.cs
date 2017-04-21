@@ -15,7 +15,7 @@ namespace Terraria.Plugins.Common {
       if (input.Equals("false", StringComparison.OrdinalIgnoreCase))
         return false;
 
-      throw new FormatException(string.Format("The value \"{0}\" can not be parsed as a valid boolean.", input));
+      throw new FormatException($"The value \"{input}\" can not be parsed as a valid boolean.");
     }
   }
 }

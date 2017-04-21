@@ -10,6 +10,13 @@ using DPoint = System.Drawing.Point;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common {
+  /// <summary>
+  ///   A user interaction class is meant to implement all logic required by a plugin to communicate with- and handle actions of players.
+  ///   This includes command handling aswell as reacting to several events, such as player deaths etc.
+  /// 
+  ///   It supports asynchronous user interactions, so that "put a wire somewhere to display the name of this region" can be implemented
+  ///   very easily.
+  /// </summary>
   public abstract class UserInteractionHandlerBase: IDisposable {
     public const int CommandInteractionDefaultTimeoutMs = 20000;
 
@@ -149,7 +156,7 @@ namespace Terraria.Plugins.Common {
     }
 
     #region [Hook Handlers]
-    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, BlockType blockType, DPoint location, int objectStyle) {
+    public virtual bool HandleTileEdit(TSPlayer player, TileEditType editType, int blockType, DPoint location, int objectStyle) {
       if (this.IsDisposed || this.activeCommandInteractions.Count == 0)
         return false;
 

@@ -551,7 +551,7 @@ namespace Terraria.Plugins.Common.Hooks {
             int objectStyle = e.Msg.readBuffer[e.Index + 7];
 
             e.Handled = this.OnTileEdit(
-              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), (BlockType)blockType, objectStyle)
+              new TileEditEventArgs(player, (TileEditType)editType, new DPoint(x, y), blockType, objectStyle)
             );
             break;
           }
@@ -573,13 +573,13 @@ namespace Terraria.Plugins.Common.Hooks {
 
             if (this.InvokeTileOnObjectPlacement) {
               e.Handled = this.OnTileEdit(
-                new TileEditEventArgs(player, TileEditType.PlaceTile, new DPoint(x, y), (BlockType)blockType, objectStyle
+                new TileEditEventArgs(player, TileEditType.PlaceTile, new DPoint(x, y), blockType, objectStyle
               ));
             }
 
             if (!e.Handled) { 
               e.Handled = this.OnObjectPlacement(
-                new ObjectPlacementEventArgs(player, new DPoint(x, y), (BlockType)blockType, objectStyle, alternative, random, direction
+                new ObjectPlacementEventArgs(player, new DPoint(x, y), blockType, objectStyle, alternative, random, direction
               ));
             }
 
@@ -661,8 +661,8 @@ namespace Terraria.Plugins.Common.Hooks {
             int chestIndex = BitConverter.ToInt16(e.Msg.readBuffer, e.Index);
             int slotIndex = e.Msg.readBuffer[e.Index + 2];
             int itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 5];
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 6);
+            int itemPrefix = e.Msg.readBuffer[e.Index + 5];
+            int itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 6);
 
             if (chestIndex >= Main.chest.Length || slotIndex > 39)
               break;
@@ -742,9 +742,9 @@ namespace Terraria.Plugins.Common.Hooks {
             float velocityX = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 10);
             float velocityY = BitConverter.ToSingle(e.Msg.readBuffer, e.Index + 14);
             int itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 18);
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 20];
+            int itemPrefix = e.Msg.readBuffer[e.Index + 20];
             bool noDelay = (e.Msg.readBuffer[e.Index + 21] != 0);
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 22);
+            int itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 22);
 
             // If it is actually an item pick up, then ensure a valid item index.
             if (itemType == 0 && (itemIndex < 0 || itemIndex >= Main.item.Length))
@@ -789,8 +789,8 @@ namespace Terraria.Plugins.Common.Hooks {
             //byte playerIndex = e.Msg.readBuffer[e.Index];
             int slotIndex = e.Msg.readBuffer[e.Index + 1];
             int itemStackSize = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 2);
-            ItemPrefix itemPrefix = (ItemPrefix)e.Msg.readBuffer[e.Index + 4];
-            ItemType itemType = (ItemType)BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
+            int itemPrefix = e.Msg.readBuffer[e.Index + 4];
+            int itemType = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 5);
 
             Player tServerPlayer = TSPlayer.Server.TPlayer;
             if (slotIndex >= tServerPlayer.inventory.Length + tServerPlayer.bank.item.Length + tServerPlayer.bank2.item.Length)

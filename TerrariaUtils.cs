@@ -23,9 +23,7 @@ namespace Terraria.Plugins.Common {
     public static TerrariaNpcs Npcs { get; private set; }
     public static TerrariaProjectiles Projectiles { get; private set; }
 
-    public static InvasionType InvasionType {
-      get { return (Common.InvasionType)Main.invasionType; }
-    }
+    public static InvasionType InvasionType => (Common.InvasionType)Main.invasionType;
 
 
     static TerrariaUtils() {

@@ -20,8 +20,8 @@ namespace Terraria.Plugins.Common {
 
         string[] rawData = ((string)reader.Value).Split(',');
         return new ItemData(
-          (ItemPrefix)int.Parse(rawData[0]),
-          (ItemType)int.Parse(rawData[1]),
+          int.Parse(rawData[0]),
+          int.Parse(rawData[1]),
           int.Parse(rawData[2])
         );
       }
@@ -35,22 +35,22 @@ namespace Terraria.Plugins.Common {
 
     public static readonly ItemData None = default(ItemData);
 
-    public ItemPrefix Prefix { get; set; }
-    public ItemType Type  { get; set; }
-    public int StackSize { get; set; }
+    public int Prefix { get; private set; }
+    public int Type  { get; private set; }
+    public int StackSize { get; private set; }
 
 
-    public ItemData(ItemType type, int stackSize = 1): this(ItemPrefix.None, type, stackSize) {}
+    public ItemData(int type, int stackSize = 1): this(0, type, stackSize) {}
 
-    public ItemData(ItemPrefix prefix, ItemType type, int stackSize = 1) {
-      if (type != ItemType.None && stackSize >= 1) {
+    public ItemData(int prefix, int type, int stackSize = 1) {
+      if (type != 0 && stackSize >= 1) {
         this.Prefix = prefix;
         this.Type = type;
         this.StackSize = stackSize;
       } else {
         // become ItemData.None
-        this.Prefix = ItemPrefix.None;
-        this.Type = ItemType.None;
+        this.Prefix = 0;
+        this.Type = 0;
         this.StackSize = 0;
       }
     }
@@ -59,19 +59,19 @@ namespace Terraria.Plugins.Common {
       if (item.type == 0 || item.stack <= 0)
         return ItemData.None;
 
-      return new ItemData((ItemPrefix)item.prefix, (ItemType)item.netID, item.stack);
+      return new ItemData(item.prefix, item.netID, item.stack);
     }
 
     public static ItemData FromNetItem(NetItem netItem) {
-      return new ItemData((ItemPrefix)netItem.PrefixId, (ItemType)netItem.NetId, netItem.Stack);
+      return new ItemData(netItem.PrefixId, netItem.NetId, netItem.Stack);
     }
 
     [Pure]
     public Item ToItem() {
       Item item = new Item();
       if (this.StackSize > 0) {
-        item.netDefaults((int)this.Type);
-        item.Prefix((int)this.Prefix);
+        item.netDefaults(this.Type);
+        item.Prefix(this.Prefix);
         item.stack = this.StackSize;
       } else {
         item.netDefaults(0);
@@ -81,7 +81,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public override int GetHashCode() {
-      return (int)this.Prefix ^ (int)this.Type ^ this.StackSize;
+      return this.Prefix ^ this.Type ^ this.StackSize;
     }
 
     public bool Equals(ItemData other) {
@@ -110,16 +110,14 @@ namespace Terraria.Plugins.Common {
       return !a.Equals(b);
     }
 
-    #region [Method: ToString]
     public override string ToString() {
       string format;
-      if (this.Prefix == ItemPrefix.None)
+      if (this.Prefix == 0)
         format = "{1} ({2})";
       else
         format = "{0} {1} ({2})";
 
       return string.Format(format, this.Prefix, this.Type, this.StackSize);
     }
-    #endregion
   }
 }

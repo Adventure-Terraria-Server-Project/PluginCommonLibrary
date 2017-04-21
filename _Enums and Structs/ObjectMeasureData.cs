@@ -6,7 +6,7 @@ namespace Terraria.Plugins.Common {
   public struct ObjectMeasureData {
     public static readonly ObjectMeasureData Invalid = default(ObjectMeasureData);
 
-    public BlockType BlockType { get; private set; }
+    public int BlockType { get; private set; }
     public DPoint OriginTileLocation { get; private set; }
     public DPoint Size { get; private set; }
     public DPoint TextureTileSize { get; private set; }
@@ -14,7 +14,7 @@ namespace Terraria.Plugins.Common {
 
 
     public ObjectMeasureData(
-      BlockType blockType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, DPoint textureFrameLocation
+      int blockType, DPoint originTileLocation, DPoint size, DPoint textureTileSize, DPoint textureFrameLocation
     ): this() {
       this.BlockType = blockType;
       this.OriginTileLocation = originTileLocation;

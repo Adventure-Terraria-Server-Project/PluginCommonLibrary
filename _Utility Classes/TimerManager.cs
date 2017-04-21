@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading;
 
 namespace Terraria.Plugins.Common {
+  /// <summary>
+  ///   A simple manager to handle synchronous timed operations meant to be used with Terraria Server's GameUpdate handler.
+  /// </summary>
 	public class TimerManager {
 		private const int FrameUpdateFreq = 10;
 

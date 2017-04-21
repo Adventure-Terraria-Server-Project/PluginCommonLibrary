@@ -6,16 +6,14 @@ using System.Security;
 namespace Terraria.Plugins.Common {
   [Serializable]
   public class InvalidBlockTypeException: Exception {
-    public BlockType BlockType { get; private set; }
+    public int BlockType { get; private set; }
 
 
-    public InvalidBlockTypeException(string message, BlockType blockType = BlockType.Invalid): base(message, null) {
+    public InvalidBlockTypeException(string message, int blockType = 0): base(message, null) {
       this.BlockType = blockType;
     }
 
-    public InvalidBlockTypeException(BlockType blockType): base(string.Format(
-      "The given block type \"{0}\" was unexpected in this context.", blockType
-    )) {
+    public InvalidBlockTypeException(int blockType): base($"The given block type \"{blockType}\" was unexpected in this context.") {
       this.BlockType = blockType;
     }
 
@@ -25,7 +23,7 @@ namespace Terraria.Plugins.Common {
 
     #region [Serializable Implementation]
     protected InvalidBlockTypeException(SerializationInfo info, StreamingContext context): base(info, context) {
-      this.BlockType = (BlockType)info.GetValue("InvalidBlockTypeException_BlockType", typeof(BlockType));
+      this.BlockType = (int)info.GetValue("InvalidBlockTypeException_BlockType", typeof(int));
     }
 
     [SecurityCritical]

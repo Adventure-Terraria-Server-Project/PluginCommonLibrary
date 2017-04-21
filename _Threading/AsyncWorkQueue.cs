@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 namespace Terraria.Plugins.Common {
   public delegate void QueueExceptionHandler(Task task, object taskState, Exception exception);
 
+  /// <summary>
+  ///   Performs asynchronous tasks in a sequential order.
+  /// </summary>
   public class AsyncWorkQueue: IDisposable {
     #region [Nested: WorkItem]
     private struct WorkItem {
@@ -45,9 +48,7 @@ namespace Terraria.Plugins.Common {
     private readonly BlockingCollection<WorkItem> queuedItems;
     private readonly QueueExceptionHandler defaultExceptionHandler;
 
-    public int WorkerThreadCount {
-      get { return this.workers.Length; }
-    }
+    public int WorkerThreadCount => this.workers.Length;
 
 
     public AsyncWorkQueue(
@@ -173,10 +174,9 @@ namespace Terraria.Plugins.Common {
           }
         }
       } catch (OperationCanceledException) {
-        // Thrown when "this.workerTokenSource.Token" token is set.
-        return;
+        Debug.WriteLine("workerTokenSource.Token was set. Shutting down queue...");
       } catch (ThreadAbortException) {
-        return;
+        Debug.WriteLine("Thread of async work queue was aborted. Shutting down queue...");
       } catch (Exception ex) {
         Debug.WriteLine("{0} has thrown an unexpected exception: \n{1}", Thread.CurrentThread.Name, ex);
       }
@@ -184,10 +184,7 @@ namespace Terraria.Plugins.Common {
 
     #region [IDisposable Implementation]
     private bool isDisposed;
-
-    public bool IsDisposed {
-      get { return this.isDisposed; } 
-    }
+    public bool IsDisposed => this.isDisposed;
 
     protected virtual void Dispose(bool isDisposing) {
       if (this.isDisposed)
@@ -207,8 +204,7 @@ namespace Terraria.Plugins.Common {
           }
         }
 
-        if (this.workerTokenSource != null)
-          this.workerTokenSource.Dispose();
+        this.workerTokenSource?.Dispose();
       }
     }
 

@@ -65,7 +65,7 @@ namespace Terraria.Plugins.Common {
       List<TSPlayer> matchedPlayers = TShock.Utils.FindPlayer(name);
       if (matchedPlayers.Count == 0) {
         if (messagesReceiver != null)
-          messagesReceiver.SendErrorMessage(string.Format("Could not match any players for \"{0}\".", name));
+          messagesReceiver.SendErrorMessage($"Could not match any players for \"{name}\".");
 
         return false;
       } if (matchedPlayers.Count > 1) {
@@ -121,10 +121,16 @@ namespace Terraria.Plugins.Common {
       player.SendTileSquare(location.X, location.Y, size);
     }
 
+    /// <summary>
+    ///   Uses x, y as the top left origin and size as width, height.
+    /// </summary>
     public static void SendTileSquareEx(this TSPlayer player, int x, int y, int size = 10) {
       player.SendData(PacketTypes.TileSendSquare, string.Empty, size, x, y);
     }
 
+    /// <summary>
+    ///   Uses x, y as the top left origin and size as width, height.
+    /// </summary>
     public static void SendTileSquareEx(this TSPlayer player, DPoint location, int size = 10) {
       TShockEx.SendTileSquareEx(player, location.X, location.Y, size);
     }

@@ -151,7 +151,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public override string ToString() {
-      return string.Format("{0} registered tests.", this.testRunData.Count);
+      return $"{this.testRunData.Count} registered tests.";
     }
   }
 }

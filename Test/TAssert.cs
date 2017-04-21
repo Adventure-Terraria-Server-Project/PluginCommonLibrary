@@ -16,9 +16,7 @@ namespace Terraria.Plugins.Common.Test {
     public static void IsObjectActive(int x, int y, bool expectedState) {
       Tile tile = TerrariaUtils.Tiles[x, y];
       if (!tile.active()) {
-        throw new AssertException(
-          string.Format("Assert failed. There is no tile at [{0},{1}].", x, y)
-        );
+        throw new AssertException($"Assert failed. There is no tile at [{x},{y}].");
       }
 
       ObjectMeasureData measureData = TerrariaUtils.Tiles.MeasureObject(new DPoint(x, y));
@@ -38,7 +36,7 @@ namespace Terraria.Plugins.Common.Test {
 
         throw new AssertException(string.Format(
           "Assert failed. {0} frame for object \"{1}\" at [{2},{3}] was expected, but it is {4}.", 
-          expectedStateString, TerrariaUtils.Tiles.GetBlockTypeName((BlockType)tile.type), x, y, actualStateString
+          expectedStateString, TerrariaUtils.Tiles.GetBlockTypeName(tile.type, 0), x, y, actualStateString
         ));
       }
     }
@@ -73,20 +71,20 @@ namespace Terraria.Plugins.Common.Test {
       }
     }
 
-    public static void IsBlockType(int x, int y, BlockType expectedBlockType) {
+    public static void IsBlockType(int x, int y, int expectedBlockType) {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (!tile.active()) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but there is no tile at all.",
-          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType), x, y
+          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType, 0), x, y
         ));
       }
 
       if (tile.type != (int)expectedBlockType) {
         throw new AssertException(string.Format(
           "The tile id \"{0}\" was expected at [{1},{2}], but it is \"{3}\".",
-          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType), x, y, TerrariaUtils.Tiles.GetBlockTypeName((BlockType)tile.type)
+          TerrariaUtils.Tiles.GetBlockTypeName(expectedBlockType, 0), x, y, TerrariaUtils.Tiles.GetBlockTypeName(tile.type, 0)
         ));
       }
     }
@@ -95,9 +93,7 @@ namespace Terraria.Plugins.Common.Test {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
-        throw new AssertException(string.Format(
-          "The tile at [{0},{1}] was expected to have liquid, but it doesn't.", x, y
-        ));
+        throw new AssertException($"The tile at [{x},{y}] was expected to have liquid, but it doesn't.");
       }
     }
 
@@ -105,9 +101,7 @@ namespace Terraria.Plugins.Common.Test {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid != 0) {
-        throw new AssertException(string.Format(
-          "The tile at [{0},{1}] was expected to have no liquid, but it has.", x, y
-        ));
+        throw new AssertException($"The tile at [{x},{y}] was expected to have no liquid, but it has.");
       }
     }
 
@@ -115,9 +109,7 @@ namespace Terraria.Plugins.Common.Test {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid < 255) {
-        throw new AssertException(string.Format(
-          "The tile at [{0},{1}] was expected to have 255 liquid, but it has {2}.", x, y, tile.liquid
-        ));
+        throw new AssertException($"The tile at [{x},{y}] was expected to have 255 liquid, but it has {tile.liquid}.");
       }
     }
 
@@ -125,20 +117,16 @@ namespace Terraria.Plugins.Common.Test {
       Tile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
-        throw new AssertException(string.Format(
-          "The tile at [{0},{1}] was expected to have at least 1 liquid, but it has none.", x, y
-        ));
+        throw new AssertException($"The tile at [{x},{y}] was expected to have at least 1 liquid, but it has none.");
       }
 
       if (tile.liquid == 255) {
-        throw new AssertException(string.Format(
-          "The tile at [{0},{1}] was expected to have less than 255 liquid, but it has {2}.", x, y, tile.liquid
-        ));
+        throw new AssertException($"The tile at [{x},{y}] was expected to have less than 255 liquid, but it has {tile.liquid}.");
       }
     }
 
     public static void AreItemsInBlockRect(
-      int tileX, int tileY, int tileW, int tileH, ItemType expectedItemType, int expectedCount, bool allowOtherNpcs = false
+      int tileX, int tileY, int tileW, int tileH, int expectedItemType, int expectedCount, bool allowOtherNpcs = false
     ) {
       int x = tileX * TerrariaUtils.TileSize;
       int y = tileY * TerrariaUtils.TileSize;
@@ -156,7 +144,7 @@ namespace Terraria.Plugins.Common.Test {
           item.position.X >= x && item.position.X <= r &&
           item.position.Y >= y && item.position.Y <= b
         ) {
-          if (item.type == (int)expectedItemType) {
+          if (item.type == expectedItemType) {
             if (!ofExpectedId)
               ofExpectedId = true;
 
@@ -170,29 +158,17 @@ namespace Terraria.Plugins.Common.Test {
 
       if (ofExpectedId) {
         if (count != expectedCount) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] contains {4} of the items, {5} were expected though.",
-            tileX, tileY, tileW, tileH, expectedCount, count
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] contains {expectedCount} of the items, {count} were expected though.");
         }
 
         if (ofOtherIds && !allowOtherNpcs) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] contains {4} of the items, though it contains other items aswell.",
-            tileX, tileY, tileW, tileH, expectedCount
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] contains {expectedCount} of the items, though it contains other items aswell.");
         }
       } else {
         if (ofOtherIds) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] does not contain the expected item. There are items of other types though.",
-            tileX, tileY, tileW, tileH
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] does not contain the expected item. There are items of other types though.");
         } else {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] does not contain the expected item.",
-            tileX, tileY, tileW, tileH
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] does not contain the expected item.");
         }
       }
     }
@@ -230,29 +206,17 @@ namespace Terraria.Plugins.Common.Test {
 
       if (ofExpectedId) {
         if (count != expectedCount) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] contains {4} of the npcs, {5} were expected though.",
-            tileX, tileY, tileW, tileH, expectedCount, count
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] contains {expectedCount} of the npcs, {count} were expected though.");
         }
 
         if (ofOtherIds && !allowOtherItems) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] contains {4} of the npcs, though it contains other npcs aswell.",
-            tileX, tileY, tileW, tileH, expectedCount
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] contains {expectedCount} of the npcs, though it contains other npcs aswell.");
         }
       } else {
         if (ofOtherIds) {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] does not contain the expected npcs. There are npcs of other types though.",
-            tileX, tileY, tileW, tileH
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] does not contain the expected npcs. There are npcs of other types though.");
         } else {
-          throw new AssertException(string.Format(
-            "The block rectangle [{0},{1},{2},{3}] does not contain the expected npcs.",
-            tileX, tileY, tileW, tileH
-          ));
+          throw new AssertException($"The block rectangle [{tileX},{tileY},{tileW},{tileH}] does not contain the expected npcs.");
         }
       }
     }
@@ -264,13 +228,12 @@ namespace Terraria.Plugins.Common.Test {
         if (ex.GetType() == expectedException)
           return true;
 
-        throw new AssertException(string.Format(
-          "Asser failed. Expected exception \"{0}\" was not thrown, \"{1}\" was thrown instead.", 
-          expectedException.Name, ex.GetType().Name
-        ), ex);
+        throw new AssertException(
+          $"Asser failed. Expected exception \"{expectedException.Name}\" was not thrown, \"{ex.GetType().Name}\" was thrown instead.", ex
+        );
       }
 
-      throw new AssertException(string.Format("Asser failed. Expected exception \"{0}\" was not thrown.", expectedException.Name));
+      throw new AssertException($"Asser failed. Expected exception \"{expectedException.Name}\" was not thrown.");
     }
 
     public static void Fail(string messageFormat, params object[] args) {

@@ -6,6 +6,10 @@ using Terraria.Localization;
 using TShockAPI;
 
 namespace Terraria.Plugins.Common.Collections {
+  /// <summary>
+  ///   Terraria.Item[] to IList<NetItem> adapter. The item array is expected to be the inventory of a player however, 
+  ///   thuse some slots may be preferred over others.
+  /// </summary>
   public class PlayerItemsAdapter: ItemsAdapter {
     private static readonly HashSet<int> CoinSlots = new HashSet<int> {50, 51, 52, 53};
     private static readonly HashSet<int> AmmoSlots = new HashSet<int> {46, 47, 48, 49};
@@ -30,7 +34,7 @@ namespace Terraria.Plugins.Common.Collections {
     }
 
     /// <inheritdoc />
-    public override HashSet<int> PreferredSlotIndexes(ItemType itemType) {
+    public override HashSet<int> PreferredSlotIndexes(int itemType) {
       if (TerrariaUtils.Items.IsCoinType(itemType)) {
         return CoinSlots;
       } else if (TerrariaUtils.Items.IsAmmoType(itemType)) {

@@ -512,7 +512,7 @@ namespace Terraria.Plugins.Common {
           int ay = originTileLocation.Y + ty;
 
           Tile tile = TerrariaUtils.Tiles[ax, ay];
-          if (tile.wire() || tile.wire2() || tile.wire3()) {
+          if (tile.HasWire()) {
             firstWirePosition = new DPoint(ax, ay);
             return true;
           }

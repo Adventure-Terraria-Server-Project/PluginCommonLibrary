@@ -261,6 +261,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="CONTRIBUTING.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

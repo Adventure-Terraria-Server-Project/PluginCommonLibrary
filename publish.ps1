@@ -8,7 +8,7 @@
 #     the commits done since the last tag (BREAKING, feature or fix commits).
 #   * Uses clog to generate a changelog in markdown format. The entries are also determined by the 
 #     commits since the last tag.
-#   * Bundles the binaries and other release files in a zip file.
+#   * Bundles release files in a zip file.
 #   * Creates a commit for the changed AssemblyInfo.cs and tags this commit with the new SemVer,
 #     also pushes this commit and the tag.
 #   * Uses GitReleaseManager to create a GitHub release and attaches the zip file to it, using the
@@ -19,7 +19,11 @@
 #   The conventional commit message format of angularjs is expected when scanning recent commits. 
 #   It's documented here: https://github.com/conventional-changelog/conventional-changelog/blob/a5505865ff3dd710cf757f50530e73ef0ca641da/conventions/angular.md
 #
-#   Do not run this script when you're currently on a tagged commit.
+#   Do not run this script when you're currently on a tagged commit. 
+#   Do not commit AssemblyInfo.cs before invoking this script.
+#
+#   If there were neither major, minor nor patch commits the patch component of the version number will
+#   still be increased when you execute this script.
 #
 #   To create pre-releases, make a new branch and call it "pre". When running this script while being on
 #   a commit in this branch, versions will looks like this "X.X.X-pre.Y" where X.X.X is your next release
@@ -102,6 +106,8 @@ function Get-OtapiVersion {
 
 function Update-AssemblyVersion {
   # GitVersion will increment the assembly version and return some information about it in json format
+  # Actually, this should have happened already be the pre-build event configured for the project, so this
+  # additional call to GitVersion will just return the current version number.
   GitVersion.exe /updateassemblyinfo $assemblyInfoPath | ConvertFrom-Json
 }
 

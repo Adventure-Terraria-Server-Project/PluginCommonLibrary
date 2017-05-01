@@ -55,6 +55,7 @@ $targetName = "Plugin Common Library"
 $projectFile = "$PSScriptRoot\$targetName.csproj"
 $commitMessageFormat = "chore(version): tick version {0}"
 $tagNameFormat = "release {0}, Terraria {1}"
+$outZipFileNameFormat = "CommonLib_{0}_Terraria_{1}.zip"
 
 $gitHubUser = "CoderCow"
 $gitHubRepoOwner = "CoderCow"
@@ -80,7 +81,7 @@ function Main {
   $outChangelogFile = "$outDir\changelog.md"
   Generate-Changelog $tshockVersion $terrariaVersion $outChangelogFile
 
-  $outZipFile = "$outDir\$targetName $releaseVersion (Terraria $terrariaVersion).zip"
+  $outZipFile = "$outDir\" + ($outZipFileNameFormat -f $releaseVersion,$terrariaVersion)
   Package-Files $outZipFile
 
   Create-Commit $releaseVersion $terrariaVersion

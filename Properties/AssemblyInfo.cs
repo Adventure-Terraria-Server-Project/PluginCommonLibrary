@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("CoderCow's Plugin Common Library")]
@@ -14,3 +14,5 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("4.0.0.0")]
 [assembly: AssemblyFileVersion("4.0.0.0")]
+
+[assembly: AssemblyInformationalVersion("4.0.0+6.Branch.master.Sha.388613ea9a7cf14f3c309d620daab708f2f0813a")]

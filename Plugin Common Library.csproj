@@ -263,6 +263,7 @@
     <None Include="app.config" />
     <None Include="CONTRIBUTING.md" />
     <None Include="packages.config" />
+    <None Include="publish.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />

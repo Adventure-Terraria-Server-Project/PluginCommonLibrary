@@ -195,8 +195,12 @@ namespace Terraria.Plugins.Common {
         throw new ArgumentException($"The tile at location {anyTileLocation} can not be measured because its not active");
 
       TileObjectData objectData = TileObjectData.GetTileData(tile);
-      DPoint objectSize = new DPoint(objectData.Width, objectData.Height);
-      DPoint textureTileSize = new DPoint(objectData.CoordinateWidth + objectData.CoordinatePadding, objectData.CoordinateHeights[0] + objectData.CoordinatePadding);
+      DPoint objectSize = new DPoint(1, 1);
+      DPoint textureTileSize = new DPoint(TerrariaUtils.DefaultTextureTileSize, TerrariaUtils.DefaultTextureTileSize);
+      if (objectData != null) {
+        objectSize = new DPoint(objectData.Width, objectData.Height);
+        textureTileSize = new DPoint(objectData.CoordinateWidth + objectData.CoordinatePadding, objectData.CoordinateHeights[0] + objectData.CoordinatePadding);
+      }
       DPoint textureFrameLocation = DPoint.Empty;
 
       DPoint originTileLocation;
@@ -1026,11 +1030,17 @@ namespace Terraria.Plugins.Common {
 
     public DPoint GetObjectSize(int blockType) {
       TileObjectData objectData = TileObjectData.GetTileData(blockType, 0);
-      return new DPoint(objectData.Width, objectData.Height);
+      if (objectData != null)
+        return new DPoint(objectData.Width, objectData.Height);
+      else
+        return new DPoint(1, 1);
     }
 
     public Direction GetObjectOrientation(Tile anyTile) {
       TileObjectData objectData = TileObjectData.GetTileData(anyTile);
+      if (objectData == null)
+        return Direction.Unknown;
+
       if (objectData.AnchorBottom.type != 0)
         return Direction.Up;
       if (objectData.AnchorLeft.type != 0)

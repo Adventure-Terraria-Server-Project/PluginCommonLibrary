@@ -49,12 +49,12 @@
 
 $ErrorActionPreference = "Stop"
 
+$outDir = "$PSScriptRoot\bin\Release"
 $assemblyInfoPath = "$PSScriptRoot\Properties\AssemblyInfo.cs"
 # the tshock binary is used to determine the tshock version this library was built against
 $tshockBinaryPath = "$outDir\TShockAPI.dll"
 # the OTAPI binary is used to determine the Terraria version this library was built against
 $otapiBinaryPath = "$outDir\OTAPI.dll"
-$outDir = "$PSScriptRoot\bin\Release"
 $targetName = "Plugin Common Library"
 $projectFile = "$PSScriptRoot\$targetName.csproj"
 $commitMessageFormat = "chore(version): tick version {0}"

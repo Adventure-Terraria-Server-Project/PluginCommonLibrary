@@ -84,7 +84,7 @@ function Main {
   Package-Files $outZipFile
 
   Create-Commit $releaseVersion $terrariaVersion
-  Create-GitHubRelease $outChangelogFile $outZipFile
+  Create-GitHubRelease $releaseVersion $outChangelogFile $outZipFile
 
   Start-Process "https://github.com/$gitHubUser/$gitHubRepoName/releases"
 }
@@ -157,10 +157,14 @@ function Create-Commit {
 }
 
 function Create-GitHubRelease {
-  $outChangelogFile = $args[0]
-  $outZipFile = $args[1]
+  $releaseVersion = $args[0]
+  $outChangelogFile = $args[1]
+  $outZipFile = $args[2]
 
   $gitHubPassword = Read-Host "Enter password for GitHub user $gitHubUser"
+
+  # This ensures that errors can be seen if they happen
+  $ErrorActionPreference = "Continue"
 
   git push origin --follow-tags
   GitReleaseManager.exe create -u $gitHubUser -p $gitHubPassword -o $gitHubRepoOwner -r $gitHubRepoName -n $releaseVersion -i $outChangelogFile -a $outZipFile

@@ -866,7 +866,7 @@ namespace Terraria.Plugins.Common.Hooks {
             e.Handled = this.OnChestUnlock(new UnlockEventArgs(player, new DPoint(chestX, chestY), unlockType));
             break;
           }
-          case PacketTypes.ChatText: {
+          case (PacketTypes)25: {
             if (this.ChatText == null)
               break;
 

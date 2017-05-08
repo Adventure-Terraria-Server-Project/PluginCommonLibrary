@@ -83,15 +83,16 @@ function Main {
   Write-Host "Release version will be $releaseVersion"
 
   $outChangelogFile = "$outDir\changelog.md"
-  Generate-Changelog $tshockVersion $terrariaVersion $outChangelogFile
+  $gitHubUrl = "https://github.com/$gitHubUser/$gitHubRepoName"
+  Generate-Changelog $tshockVersion $terrariaVersion $outChangelogFile $gitHubUrl
 
   $outZipFile = "$outDir\" + ($outZipFileNameFormat -f $releaseVersion,$terrariaVersion)
   Package-Files $outZipFile
 
   Create-Commit $releaseVersion $terrariaVersion
-  Create-GitHubRelease $releaseVersion $outChangelogFile $outZipFile
 
-  Start-Process "https://github.com/$gitHubUser/$gitHubRepoName/releases"
+  Create-GitHubRelease $releaseVersion $outChangelogFile $outZipFile
+  Start-Process "$gitHubUrl/releases"
 }
 
 function Get-TShockVersion {
@@ -111,17 +112,13 @@ function Update-AssemblyVersion {
   GitVersion.exe /updateassemblyinfo $assemblyInfoPath | ConvertFrom-Json
 }
 
-function Generate-Changelog {
-  $tshockVersion = $args[0]
-  $terrariaVersion  = $args[1]
-  $outChangelogFile = $args[2]
-
+function Generate-Changelog($tshockVersion, $terrariaVersion, $outChangelogFile, $gitHubUrl) {
   if (Test-Path $outChangelogFile) {
     Remove-Item -Force $outChangelogFile
   }
 
   # clog builds a markdown changelog from all commits since the last tag
-  clog.exe --from-latest-tag --setversion $releaseVersion --outfile $outChangelogFile
+  clog.exe --from-latest-tag --setversion $releaseVersion --outfile $outChangelogFile --repository $gitHubUrl
 
   # add some custom lines to the changelog
   if ($isPrerelease) {
@@ -141,9 +138,7 @@ function Generate-Changelog {
   }
 }
 
-function Package-Files {
-  $outZipFile = $args[0]
-
+function Package-Files($outZipFile) {
   if (Test-Path $outZipFile) {
     Remove-Item -Force $outZipFile
   }
@@ -151,10 +146,7 @@ function Package-Files {
   7z.exe a -y -r -bd -tzip -mx9 $outZipFile $binariesToPublish > $null
 }
 
-function Create-Commit {
-  $releaseVersion = $args[0]
-  $terrariaVersion = $args[1]
-
+function Create-Commit($releaseVersion, $terrariaVersion) {
   $tagName = $tagNameFormat -f $releaseVersion,$terrariaVersion
   $commitMessage = $commitMessageFormat -f $releaseVersion,$terrariaVersion
 
@@ -163,11 +155,7 @@ function Create-Commit {
   git tag --annotate $releaseVersion --message $tagName
 }
 
-function Create-GitHubRelease {
-  $releaseVersion = $args[0]
-  $outChangelogFile = $args[1]
-  $outZipFile = $args[2]
-
+function Create-GitHubRelease($releaseVersion, $outChangelogFile, $outZipFile) {
   $gitHubPassword = Read-Host "Enter password for GitHub user $gitHubUser"
 
   # This ensures that errors can be seen if they happen

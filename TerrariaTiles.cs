@@ -13,21 +13,21 @@ using TShockAPI;
 
 namespace Terraria.Plugins.Common {
   public class TerrariaTiles {
-    public Tile this[int x, int y] {
+    public ITile this[int x, int y] {
       get {
         #if DEBUG
         Check.ValidTileLocation(x, y);
         #endif
-        return (Tile)Main.tile[x, y];
+        return Main.tile[x, y];
       }
     }
 
-    public Tile this[DPoint point] {
+    public ITile this[DPoint point] {
       get {
         #if DEBUG
         Check.ValidTileLocation(point.X, point.Y);
         #endif
-        return (Tile)Main.tile[point.X, point.Y];
+        return Main.tile[point.X, point.Y];
       }
     }
 
@@ -116,7 +116,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void PlantHerb(DPoint tileLocation, HerbStyle style, HerbGrowthState state = HerbGrowthState.Mature) {
-      Tile tile = TerrariaUtils.Tiles[tileLocation];
+      ITile tile = TerrariaUtils.Tiles[tileLocation];
       tile.active(true);
       switch (state) {
         case HerbGrowthState.Growing:
@@ -137,7 +137,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void SetBlock(DPoint tileLocation, int blockType, bool localOnly = false, bool squareFrame = true) {
-      Tile tile = TerrariaUtils.Tiles[tileLocation];
+      ITile tile = TerrariaUtils.Tiles[tileLocation];
 
       if (blockType == -1) {
         this.RemoveBlock(tileLocation, squareFrame, localOnly);
@@ -154,7 +154,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void RemoveBlock(DPoint tileLocation, bool squareFrames = true, bool localOnly = false) {
-      Tile tile = TerrariaUtils.Tiles[tileLocation];
+      ITile tile = TerrariaUtils.Tiles[tileLocation];
 
       tile.type = 0;
       tile.active(false);
@@ -169,7 +169,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void RemoveTile(DPoint tileLocation, bool squareFrames = true, bool localOnly = false) {
-      Tile tile = TerrariaUtils.Tiles[tileLocation];
+      ITile tile = TerrariaUtils.Tiles[tileLocation];
 
       tile.wall = 0;
       tile.liquid = 0;
@@ -190,7 +190,7 @@ namespace Terraria.Plugins.Common {
     ///   </p>
     /// </remarks>
     public ObjectMeasureData MeasureObject(DPoint anyTileLocation) {
-      Tile tile = TerrariaUtils.Tiles[anyTileLocation];
+      ITile tile = TerrariaUtils.Tiles[anyTileLocation];
       if (!tile.active())
         throw new ArgumentException($"The tile at location {anyTileLocation} can not be measured because its not active");
 
@@ -231,7 +231,7 @@ namespace Terraria.Plugins.Common {
           // Go all the way down to the tree's stump.
           DPoint currentTileLocation = anyTrunkTileLocation;
           while (true) {
-            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
+            ITile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
 
             if (currentTile.active() && currentTile.type == tile.type)
               currentTileLocation.Y++;
@@ -244,7 +244,7 @@ namespace Terraria.Plugins.Common {
           // Now measure the tree's size by going it up.
           currentTileLocation = anyTrunkTileLocation;
           while (true) {
-            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
+            ITile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
 
             if (currentTile.active() && currentTile.type == tile.type) {
               currentTileLocation.Y--;
@@ -265,7 +265,7 @@ namespace Terraria.Plugins.Common {
           DPoint currentTileLocation = anyTileLocation;
 
           while (true) {
-            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
+            ITile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, -1)];
 
             if (currentTile.type == tile.type) {
               currentTileLocation.Y--;
@@ -280,7 +280,7 @@ namespace Terraria.Plugins.Common {
           // Now measure the vines's size by going it down.
           currentTileLocation = anyTileLocation;
           while (true) {
-            Tile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
+            ITile currentTile = TerrariaUtils.Tiles[currentTileLocation.OffsetEx(0, 1)];
 
             if (currentTile.type == tile.type) {
               currentTileLocation.Y++;
@@ -336,7 +336,7 @@ namespace Terraria.Plugins.Common {
       );
     }
 
-    private bool IsLeftTreeBranch(Tile tile) {
+    private bool IsLeftTreeBranch(ITile tile) {
       if (tile.type != TileID.Trees)
         return false;
 
@@ -354,7 +354,7 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    private bool IsRightTreeBranch(Tile tile) {
+    private bool IsRightTreeBranch(ITile tile) {
       if (tile.type != TileID.Trees)
         return false;
 
@@ -375,7 +375,7 @@ namespace Terraria.Plugins.Common {
       }
     }
 
-    private bool IsLeftCactusBranch(Tile tile) {
+    private bool IsLeftCactusBranch(ITile tile) {
       if (tile.type != TileID.Cactus)
         return false;
 
@@ -385,7 +385,7 @@ namespace Terraria.Plugins.Common {
       return (frameX == 54 || (frameX == 108 && frameY == 36));
     }
 
-    private bool IsRightCactusBranch(Tile tile) {
+    private bool IsRightCactusBranch(ITile tile) {
       if (tile.type != TileID.Cactus)
         return false;
 
@@ -422,7 +422,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public bool ObjectHasActiveState(ObjectMeasureData measureData) {
-      Tile tile = TerrariaUtils.Tiles[measureData.OriginTileLocation];
+      ITile tile = TerrariaUtils.Tiles[measureData.OriginTileLocation];
 
       switch (measureData.BlockType) {
         case TileID.Switches:
@@ -515,7 +515,7 @@ namespace Terraria.Plugins.Common {
           int ax = originTileLocation.X + tx;
           int ay = originTileLocation.Y + ty;
 
-          Tile tile = TerrariaUtils.Tiles[ax, ay];
+          ITile tile = TerrariaUtils.Tiles[ax, ay];
           if (tile.HasWire()) {
             firstWirePosition = new DPoint(ax, ay);
             return true;
@@ -529,7 +529,7 @@ namespace Terraria.Plugins.Common {
 
     public bool IsObjectWired(ObjectMeasureData measureData, WireColor wireColor, out DPoint firstWireLocation) {
       foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData)) {
-        Tile tile = TerrariaUtils.Tiles[tileLocation];
+        ITile tile = TerrariaUtils.Tiles[tileLocation];
         if (tile.HasWire(wireColor)) {
           firstWireLocation = tileLocation;
           return true;
@@ -575,7 +575,7 @@ namespace Terraria.Plugins.Common {
       return (StatueStyle)(objectStyle + 1);
     }
 
-    public StatueStyle GetStatueStyle(Tile tile) {
+    public StatueStyle GetStatueStyle(ITile tile) {
       return this.GetStatueStyle(tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2));
     }
 
@@ -764,7 +764,7 @@ namespace Terraria.Plugins.Common {
       return lookupItem.Item1;
     }
 
-    public ChestStyle GetChestStyle(Tile tile, out bool isLocked) {
+    public ChestStyle GetChestStyle(ITile tile, out bool isLocked) {
       return this.GetChestStyle(tile.type, (tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
     }
 
@@ -787,7 +787,7 @@ namespace Terraria.Plugins.Common {
       return itemType;
     }
 
-    public bool IsChestLocked(Tile tile) {
+    public bool IsChestLocked(ITile tile) {
       bool isLocked;
       this.GetChestStyle(tile.type, (tile.frameX / (TerrariaUtils.DefaultTextureTileSize * 2)), out isLocked);
       return isLocked;
@@ -863,7 +863,7 @@ namespace Terraria.Plugins.Common {
       };
     });
     public void LockChest(DPoint anyChestTileLocation) {
-      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
+      ITile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
       if (!chestTile.active() || (chestTile.type != TileID.Containers && chestTile.type != TileID.Containers2))
         throw new ArgumentException("Tile is not a chest.", nameof(anyChestTileLocation));
 
@@ -883,12 +883,12 @@ namespace Terraria.Plugins.Common {
         chestStyle == ChestStyle.HallowedChest ||
         chestStyle == ChestStyle.FrozenChest)
       {
-        foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+        foreach (ITile tile in this.EnumerateObjectTiles(measureData))
           tile.frameX += 180;
       }
       else
       {
-        foreach (Tile tile in this.EnumerateObjectTiles(measureData))
+        foreach (ITile tile in this.EnumerateObjectTiles(measureData))
           tile.frameX += 36;
       }
       
@@ -900,7 +900,7 @@ namespace Terraria.Plugins.Common {
     }
  
     public ChestKind GuessChestKind(DPoint anyChestTileLocation) {
-      Tile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
+      ITile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
       if (!chestTile.active())
         throw new ArgumentException("The tile on the given location is not active.");
 
@@ -974,7 +974,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public Direction GetDoorDirection(DPoint anyDoorTileLocation) {
-      Tile anyDoorTile = TerrariaUtils.Tiles[anyDoorTileLocation];
+      ITile anyDoorTile = TerrariaUtils.Tiles[anyDoorTileLocation];
       if (!anyDoorTile.active())
         throw new ArgumentException("The tile is not active.");
       
@@ -992,7 +992,7 @@ namespace Terraria.Plugins.Common {
       return (HerbStyle)(objectStyle + 1);
     }
 
-    public HerbStyle GetHerbStyle(Tile tile) {
+    public HerbStyle GetHerbStyle(ITile tile) {
       return this.GetHerbStyle(tile.frameX / TerrariaUtils.DefaultTextureTileSize);
     }
 
@@ -1013,12 +1013,12 @@ namespace Terraria.Plugins.Common {
           yield return new DPoint(x, y);
     }
 
-    public IEnumerable<Tile> EnumerateObjectTiles(ObjectMeasureData measureData) {
+    public IEnumerable<ITile> EnumerateObjectTiles(ObjectMeasureData measureData) {
       foreach (DPoint tileLocation in this.EnumerateObjectTileLocations(measureData))
         yield return TerrariaUtils.Tiles[tileLocation];
     }
 
-    public IEnumerable<Tile> EnumerateTilesRectangularAroundPoint(DPoint tileLocation, int rectWidth, int rectHeight) {
+    public IEnumerable<ITile> EnumerateTilesRectangularAroundPoint(DPoint tileLocation, int rectWidth, int rectHeight) {
       int halfWidth = (rectWidth / 2);
       int halfHeight = (rectHeight / 2);
       for (int x = tileLocation.X - halfWidth; x <= tileLocation.X + halfWidth; x++) {
@@ -1036,7 +1036,7 @@ namespace Terraria.Plugins.Common {
         return new DPoint(1, 1);
     }
 
-    public Direction GetObjectOrientation(Tile anyTile) {
+    public Direction GetObjectOrientation(ITile anyTile) {
       TileObjectData objectData = TileObjectData.GetTileData(anyTile);
       if (objectData == null)
         return Direction.Unknown;

@@ -1,8 +1,9 @@
 ﻿using System;
+using OTAPI.Tile;
 
 namespace Terraria.Plugins.Common {
   public static class TileEx {
-    public static bool HasWire(this Tile tile, WireColor color = WireColor.None) {
+    public static bool HasWire(this ITile tile, WireColor color = WireColor.None) {
       if (color == WireColor.None)
         return tile.wire() || tile.wire2() || tile.wire3() || tile.wire4();
       if (color == WireColor.Red)

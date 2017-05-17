@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using OTAPI.Tile;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common.Test {
@@ -14,7 +15,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void IsObjectActive(int x, int y, bool expectedState) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       if (!tile.active()) {
         throw new AssertException($"Assert failed. There is no tile at [{x},{y}].");
       }
@@ -50,7 +51,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void IsTileActive(int x, int y, bool expectedState) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       if (tile.active() != expectedState) {
         string actualStateString;
         if (tile.active())
@@ -72,7 +73,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void IsBlockType(int x, int y, int expectedBlockType) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       
       if (!tile.active()) {
         throw new AssertException(string.Format(
@@ -90,7 +91,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasLiquid(int x, int y) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
         throw new AssertException($"The tile at [{x},{y}] was expected to have liquid, but it doesn't.");
@@ -98,7 +99,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasNoLiquid(int x, int y) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid != 0) {
         throw new AssertException($"The tile at [{x},{y}] was expected to have no liquid, but it has.");
@@ -106,7 +107,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasFullLiquid(int x, int y) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid < 255) {
         throw new AssertException($"The tile at [{x},{y}] was expected to have 255 liquid, but it has {tile.liquid}.");
@@ -114,7 +115,7 @@ namespace Terraria.Plugins.Common.Test {
     }
 
     public static void HasNotFullLiquid(int x, int y) {
-      Tile tile = TerrariaUtils.Tiles[x, y];
+      ITile tile = TerrariaUtils.Tiles[x, y];
       
       if (tile.liquid <= 0) {
         throw new AssertException($"The tile at [{x},{y}] was expected to have at least 1 liquid, but it has none.");

@@ -865,15 +865,15 @@ namespace Terraria.Plugins.Common {
     public void LockChest(DPoint anyChestTileLocation) {
       ITile chestTile = TerrariaUtils.Tiles[anyChestTileLocation];
       if (!chestTile.active() || (chestTile.type != TileID.Containers && chestTile.type != TileID.Containers2))
-        throw new ArgumentException("Tile is not a chest.", nameof(anyChestTileLocation));
+        throw new ArgumentException($"Tile is not a chest (location: {anyChestTileLocation}).", nameof(anyChestTileLocation));
 
       bool isLocked;
       ChestStyle chestStyle = this.GetChestStyle(chestTile, out isLocked);
       if (isLocked)
-        throw new InvalidChestStyleException("Chest is already locked.", chestStyle);
+        throw new InvalidChestStyleException($"Chest is already locked (location: {anyChestTileLocation}).", chestStyle);
 
       if (!this.IsChestStyleLockable(chestStyle))
-        throw new InvalidChestStyleException("Chest has to be a lockable chest.", chestStyle);
+        throw new InvalidChestStyleException($"Chest has to be a lockable chest (location: {anyChestTileLocation}).", chestStyle);
 
       ObjectMeasureData measureData = this.MeasureObject(anyChestTileLocation);
       if (

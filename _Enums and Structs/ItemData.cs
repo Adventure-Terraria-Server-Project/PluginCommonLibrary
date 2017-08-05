@@ -56,7 +56,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public static ItemData FromItem(Item item) {
-      if (item.type == 0 || item.stack <= 0)
+      if (item == null || item.type == 0 || item.stack <= 0)
         return ItemData.None;
 
       return new ItemData(item.prefix, item.netID, item.stack);

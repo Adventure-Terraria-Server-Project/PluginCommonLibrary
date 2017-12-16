@@ -16,9 +16,9 @@ namespace Terraria.Plugins.Common {
     }
 
     public static bool TryGetKey<TKey,TValue>(this IDictionary dictionary, TValue value, out TKey key) {
-      foreach (KeyValuePair<TKey,TValue> pair in dictionary) {
+      foreach (DictionaryEntry pair in dictionary) {
         if (pair.Value.Equals(value)) {
-          key = pair.Key;
+          key = (TKey)pair.Key;
           return true;
         }
       }

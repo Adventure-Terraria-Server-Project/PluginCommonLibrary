@@ -12,13 +12,13 @@ namespace Terraria.Plugins.Common {
   public static class TShockEx {
     public static bool MatchUserAccountNameByPlayerName(string playerName, out string exactName, TSPlayer messagesReceiver = null) {
       exactName = null;
-      TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
+      TShockAPI.DB.UserAccount tsUser = TShock.UserAccounts.GetUserAccountByName(playerName);
       if (tsUser == null) {
         TSPlayer player;
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        exactName = player.User.Name;
+        exactName = player.Account.Name;
       } else {
         exactName = tsUser.Name;
       }
@@ -28,13 +28,13 @@ namespace Terraria.Plugins.Common {
 
     public static bool MatchUserIdByPlayerName(string playerName, out int userId, TSPlayer messagesReceiver = null) {
       userId = -1;
-      TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
+      TShockAPI.DB.UserAccount tsUser = TShock.UserAccounts.GetUserAccountByName(playerName);
       if (tsUser == null) {
         TSPlayer player;
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        userId = player.User.ID;
+        userId = player.Account.ID;
       } else {
         userId = tsUser.ID;
       }
@@ -42,15 +42,15 @@ namespace Terraria.Plugins.Common {
       return true;
     }
 
-    public static bool MatchUserByPlayerName(string playerName, out TShockAPI.DB.User user, TSPlayer messagesReceiver = null) {
+    public static bool MatchUserByPlayerName(string playerName, out TShockAPI.DB.UserAccount user, TSPlayer messagesReceiver = null) {
       user = null;
-      TShockAPI.DB.User tsUser = TShock.Users.GetUserByName(playerName);
+      TShockAPI.DB.UserAccount tsUser = TShock.UserAccounts.GetUserAccountByName(playerName);
       if (tsUser == null) {
         TSPlayer player;
         if (!TShockEx.MatchPlayerByName(playerName, out player, messagesReceiver))
           return false;
 
-        user = TShock.Users.GetUserByID(player.User.ID);
+        user = TShock.UserAccounts.GetUserAccountByID(player.Account.ID);
       } else {
         user = tsUser;
       }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-
 namespace Terraria.Plugins.Common.Test {
   public class TestRunData {
     public Action<TestContext> TestAction { get; private set; }

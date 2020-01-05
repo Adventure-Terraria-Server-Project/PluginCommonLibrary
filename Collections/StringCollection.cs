@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common.Collections {
   public class StringCollection: Collection<string> {

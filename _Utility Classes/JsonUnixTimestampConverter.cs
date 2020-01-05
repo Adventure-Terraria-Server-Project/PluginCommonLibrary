@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

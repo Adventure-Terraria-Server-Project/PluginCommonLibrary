@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
 using TShockAPI;

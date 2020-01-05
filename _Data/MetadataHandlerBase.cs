@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.IO;
 
 namespace Terraria.Plugins.Common {
@@ -41,7 +40,7 @@ namespace Terraria.Plugins.Common {
     protected abstract IMetadataFile ReadMetadataFromFile(string filePath);
 
     public virtual void WriteMetadata() {
-      Contract.Requires<InvalidOperationException>(this.Metadata != null, "No present metadata.");
+      if (this.Metadata == null) throw new InvalidOperationException("No present metadata.");
 
       // Make a backup of the old file if it exists.
       if (File.Exists(this.MetadataFilePath)) {
@@ -54,7 +53,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public virtual void CreateMetadataSnapshot() {
-      Contract.Requires<InvalidOperationException>(this.Metadata != null, "No present metadata.");
+      if (this.Metadata == null) throw new InvalidOperationException("No present metadata.");
 
       if (!File.Exists(this.MetadataFilePath))
         throw new InvalidOperationException("Theres no actual metadata file, a snapshot can not be created.");

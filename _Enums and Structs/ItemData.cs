@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 
 using Newtonsoft.Json;
 
@@ -66,7 +65,7 @@ namespace Terraria.Plugins.Common {
       return new ItemData(netItem.PrefixId, netItem.NetId, netItem.Stack);
     }
 
-    [Pure]
+    //[Pure]
     public Item ToItem() {
       Item item = new Item();
       if (this.StackSize > 0) {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace Terraria.Plugins.Common {
   public static class CollectionEx {
     public static void AddRangeWithoutClones(this IList list, IEnumerable enumerable) {
-      Contract.Requires<ArgumentNullException>(list != null);
-      Contract.Requires<ArgumentNullException>(enumerable != null);
+      if (list == null) throw new ArgumentNullException();
+      if (enumerable == null) throw new ArgumentNullException();
 
       foreach (object item in enumerable) {
         if (!list.Contains(item))

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Collections.Concurrent;
-using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,8 +28,6 @@ namespace Terraria.Plugins.Common {
         dynamic completionSource, CancellationToken? cancellationToken, dynamic function, dynamic state = null,
         QueueExceptionHandler exceptionHandler = null
       ): this() {
-        //Contract.Requires<ArgumentNullException>(completionSource != null);
-        //Contract.Requires<ArgumentNullException>(function != null);
 
         this.CompletionSource = completionSource;
         this.CancellationToken = cancellationToken;
@@ -74,7 +71,7 @@ namespace Terraria.Plugins.Common {
     public Task EnqueueTask(Action action, CancellationToken? cancellationToken = null, 
       QueueExceptionHandler exceptionHandler = null
     ) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
 
       var completionSource = new TaskCompletionSource<object>();
       this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, action, null, exceptionHandler));
@@ -86,7 +83,7 @@ namespace Terraria.Plugins.Common {
       Action<TState> action, TState state, CancellationToken? cancellationToken = null,
       QueueExceptionHandler exceptionHandler = null
     ) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
 
       var completionSource = new TaskCompletionSource<object>();
       this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, action, state, exceptionHandler));
@@ -97,7 +94,7 @@ namespace Terraria.Plugins.Common {
     public Task<TResult> EnqueueTask<TResult>(
       Func<TResult> function, CancellationToken? cancellationToken = null, QueueExceptionHandler exceptionHandler = null
     ) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
 
       var completionSource = new TaskCompletionSource<TResult>();
       this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, function, null, exceptionHandler));
@@ -109,7 +106,7 @@ namespace Terraria.Plugins.Common {
       Func<TState,TResult> function, TState state, CancellationToken? cancellationToken = null,
       QueueExceptionHandler exceptionHandler = null
     ) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
 
       var completionSource = new TaskCompletionSource<TResult>();
       this.queuedItems.Add(new WorkItem(completionSource, cancellationToken, function, state, exceptionHandler));
@@ -118,7 +115,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void AwaitAll(int timeoutMs = -1) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
 
       this.AwaitAllInternal(timeoutMs);
     }

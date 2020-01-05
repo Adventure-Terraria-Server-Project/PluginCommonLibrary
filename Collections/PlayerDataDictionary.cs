@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 using TerrariaApi.Server;
 
@@ -42,8 +40,8 @@ namespace Terraria.Plugins.Common.Collections {
     public PlayerDataDictionary(
       TerrariaPlugin plugin, Func<int,DataType> playerDataFactoryFunction, bool addPlayersAfterLoginOnly = true, bool registerHooks = false
     ) {
-      Contract.Requires<ArgumentNullException>(plugin != null);
-      Contract.Requires<ArgumentNullException>(playerDataFactoryFunction != null);
+      if (plugin == null) throw new ArgumentNullException();
+      if (playerDataFactoryFunction == null) throw new ArgumentNullException();
 
       this.dataList = new List<DataType>(new DataType[100]);
       this.owningPlugin = plugin;

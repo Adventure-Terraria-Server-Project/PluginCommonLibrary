@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -12,7 +11,7 @@ namespace Terraria.Plugins.Common {
     );
 
     public static bool TryParseShort(string input, out TimeSpan result) {
-      Contract.Requires<ArgumentNullException>(input != null);
+      if (input == null) throw new ArgumentNullException();
 
       result = TimeSpan.Zero;
       if (string.IsNullOrWhiteSpace(input))

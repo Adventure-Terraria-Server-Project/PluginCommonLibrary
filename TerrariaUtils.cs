@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using DPoint = System.Drawing.Point;
 
 namespace Terraria.Plugins.Common {

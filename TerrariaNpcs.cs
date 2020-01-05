@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using Terraria.Utilities;
 using DPoint = System.Drawing.Point;
 
@@ -62,7 +61,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void MoveOrSpawnSpecificType(int npcType, DPoint location) {
-      Contract.Requires<ArgumentOutOfRangeException>(npcType >= TerrariaUtils.NpcType_Min && npcType <= TerrariaUtils.NpcType_Max);
+      if (!(npcType >= TerrariaUtils.NpcType_Min && npcType <= TerrariaUtils.NpcType_Max)) throw new ArgumentOutOfRangeException();
 
       foreach (int npcIndex in TerrariaUtils.Npcs.EnumerateSpecificNPCIndexes(npcType)) {
         this.Move(npcIndex, location);
@@ -73,7 +72,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public void Move(int npcIndex, DPoint location) {
-      Contract.Requires<ArgumentOutOfRangeException>(npcIndex >= 0 && npcIndex < Main.npc.Length);
+      if (!(npcIndex >= 0 && npcIndex < Main.npc.Length)) throw new ArgumentOutOfRangeException();
 
       NPC npc = Main.npc[npcIndex];
       if (npc == null)

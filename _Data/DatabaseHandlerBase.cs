@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics.Contracts;
 using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 
@@ -18,8 +17,8 @@ namespace Terraria.Plugins.Common {
 
 
     protected DatabaseHandlerBase(string sqliteDatabaseFilePath) {
-      Contract.Requires<ArgumentNullException>(sqliteDatabaseFilePath != null);
-      Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(sqliteDatabaseFilePath));
+      if (sqliteDatabaseFilePath == null) throw new ArgumentNullException();
+      if (string.IsNullOrWhiteSpace(sqliteDatabaseFilePath)) throw new ArgumentException();
 
       this.sqliteDatabaseFilePath = sqliteDatabaseFilePath;
     }

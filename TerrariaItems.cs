@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework;
 using Terraria.ID;
 using DPoint = System.Drawing.Point;
@@ -194,7 +192,7 @@ namespace Terraria.Plugins.Common {
           return ItemID.None;
         default: {
           int[] styleArray = TerrariaItems.blockTypesItemTypes.Value[blockType];
-          Contract.Assert(styleArray != null, "BlockType: " + blockType);
+          //Contract.Assert(styleArray != null, "BlockType: " + blockType);
 
           if (objectStyle >= styleArray.Length)
             throw new ArgumentException($"There is no item type for block \"{blockType}\" with object style {objectStyle}");

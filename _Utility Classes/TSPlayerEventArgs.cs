@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 using TShockAPI;
 
@@ -10,7 +8,7 @@ namespace Terraria.Plugins.Common {
 
 
     public TSPlayerEventArgs(TSPlayer tsPlayer) {
-      Contract.Requires<ArgumentNullException>(tsPlayer != null);
+      if (tsPlayer == null) throw new ArgumentNullException();
 
       this.TSPlayer = tsPlayer;
     }

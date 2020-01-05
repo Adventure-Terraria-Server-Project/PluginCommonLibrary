@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent.UI;
 using TShockAPI;

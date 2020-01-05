@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using Terraria.DataStructures;
 using TShockAPI;
 

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Threading;
 using DPoint = System.Drawing.Point;
 
@@ -37,9 +35,9 @@ namespace Terraria.Plugins.Common {
       string[] names, CommandDelegate commandExec, Func<CommandArgs,bool> commandHelpExec = null, 
       string requiredPermission = null, bool allowServer = true, bool doLog = true
     ) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-      Contract.Requires<ArgumentNullException>(names != null);
-      Contract.Requires<ArgumentNullException>(commandExec != null);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
+      if (names == null) throw new ArgumentNullException();
+      if (commandExec == null) throw new ArgumentNullException();
       
       CommandDelegate actualCommandExec;
       if (commandHelpExec != null) {
@@ -68,15 +66,15 @@ namespace Terraria.Plugins.Common {
     }
 
     protected void DeregisterCommand(Command tshockCommand) {
-      Contract.Requires<ArgumentNullException>(tshockCommand != null);
+      if (tshockCommand == null) throw new ArgumentNullException();
 
       if (!TShockAPI.Commands.ChatCommands.Contains(tshockCommand))
         throw new InvalidOperationException("Command is not registered.");
     }
 
     protected CommandInteraction StartOrResetCommandInteraction(TSPlayer forPlayer, int timeoutMs = 0) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-      Contract.Requires<ArgumentNullException>(forPlayer != null);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
+      if (forPlayer == null) throw new ArgumentNullException();
 
       CommandInteraction newInteraction = new CommandInteraction(forPlayer);
 
@@ -135,8 +133,8 @@ namespace Terraria.Plugins.Common {
     }
 
     protected void StopInteraction(TSPlayer forPlayer) {
-      Contract.Requires<ObjectDisposedException>(!this.IsDisposed);
-      Contract.Requires<ArgumentNullException>(forPlayer != null);
+      if (this.isDisposed) throw new ObjectDisposedException(this.ToString());
+      if (forPlayer == null) throw new ArgumentNullException();
 
       lock (this.activeCommandInteractionsLock) {
         CommandInteraction interaction;

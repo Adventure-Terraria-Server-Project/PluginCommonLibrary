@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Contracts;
 using Terraria.ID;
 
 namespace Terraria.Plugins.Common.Collections {
@@ -16,9 +15,9 @@ namespace Terraria.Plugins.Common.Collections {
     protected readonly int toIndex;
 
     public ItemsAdapter(Item[] itemArray, int fromIndex = 0, int toIndex = 0) {
-      Contract.Requires<ArgumentNullException>(itemArray != null);
-      Contract.Requires<ArgumentException>(itemArray.Length > 0);
-      Contract.Requires<ArgumentOutOfRangeException>(fromIndex <= toIndex);
+      if (itemArray == null) throw new ArgumentNullException();
+      if (!(itemArray.Length > 0)) throw new ArgumentException();
+      if (!(fromIndex <= toIndex)) throw new ArgumentOutOfRangeException();
 
       this.itemArray = itemArray;
       this.fromIndex = fromIndex;

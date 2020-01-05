@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Threading;
 using DPoint = System.Drawing.Point;
 
@@ -27,7 +25,7 @@ namespace Terraria.Plugins.Common {
 
 
     public CommandInteraction(TSPlayer forPlayer) {
-      Contract.Requires<ArgumentNullException>(forPlayer != null);
+      if (forPlayer == null) throw new ArgumentNullException();
 
       this.ForPlayer = forPlayer;
     }

@@ -62,7 +62,7 @@ namespace Terraria.Plugins.Common {
       string name, out TSPlayer matchedPlayer, TSPlayer messagesReceiver = null
     ) {
       matchedPlayer = null;
-      List<TSPlayer> matchedPlayers = TShock.Utils.FindPlayer(name);
+      List<TSPlayer> matchedPlayers = TSPlayer.FindByNameOrID(name);
       if (matchedPlayers.Count == 0) {
         if (messagesReceiver != null)
           messagesReceiver.SendErrorMessage($"Could not match any players for \"{name}\".");

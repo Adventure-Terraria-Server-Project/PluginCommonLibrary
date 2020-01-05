@@ -589,7 +589,7 @@ namespace Terraria.Plugins.Common.Hooks {
           // a tile but didn't succeed yet, and will be of "0" as the tile is actually destroyed.
           // However, there's one exception with Chests, they will never send their actual destroy packet, except a hack
           // tool is used, it seems.
-          case PacketTypes.TileKill: {
+          case PacketTypes.PlaceChest: {
             int type = e.Msg.readBuffer[e.Index];
             int x = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 1);
             int y = BitConverter.ToInt16(e.Msg.readBuffer, e.Index + 3);
@@ -713,9 +713,9 @@ namespace Terraria.Plugins.Common.Hooks {
               return;
 
             // For some reason, TShock doesn't handle this packet so we just do our own checks.
-            if (TShock.CheckIgnores(player))
+            if (player.IsBeingDisabled())
               return;
-            if (TShock.CheckRangePermission(player, x, y, 32))
+            if (!player.IsInRange(x, y, 32))
               return;
       
             e.Handled = this.OnHitSwitch(new TileLocationEventArgs(player, new DPoint(x, y)));
@@ -906,7 +906,7 @@ namespace Terraria.Plugins.Common.Hooks {
             if (!TerrariaUtils.Tiles.IsValidCoord(tileX, tileY))
               break;
 
-            int color = e.Msg.readBuffer[e.Index + 8];
+            int color = e.Msg.readBuffer[e.Index + 4];
 
             e.Handled = this.OnTilePaint(new TilePaintEventArgs(player, new DPoint(tileX, tileY), (PaintColor)color));
             break;

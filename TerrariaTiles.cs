@@ -656,6 +656,13 @@ namespace Terraria.Plugins.Common {
         [StatueStyle.GraniteGolem] = ItemID.GraniteGolemStatue,
         [StatueStyle.ZombieArm] = ItemID.ZombieArmStatue,
         [StatueStyle.BloodZombie] = ItemID.BloodZombieStatue,
+        // 1.4
+        [StatueStyle.Bast] = ItemID.CatBast,
+        [StatueStyle.Dragonfly] = ItemID.DragonflyStatue,
+        [StatueStyle.Boulder] = ItemID.BoulderStatue,
+        [StatueStyle.Seagull] = ItemID.SeagullStatue,
+        [StatueStyle.Owl] = ItemID.OwlStatue,
+        [StatueStyle.Turtle] = ItemID.TurtleStatue,
       };
     });
     public int GetItemTypeFromStatueStyle(StatueStyle statueStyle) {
@@ -672,6 +679,7 @@ namespace Terraria.Plugins.Common {
         case 3:
         case 4:
         case 6:
+        case 7:
           return PressurePlateKind.TriggeredByPlayers;
         case 0:
         case 1:
@@ -747,6 +755,19 @@ namespace Terraria.Plugins.Common {
       return new[] {
         new Tuple<ChestStyle, bool>(ChestStyle.CrystalChest, false),
         new Tuple<ChestStyle, bool>(ChestStyle.GoldenChest, false),
+        //1.4
+        new Tuple<ChestStyle, bool>(ChestStyle.SpiderChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.LesionChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.DeadMansChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.SolarChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.VortexChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.NebulaChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.StardustChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.GolfChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.SandstoneChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.BambooChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.DesertChest, false),
+        new Tuple<ChestStyle, bool>(ChestStyle.DesertChest, true),
       };
     });
     public ChestStyle GetChestStyle(ushort tileId, int objectStyle, out bool isLocked) {
@@ -775,6 +796,7 @@ namespace Terraria.Plugins.Common {
         [ChestStyle.HallowedChest] = ItemID.HallowedKey,
         [ChestStyle.FrozenChest] = ItemID.FrozenKey,
         [ChestStyle.JungleChest] = ItemID.JungleKey,
+        [ChestStyle.DesertChest] = ItemID.DungeonDesertKey,
       };
     });
     public int KeyItemTypeFromChestStyle(ChestStyle chestStyle) {
@@ -836,6 +858,18 @@ namespace Terraria.Plugins.Common {
         [ChestStyle.MarbleChest] = ItemID.MarbleChest,
         [ChestStyle.CrystalChest] = ItemID.CrystalChest,
         [ChestStyle.GoldenChest] = ItemID.GoldenChest,
+        // 1.4
+        [ChestStyle.SpiderChest] = ItemID.SpiderChest,
+        [ChestStyle.LesionChest] = ItemID.LesionChest,
+        [ChestStyle.DeadMansChest] = ItemID.DeadMansChest,
+        [ChestStyle.SolarChest] = ItemID.SolarChest,
+        [ChestStyle.VortexChest] = ItemID.VortexChest,
+        [ChestStyle.NebulaChest] = ItemID.NebulaChest,
+        [ChestStyle.StardustChest] = ItemID.StardustChest,
+        [ChestStyle.GolfChest] = ItemID.GolfChest,
+        [ChestStyle.SandstoneChest] = ItemID.DesertChest,
+        [ChestStyle.BambooChest] = ItemID.BambooChest,
+        [ChestStyle.DesertChest] = ItemID.DungeonDesertChest,
       };
     });
     public int GetItemTypeFromChestStyle(ChestStyle chestStyle) {
@@ -857,7 +891,8 @@ namespace Terraria.Plugins.Common {
         ChestStyle.FrozenChest,
         ChestStyle.BlueDungeonChest,
         ChestStyle.GreenDungeonChest,
-        ChestStyle.PinkDungeonChest
+        ChestStyle.PinkDungeonChest,
+        ChestStyle.DesertChest,
       };
     });
     public void LockChest(DPoint anyChestTileLocation) {
@@ -936,6 +971,7 @@ namespace Terraria.Plugins.Common {
         case ChestStyle.JungleChest:
         case ChestStyle.CrimsonChest:
         case ChestStyle.CorruptionChest:
+        case ChestStyle.DesertChest:
           if (isLocked) {
             if (
               chestTile.wall >= WallID.BlueDungeonUnsafe && chestTile.wall <= WallID.PinkDungeonUnsafe ||

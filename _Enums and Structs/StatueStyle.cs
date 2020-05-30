@@ -80,5 +80,12 @@ namespace Terraria.Plugins.Common {
     GraniteGolem,
     ZombieArm,
     BloodZombie,
+    //1.4
+    Bast,
+    Dragonfly,
+    Boulder,
+    Seagull,
+    Owl,
+    Turtle,
   }
 }

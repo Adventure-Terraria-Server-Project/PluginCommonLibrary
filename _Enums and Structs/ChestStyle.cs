@@ -48,5 +48,17 @@ namespace Terraria.Plugins.Common {
     // 1.3.5
     CrystalChest,
     GoldenChest,
+    // 1.4
+    SpiderChest,
+    LesionChest,
+    DeadMansChest,
+    SolarChest,
+    VortexChest,
+    NebulaChest,
+    StardustChest,
+    GolfChest,
+    SandstoneChest,
+    BambooChest,
+    DesertChest,
   }
 }

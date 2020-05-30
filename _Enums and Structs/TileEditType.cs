@@ -22,5 +22,9 @@ namespace Terraria.Plugins.Common {
     DestroyWireYellow,
     PokeLogicGate,
     Actuate,
+    KillTile,
+    ReplaceTile,
+    ReplaceWall,
+    SlopePoundTile,
   }
 }

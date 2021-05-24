@@ -20,7 +20,7 @@ namespace Terraria.Plugins.Common {
     }
 
     public int Shoot(DPoint fromLocation, Vector2 velocity, int projectileId, int damage = 1, float knockback = 0f, int lifeTimeOverride = -1, int owner = 255) {
-      int projectileIndex = Projectile.NewProjectile(fromLocation.X, fromLocation.Y, velocity.X, velocity.Y, projectileId, damage, knockback, owner);
+      int projectileIndex = Projectile.NewProjectile(Projectile.GetNoneSource(), fromLocation.X, fromLocation.Y, velocity.X, velocity.Y, projectileId, damage, knockback, owner);
       if (lifeTimeOverride != -1)
         Main.projectile[projectileIndex].timeLeft = lifeTimeOverride;
 
